@@ -7,8 +7,9 @@ public enum ExitCode
     INVALID_SYNTAX      (2, "Invalid Syntax"),
     MISSING_INPUT2      (3, "Required Input File Is Missing"),
     MISSING_OUTPUT      (4, "Required Output File Is Missing"),
-    MISSING_HEADERS     (5, "Required Headers Are Missing"),
-    FILE_NOT_FOUND      (6, "File Not Found");
+    MISSING_KEY         (5, "Required Key is Missing"),
+    MISSING_HEADERS     (6, "Required Headers Are Missing"),
+    FILE_NOT_FOUND      (7, "File Not Found");
 
     private final int code;
     private final String message;
