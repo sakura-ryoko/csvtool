@@ -3,13 +3,37 @@ plugins {
     id 'application'
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation "com.google.guava:guava:33.3.1-jre"
-    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    //implementation "com.google.guava:guava:${project.guava_version}"
+    //implementation "com.google.code.findbugs:jsr305:3.0.2"
+    //implementation "org.apache.commons:commons-csv:1.12.0"
+
+    implementation fileTree(dir: 'libs', include: '*.jar')
 }
 
-mainClassName = 'csvtool.Main'
+group = project.group
+//archivesBaseName = project.file_name + '-' + project.version
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 21
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'csvtool.Main')
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

@@ -6,35 +6,43 @@ import javax.annotation.Nullable;
 
 public enum Operation
 {
-    MERGE("--merge"),             // --merge
-    DIFF("--diff"),               // --diff
-    REFORMAT("--reformat");       // --reformat
+    TEST    ("test",     "--test"),                 // --test
+    MERGE   ("merge",    "--merge"),                // --merge
+    DIFF    ("diff",     "--diff"),                 // --diff
+    REFORMAT("reformat", "--reformat");             // --reformat
 
     public static final ImmutableList<Operation> VALUES = ImmutableList.copyOf(values());
 
+    private final String name;
     private final String op;
 
-    Operation(String op)
+    Operation(String name, String op)
     {
+        this.name = name;
         this.op = op;
     }
 
-    public String get()
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public String getOp()
     {
         return this.op;
     }
 
-    public Operation fromString(String name)
+    public Operation fromArg(String name)
     {
-        return fromStringStatic(name);
+        return fromArgStatic(name);
     }
 
     @Nullable
-    public static Operation fromStringStatic(String name)
+    public static Operation fromArgStatic(String name)
     {
         for (Operation val : VALUES)
         {
-            if (val.get().equalsIgnoreCase(name))
+            if (val.getOp().equalsIgnoreCase(name))
             {
                 return val;
             }
