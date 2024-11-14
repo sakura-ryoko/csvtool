@@ -8,8 +8,12 @@ import java.util.List;
 
 public enum Settings
 {
-    TEST        ("test",     "--t",     true,  List.of("-t")),
-    UTF8        ("utf8",     "--utf8",  false, List.of("--utf", "-utf", "-utf8"));
+    TEST        ("test",     "--t",       true,  List.of("-t")),
+    INPUT2      ("input2",   "--input",   true,  List.of("--in", "-input", "-i")),
+    OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
+    UTF8        ("utf8",     "--utf8",    false, List.of("--utf", "-utf", "-utf8")),
+    HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers")),
+    KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k"));
 
     public static final ImmutableList<Settings> VALUES = ImmutableList.copyOf(values());
 

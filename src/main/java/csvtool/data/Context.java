@@ -10,41 +10,37 @@ public class Context
 {
     private final Operation op;
     private Map<Settings, String> settings;
-    private String inputFile1;
-    private String inputFile2;
-    private String outputFile;
-    private String key;
-    private String headers;
+    private String inputFile;
+    private OptSettings opt;
 
     public Context(Operation op)
     {
-        this(op, null, "", "", "", "", "");
+        this(op, null, "");
     }
 
-    public Context(Operation op, Map<Settings, String> settings, String inputFile1, String inputFile2, String outputFile, String key, String headers)
+    public Context(Operation op, Map<Settings, String> settings, String inputFile)
     {
         this.op = op;
         this.settings = settings;
-        this.inputFile1 = inputFile1;
-        this.inputFile2 = inputFile2;
-        this.outputFile = outputFile;
-        this.key = key;
-        this.headers = headers;
+        this.inputFile = inputFile;
+        this.opt = new OptSettings();
     }
 
     public Operation getOp() { return this.op; }
 
     public Map<Settings, String> getSettings() { return this.settings; }
 
-    public String getInputFile1() { return this.inputFile1; }
+    public @Nullable String getSettingValue(Settings setting)
+    {
+        if (this.settings.containsKey(setting))
+        {
+            return this.settings.get(setting);
+        }
 
-    public String getInputFile2() { return this.inputFile2; }
+        return null;
+    }
 
-    public String getOutputFile() { return this.outputFile; }
-
-    public String getKey() { return this.key; }
-
-    public String getHeaders() { return this.headers; }
+    public String getInputFile() { return this.inputFile; }
 
     public Context addSettings(Settings settings, @Nullable String param)
     {
@@ -57,33 +53,20 @@ public class Context
         return this;
     }
 
-    public Context setInputFile1(String file)
+    public Context setInputFile(String file)
     {
-        this.inputFile1 = file;
+        this.inputFile = file;
         return this;
     }
 
-    public Context setInputFile2(String file)
+    public OptSettings getOpt()
     {
-        this.inputFile2 = file;
-        return this;
+        return this.opt;
     }
 
-    public Context setOutputFile(String file)
+    public Context setOptSettings(OptSettings opt)
     {
-        this.outputFile = file;
-        return this;
-    }
-
-    public Context setKey(String key)
-    {
-        this.key = key;
-        return this;
-    }
-
-    public Context setHeaders(String headers)
-    {
-        this.headers = headers;
+        this.opt = opt;
         return this;
     }
 }
