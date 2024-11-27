@@ -170,7 +170,12 @@ public class Main
 
     private static boolean isSettingMissing(Settings entry)
     {
-        return !ctx.getSettings().containsKey(entry);
+        if (ctx.getSettings() != null)
+        {
+            return !ctx.getSettings().containsKey(entry);
+        }
+
+        return true;
     }
 
     private static void verifyOperation()
@@ -197,16 +202,19 @@ public class Main
     {
         OptSettings opt = new OptSettings();
 
-        for (Settings entry : ctx.getSettings().keySet())
+        if (ctx.getSettings() != null)
         {
-            switch (entry)
+            for (Settings entry : ctx.getSettings().keySet())
             {
-                case INPUT2 -> opt.setInput2(entry.getSetting());
-                case OUTPUT -> opt.setOutput(entry.getSetting());
-                case KEY -> opt.setKey(entry.getSetting());
-                case HEADERS -> opt.setHeadersConfig(entry.getSetting());
-                case UTF8 -> opt.setUtf8(true);
-                case TEST -> { }
+                switch (entry)
+                {
+                    case INPUT2 -> opt.setInput2(entry.getSetting());
+                    case OUTPUT -> opt.setOutput(entry.getSetting());
+                    case KEY -> opt.setKey(entry.getSetting());
+                    case HEADERS -> opt.setHeadersConfig(entry.getSetting());
+                    case UTF8 -> opt.setUtf8(true);
+                    case TEST -> {}
+                }
             }
         }
 
