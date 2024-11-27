@@ -1,44 +1,58 @@
 package csvtool.utils;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import csvtool.enums.Colors;
 
 public class LogUtils
 {
-    private final Logger log;
+    private final String log;
 
     public LogUtils(Class<?> clazz)
     {
-        this.log = LogManager.getLogger(clazz);
+        this.log = clazz.getName();
     }
 
-    public void info(String msg, Object... args)
+    public void info(String fmt, Object... args)
     {
-        this.log.info(String.format(msg, args));
+        if (this.log != null)
+        {
+            String msg = StringUtils.format(fmt, args);
+            System.out.printf(Colors.WHITE + "[INFO/"+this.log+"]: %s" + Colors.RESET+"\n", msg);
+        }
     }
 
-    public void debug(String msg, Object... args)
+    public void debug(String fmt, Object... args)
     {
-        this.log.debug(String.format(msg, args));
+        if (this.log != null)
+        {
+            String msg = StringUtils.format(fmt, args);
+            System.out.printf(Colors.PURPLE_BOLD + "[DEBUG/"+this.log+"]: %s" + Colors.RESET+"\n", msg);
+        }
     }
 
-    public void warn(String msg, Object... args)
+    public void warn(String fmt, Object... args)
     {
-        this.log.warn(String.format(msg, args));
+        if (this.log != null)
+        {
+            String msg = StringUtils.format(fmt, args);
+            System.out.printf(Colors.YELLOW_BOLD + "[WARN/"+this.log+"]: %s" + Colors.RESET+"\n", msg);
+        }
     }
 
-    public void error(String msg, Object... args)
+    public void error(String fmt, Object... args)
     {
-        this.log.error(String.format(msg, args));
+        if (this.log != null)
+        {
+            String msg = StringUtils.format(fmt, args);
+            System.out.printf(Colors.RED_BOLD + "[ERROR/"+this.log+"]: %s" + Colors.RESET+"\n", msg);
+        }
     }
 
-    public void fatal(String msg, Object... args)
+    public void fatal(String fmt, Object... args)
     {
-        this.log.fatal(String.format(msg, args));
-    }
-
-    public void trace(String msg, Object... args)
-    {
-        this.log.trace(String.format(msg, args));
+        if (this.log != null)
+        {
+            String msg = StringUtils.format(fmt, args);
+            System.out.printf(Colors.RED_BOLD_BRIGHT + "[FATAL/"+this.log+"]: %s" + Colors.RESET+"\n", msg);
+        }
     }
 }

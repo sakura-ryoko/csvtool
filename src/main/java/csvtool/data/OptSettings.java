@@ -81,7 +81,7 @@ public class OptSettings
         }
         else
         {
-            LOGGER.error("ERROR: Headers Config file [{}] does not exist!", headersConfig);
+            LOGGER.warn("ERROR: Headers Config file [{}] does not exist!", headersConfig);
         }
     }
 

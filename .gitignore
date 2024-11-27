@@ -27,3 +27,4 @@ replay_pid*
 /build/
 /.run/
 /downloads/
+/libs/

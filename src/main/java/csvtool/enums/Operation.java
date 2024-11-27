@@ -8,11 +8,12 @@ import java.util.List;
 
 public enum Operation
 {
-    HELP        ("help",     "--help",     false, false,false,false, List.of("-h", "-help")),
-    TEST        ("test",     "--test",     false, false,false,false, List.of()),
-    MERGE       ("merge",    "--merge",    true,  true, true, false, List.of()),
-    DIFF        ("diff",     "--diff",     true,  true, true, false, List.of()),
-    REFORMAT    ("reformat", "--reformat", false, true, false,true,  List.of());
+    HELP        ("help",         "--help",         false, false,false,false, List.of("-h", "-help")),
+    TEST        ("test",         "--test",         false, false,false,false, List.of()),
+    MERGE       ("merge",        "--merge",        true,  true, true, false, List.of()),
+    DIFF        ("diff",         "--diff",         true,  true, true, false, List.of()),
+    SAVE_HEADER ("save-headers", "--save-headers", false, true, false,true,  List.of("--save", "-save-headers", "-s")),
+    REFORMAT    ("reformat",     "--reformat",     false, true, false,true,  List.of());
 
     public static final ImmutableList<Operation> VALUES = ImmutableList.copyOf(values());
 
