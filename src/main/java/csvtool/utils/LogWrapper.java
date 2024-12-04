@@ -2,11 +2,11 @@ package csvtool.utils;
 
 import csvtool.enums.Colors;
 
-public class LogUtils
+public class LogWrapper
 {
     private final String log;
 
-    public LogUtils(Class<?> clazz)
+    public LogWrapper(Class<?> clazz)
     {
         this.log = clazz.getName();
     }

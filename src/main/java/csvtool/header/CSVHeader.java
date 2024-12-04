@@ -62,4 +62,19 @@ public class CSVHeader
         this.stream().forEach(builder::add);
         return builder.build();
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("CSVHeader[");
+
+        this.headers.forEach((entry) ->
+        {
+            builder.append(entry);
+            builder.append(",");
+        });
+        builder.append("]");
+        String result = builder.toString();
+        return result.replace(",]", "]");
+    }
 }

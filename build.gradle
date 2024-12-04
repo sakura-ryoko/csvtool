@@ -27,7 +27,7 @@ dependencies {
 }
 
 group = project.group
-//archivesBaseName = project.file_name + '-' + project.version
+//base.archivesName = project.file_name + '-' + project.version
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"

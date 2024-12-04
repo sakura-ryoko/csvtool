@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import csvtool.data.OptSettings;
-import csvtool.utils.LogUtils;
+import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nullable;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 public class HeaderParser
 {
-    private static final LogUtils LOGGER = new LogUtils(HeaderParser.class);
+    private static final LogWrapper LOGGER = new LogWrapper(HeaderParser.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static HeaderConfig CONFIG = new HeaderConfig();
     private static boolean loaded;

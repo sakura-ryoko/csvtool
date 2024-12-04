@@ -9,23 +9,23 @@ public class OperationType<T extends Operation>
     //private final LogUtils LOGGER = new LogUtils(getClass());
 
     public static final OperationType<OperationHelp>  HELP;
-    public static final OperationType<OperationEmpty> TEST;
+    public static final OperationType<OperationTest> TEST;
     public static final OperationType<OperationEmpty> MERGE;
     public static final OperationType<OperationEmpty> DIFF;
     public static final OperationType<OperationEmpty> GEN;
     public static final OperationType<OperationEmpty> REFORMAT;
     private final OperationFactory<? extends T> factory;
-    private final Operations op;
+    private final Operations ops;
 
     @SuppressWarnings("unchecked")
-    private static <T extends Operation> OperationType<T> create(OperationFactory<? extends T> factory, Operations op)
+    private static <T extends Operation> OperationType<T> create(OperationFactory<? extends T> factory, Operations ops)
     {
-        return (OperationType) new OperationType(factory, op);
+        return (OperationType) new OperationType(factory, ops);
     }
 
-    private OperationType(OperationFactory<? extends T> factory, Operations op)
+    private OperationType(OperationFactory<? extends T> factory, Operations ops)
     {
-        this.op = op;
+        this.ops = ops;
         this.factory = factory;
     }
 
@@ -35,15 +35,15 @@ public class OperationType<T extends Operation>
         return this.factory.create(op);
     }
 
-    public Operations getOp()
+    public Operations getOps()
     {
-        return this.op;
+        return this.ops;
     }
 
     static
     {
         HELP = create(OperationHelp::new, Operations.HELP);
-        TEST = create(OperationEmpty::new, Operations.TEST);
+        TEST = create(OperationTest::new, Operations.TEST);
         MERGE = create(OperationEmpty::new, Operations.MERGE);
         DIFF = create(OperationEmpty::new, Operations.DIFF);
         GEN = create(OperationEmpty::new, Operations.SAVE_HEADER);
@@ -53,6 +53,6 @@ public class OperationType<T extends Operation>
     @FunctionalInterface
     interface OperationFactory<T extends Operation>
     {
-        T create(Operations op);
+        T create(Operations ops);
     }
 }

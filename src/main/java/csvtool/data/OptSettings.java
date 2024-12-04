@@ -1,11 +1,11 @@
 package csvtool.data;
 
 import csvtool.utils.FileUtils;
-import csvtool.utils.LogUtils;
+import csvtool.utils.LogWrapper;
 
 public class OptSettings
 {
-    private final LogUtils LOGGER = new LogUtils(OptSettings.class);
+    private final LogWrapper LOGGER = new LogWrapper(OptSettings.class);
     private String input2;
     private String output;
     private String headersConfig;

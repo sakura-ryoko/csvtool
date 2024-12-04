@@ -4,6 +4,8 @@ import java.io.File;
 
 public class FileUtils
 {
+    private static final LogWrapper LOGGER = new LogWrapper(FileUtils.class);
+
     public static boolean fileExists(String path)
     {
         try
@@ -13,7 +15,7 @@ public class FileUtils
         }
         catch (Exception err)
         {
-            System.out.printf("ERR: Exception checking if file [\"%s\"] exists. [%s]", path, err.getMessage());
+            LOGGER.error("Exception checking if file [\"{}\"] exists. [{}]", path, err.getMessage());
         }
 
         return false;

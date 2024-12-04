@@ -3,11 +3,11 @@ package csvtool.operation;
 import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.enums.Operations;
-import csvtool.utils.LogUtils;
+import csvtool.utils.LogWrapper;
 
 public class OperationHelp extends Operation
 {
-    private final LogUtils LOGGER = new LogUtils(this.getClass());
+    private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
     public OperationHelp(Operations op)
     {
