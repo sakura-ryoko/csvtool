@@ -1,6 +1,6 @@
 package csvtool.data;
 
-import csvtool.enums.Operation;
+import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 
 import javax.annotation.Nullable;
@@ -8,17 +8,17 @@ import java.util.*;
 
 public class Context
 {
-    private final Operation op;
+    private final Operations op;
     private Map<Settings, String> settings;
     private String inputFile;
     private OptSettings opt;
 
-    public Context(Operation op)
+    public Context(Operations op)
     {
         this(op, null, "");
     }
 
-    public Context(Operation op, Map<Settings, String> settings, String inputFile)
+    public Context(Operations op, Map<Settings, String> settings, String inputFile)
     {
         this.op = op;
         this.settings = settings;
@@ -26,7 +26,7 @@ public class Context
         this.opt = new OptSettings();
     }
 
-    public Operation getOp() { return this.op; }
+    public Operations getOp() { return this.op; }
 
     public Map<Settings, String> getSettings() { return this.settings; }
 

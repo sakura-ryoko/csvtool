@@ -1,21 +1,23 @@
 package csvtool.enums;
 
 import com.google.common.collect.ImmutableList;
+import csvtool.operation.Operation;
+import csvtool.operation.OperationType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum Operation
+public enum Operations
 {
-    HELP        ("help",         "--help",         false, false,false,false, List.of("-h", "-help")),
-    TEST        ("test",         "--test",         false, false,false,false, List.of()),
-    MERGE       ("merge",        "--merge",        true,  true, true, false, List.of()),
-    DIFF        ("diff",         "--diff",         true,  true, true, false, List.of()),
-    SAVE_HEADER ("save-headers", "--save-headers", false, true, false,true,  List.of("--save", "-save-headers", "-s")),
-    REFORMAT    ("reformat",     "--reformat",     false, true, false,true,  List.of());
+    HELP        ("help",         "--help",         false, false,false,false, OperationType.HELP,     List.of("-h", "-help")),
+    TEST        ("test",         "--test",         false, false,false,false, OperationType.TEST,     List.of("-test", "-t", "--t")),
+    MERGE       ("merge",        "--merge",        true,  true, true, false, OperationType.MERGE,    List.of("-merge", "-m", "--m")),
+    DIFF        ("diff",         "--diff",         true,  true, true, false, OperationType.DIFF,     List.of("-diff", "-d", "--d")),
+    SAVE_HEADER ("gen-headers",  "--gen-headers",  false, false,false,true,  OperationType.GEN,      List.of("-gen-headers", "--gen", "-gen", "--g", "-g")),
+    REFORMAT    ("reformat",     "--reformat",     false, true, false,true,  OperationType.REFORMAT, List.of("-reformat", "--ref", "-ref", "--r", "-r"));
 
-    public static final ImmutableList<Operation> VALUES = ImmutableList.copyOf(values());
+    public static final ImmutableList<Operations> VALUES = ImmutableList.copyOf(values());
 
     private final String name;          // Operation Name
     private final String op;            // Operation argument
@@ -23,9 +25,11 @@ public enum Operation
     private final boolean output;       // Operation requires an output file
     private final boolean key;          // Operation requires a key field
     private final boolean headers;      // Operation requires a CSV header mapping
+
+    private final OperationType<?> type;
     private final List<String> alias = new ArrayList<>();
 
-    Operation(String name, String op, boolean input2, boolean output, boolean key, boolean headers, List<String> alias)
+    Operations(String name, String op, boolean input2, boolean output, boolean key, boolean headers, OperationType<?> type, List<String> alias)
     {
         this.name = name;
         this.op = op;
@@ -33,6 +37,7 @@ public enum Operation
         this.output = output;
         this.key = key;
         this.headers = headers;
+        this.type = type;
         this.alias.addAll(alias);
     }
 
@@ -50,10 +55,20 @@ public enum Operation
 
     public boolean needsHeaders() { return this.headers; }
 
-    @Nullable
-    public static Operation fromArg(String name)
+    public OperationType<?> getType()
     {
-        for (Operation val : VALUES)
+        return this.type;
+    }
+
+    public @Nullable Operation init()
+    {
+        return this.type.init(this);
+    }
+
+    @Nullable
+    public static Operations fromArg(String name)
+    {
+        for (Operations val : VALUES)
         {
             if (val.getOp().equalsIgnoreCase(name))
             {

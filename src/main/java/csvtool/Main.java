@@ -4,8 +4,9 @@ import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.OptSettings;
 import csvtool.enums.ExitCode;
-import csvtool.enums.Operation;
+import csvtool.enums.Operations;
 import csvtool.enums.Settings;
+import csvtool.operation.Operation;
 import csvtool.utils.FileUtils;
 import csvtool.utils.LogUtils;
 
@@ -46,7 +47,7 @@ public class Main
         }
 
         // Get Operation
-        ctx = new Context(Operation.fromArg(args[argIndex]));
+        ctx = new Context(Operations.fromArg(args[argIndex]));
         Settings setting;
         argIndex++;
 
@@ -54,7 +55,7 @@ public class Main
         {
             exit(ExitCode.INVALID_OPERATION);
         }
-        else if (ctx.getOp() == Operation.HELP)
+        else if (ctx.getOp() == Operations.HELP)
         {
             displayHelp();
             exit(ExitCode.SUCCESS);
@@ -120,6 +121,19 @@ public class Main
                     ctx = ctx.addSettings(setting, null);
                 }
             }
+        }
+
+        Operation type = ctx.getOp().init();
+
+        if (type != null && type.runOperation(ctx))
+        {
+            LOGGER.info("Operation Successful.");
+            exit(ExitCode.SUCCESS);
+        }
+        else
+        {
+            LOGGER.fatal("Operation FAILED.");
+            exit(ExitCode.OPERATION_FAILURE);
         }
     }
 

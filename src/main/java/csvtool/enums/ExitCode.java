@@ -9,7 +9,8 @@ public enum ExitCode
     MISSING_OUTPUT      (4, "Required Output File Is Missing"),
     MISSING_KEY         (5, "Required Key is Missing"),
     MISSING_HEADERS     (6, "Required Headers Are Missing"),
-    FILE_NOT_FOUND      (7, "File Not Found");
+    FILE_NOT_FOUND      (7, "File Not Found"),
+    OPERATION_FAILURE   (8, "Operation has failed");
 
     private final int code;
     private final String message;
