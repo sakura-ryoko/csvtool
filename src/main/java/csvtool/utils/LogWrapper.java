@@ -1,7 +1,11 @@
 package csvtool.utils;
 
+import csvtool.data.Const;
 import csvtool.enums.Colors;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class LogWrapper
 {
     private final String log;
@@ -22,7 +26,7 @@ public class LogWrapper
 
     public void debug(String fmt, Object... args)
     {
-        if (this.log != null)
+        if (this.log != null && Const.DEBUG)
         {
             String msg = StringUtils.format(fmt, args);
             System.out.printf(Colors.PURPLE_BOLD + "[DEBUG/"+this.log+"]: %s" + Colors.RESET+"\n", msg);

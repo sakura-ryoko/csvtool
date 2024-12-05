@@ -1,5 +1,6 @@
 package csvtool;
 
+import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.OptSettings;
 import csvtool.enums.ExitCode;
@@ -17,11 +18,12 @@ public class Main
     public static void main(String[] args)
     {
         processArgs(args);
-        displayContext();
         verifyOperation();
         processSettings();
-
-        exit(ExitCode.SUCCESS);
+        displayContext();
+        displayOptSettings();
+        executeOperations();
+        exit(ExitCode.EOF);
     }
 
     private static void exit(ExitCode code)
@@ -80,8 +82,10 @@ public class Main
             if (FileUtils.fileExists(inputStr))
             {
                 LOGGER.debug("input file [{}] exists.", inputStr);
-            } else
+            }
+            else
             {
+                LOGGER.error("input file [{}] does not exist!", inputStr);
                 exit(ExitCode.FILE_NOT_FOUND);
             }
 
@@ -101,36 +105,23 @@ public class Main
                         String param = args[i + 1];
                         ctx = ctx.addSettings(setting, param);
                         i++;
-                    } else
+                    }
+                    else
                     {
                         ctx = ctx.addSettings(setting, null);
                     }
                 }
             }
         }
-
-        if (ctx.getOp() != Operations.HELP
-            && (ctx.getInputFile() == null || ctx.getInputFile().isEmpty()))
-        {
-            exit(ExitCode.MISSING_INPUT);
-        }
-
-        Operation type = ctx.getOp().init();
-
-        if (type != null && type.runOperation(ctx))
-        {
-            LOGGER.info("Operation Successful.");
-            exit(ExitCode.SUCCESS);
-        }
-        else
-        {
-            LOGGER.fatal("Operation FAILED.");
-            exit(ExitCode.OPERATION_FAILURE);
-        }
     }
 
    private static void displayContext()
     {
+        if (!Const.DEBUG)
+        {
+            return;
+        }
+
         System.out.printf("Operation: %s\n",  ctx.getOp().getName());
         System.out.print("Settings:");
         if (ctx.getSettings() == null)
@@ -153,6 +144,57 @@ public class Main
             System.out.print("\n");
         }
         System.out.printf("InputFile: %s\n", ctx.getInputFile());
+    }
+
+    private static void displayOptSettings()
+    {
+        if (!Const.DEBUG)
+        {
+            return;
+        }
+
+        OptSettings opt = ctx.getOpt();
+        System.out.print("Optional Settings:\n");
+
+        if (opt.hasInput2())
+        {
+            System.out.printf(" Input2: [%s] // applied [%s]\n", opt.getInput2(), ctx.getSettingValue(Settings.INPUT2));
+        }
+        else
+        {
+            System.out.print(" Input2: [NOT_SET]\n");
+        }
+
+        if (opt.hasOutput())
+        {
+            System.out.printf(" Output: [%s] // applied [%s]\n", opt.getOutput(), ctx.getSettingValue(Settings.OUTPUT));
+        }
+        else
+        {
+            System.out.print(" Output: [NOT_SET]\n");
+        }
+
+        if (opt.hasHeaders())
+        {
+            System.out.printf(" Headers: [%s] // applied [%s]\n", opt.getHeadersConfig(), ctx.getSettingValue(Settings.HEADERS));
+        }
+        else
+        {
+            System.out.print(" Headers: [NOT_SET]\n");
+        }
+
+        if (opt.hasKey())
+        {
+            System.out.printf(" Key: [%s] // applied [%s]\n", opt.getKey(), ctx.getSettingValue(Settings.KEY));
+        }
+        else
+        {
+            System.out.print(" Key: [NOT_SET]\n");
+        }
+
+        //System.out.printf(" UTF8: [%s]\n", opt.isUtf8());
+        System.out.printf(" Apply Quotes: [%s]\n", opt.isApplyQuotes());
+        System.out.printf(" Append Output: [%s]\n", opt.isAppendOutput());
     }
 
     private static boolean isSettingMissing(Settings entry)
@@ -193,18 +235,44 @@ public class Main
         {
             for (Settings entry : ctx.getSettings().keySet())
             {
+                LOGGER.debug("processSettings(): entry [{}], value [{}]", entry.getName(), ctx.getSettingValue(entry));
+
                 switch (entry)
                 {
-                    case INPUT2 -> opt.setInput2(entry.getSetting());
-                    case OUTPUT -> opt.setOutput(entry.getSetting());
-                    case KEY -> opt.setKey(entry.getSetting());
-                    case HEADERS -> opt.setHeadersConfig(entry.getSetting());
-                    case UTF8 -> opt.setUtf8(true);
+                    case INPUT2 -> opt.setInput2(ctx.getSettingValue(entry));
+                    case OUTPUT -> opt.setOutput(ctx.getSettingValue(entry));
+                    case KEY -> opt.setKey(ctx.getSettingValue(entry));
+                    case HEADERS -> opt.setHeadersConfig(ctx.getSettingValue(entry));
+                    //case UTF8 -> opt.setUtf8(true);
+                    case QUOTES -> opt.setApplyQuotes(false);
+                    case APPEND -> opt.setAppendOutput(false);
                     case TEST -> {}
                 }
             }
         }
 
         ctx = ctx.setOptSettings(opt);
+    }
+
+    private static void executeOperations()
+    {
+        if (ctx.getOp() != Operations.HELP
+                && (ctx.getInputFile() == null || ctx.getInputFile().isEmpty()))
+        {
+            exit(ExitCode.MISSING_INPUT);
+        }
+
+        Operation type = ctx.getOp().init();
+
+        if (type != null && type.runOperation(ctx))
+        {
+            LOGGER.info("Operation Successful.");
+            exit(ExitCode.SUCCESS);
+        }
+        else
+        {
+            LOGGER.error("Operation FAILED.");
+            exit(ExitCode.OPERATION_FAILURE);
+        }
     }
 }

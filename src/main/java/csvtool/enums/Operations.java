@@ -1,6 +1,5 @@
 package csvtool.enums;
 
-import com.google.common.collect.ImmutableList;
 import csvtool.operation.Operation;
 import csvtool.operation.OperationType;
 
@@ -11,13 +10,13 @@ import java.util.List;
 public enum Operations
 {
     HELP        ("help",         "--help",         false, false,false,false, OperationType.HELP,     List.of("-h", "-help")),
-    TEST        ("test",         "--test",         false, false,false,false, OperationType.TEST,     List.of("-test", "-t", "--t")),
+    TEST        ("test",         "--test",         false, true ,false,false, OperationType.TEST,     List.of("-test", "-t", "--t")),
     MERGE       ("merge",        "--merge",        true,  true, true, false, OperationType.MERGE,    List.of("-merge", "-m", "--m")),
     DIFF        ("diff",         "--diff",         true,  true, true, false, OperationType.DIFF,     List.of("-diff", "-d", "--d")),
     SAVE_HEADER ("gen-headers",  "--gen-headers",  false, false,false,true,  OperationType.GEN,      List.of("-gen-headers", "--gen", "-gen", "--g", "-g")),
     REFORMAT    ("reformat",     "--reformat",     false, true, false,true,  OperationType.REFORMAT, List.of("-reformat", "--ref", "-ref", "--r", "-r"));
 
-    public static final ImmutableList<Operations> VALUES = ImmutableList.copyOf(values());
+    public static final List<Operations> VALUES = List.of(values());
 
     private final String name;          // Operation Name
     private final String op;            // Operation argument

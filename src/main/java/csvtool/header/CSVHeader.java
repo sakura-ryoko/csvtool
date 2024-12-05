@@ -1,7 +1,5 @@
 package csvtool.header;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.AbstractList;
@@ -36,6 +34,30 @@ public class CSVHeader
         this.headers.addAll(headers);
     }
 
+    public boolean matches(@Nonnull CSVHeader otherHeaders)
+    {
+        if (this.size() != otherHeaders.size())
+        {
+            return false;
+        }
+
+        Iterator<String> iter = this.iterator();
+        Iterator<String> otherIter = otherHeaders.iterator();
+
+        while (iter.hasNext() && otherIter.hasNext())
+        {
+            String left = iter.next();
+            String right = otherIter.next();
+
+            if (!left.matches(right))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public void add(String header)
     {
         this.headers.add(header);
@@ -51,16 +73,9 @@ public class CSVHeader
         return this.headers.iterator();
     }
 
-    public ImmutableList<String> toImmutable()
+    public int size()
     {
-        if (this.headers.isEmpty())
-        {
-            return ImmutableList.of();
-        }
-
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
-        this.stream().forEach(builder::add);
-        return builder.build();
+        return this.headers.size();
     }
 
     @Override

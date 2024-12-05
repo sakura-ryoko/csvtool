@@ -1,4 +1,4 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id 'com.gradleup.shadow' version '9.0.0-beta1'
@@ -15,15 +15,16 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.guava:guava:${project.guava_version}"
-    implementation "com.google.code.gson:gson:${project.gson_version}"
+    // Deprecated
+    //implementation "com.google.guava:guava:${project.guava_version}"
     //implementation "org.apache.logging.log4j:log4j-1.2-api:${project.log4j_version}"
     //implementation "org.apache.logging.log4j:log4j-core:${project.log4j_version}"
     //implementation "org.apache.commons:commons-csv:${project.commons_version}"
+
+    // Dependencies
+    implementation "com.google.code.gson:gson:${project.gson_version}"
     implementation "com.opencsv:opencsv:${project.opencsv_version}"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
-
-    //implementation fileTree(dir: 'libs', include: '*.jar')
 }
 
 group = project.group
@@ -33,18 +34,6 @@ tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     it.options.release = 21
 }
-
-//jar {
-    /*
-    manifest {
-        attributes('Main-Class': 'csvtool.Main')
-    }
-
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-     */
-//}
 
 // Shadow task depends on Jar task, so these configs are reflected for Shadow as well
 tasks.jar {

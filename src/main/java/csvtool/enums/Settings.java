@@ -1,7 +1,5 @@
 package csvtool.enums;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +9,13 @@ public enum Settings
     TEST        ("test",     "--t",       true,  List.of("-t")),
     INPUT2      ("input2",   "--input",   true,  List.of("--in", "-input", "-i")),
     OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
-    UTF8        ("utf8",     "--utf8",    false, List.of("--utf", "-utf", "-utf8")),
     HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers")),
-    KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k"));
+    KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
+    //UTF8        ("utf8",     "--utf8",    false, List.of("--utf", "-utf", "-utf8")),
+    QUOTES      ("quotes",   "--quotes",  false, List.of("--q", "-quotes", "-q")),
+    APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a"));
 
-    public static final ImmutableList<Settings> VALUES = ImmutableList.copyOf(values());
+    public static final List<Settings> VALUES = List.of(values());
 
     private final String name;          // Setting Name
     private final String setting;       // Setting argument

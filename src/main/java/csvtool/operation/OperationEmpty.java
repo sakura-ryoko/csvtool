@@ -16,7 +16,7 @@ public class OperationEmpty extends Operation
     @Override
     public boolean runOperation(Context ctx)
     {
-        LOGGER.debug("Empty()");
+        LOGGER.debug("runOperation(): Empty()");
         return true;
     }
 }

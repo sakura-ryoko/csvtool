@@ -2,38 +2,115 @@ package csvtool.operation;
 
 import csvtool.data.Context;
 import csvtool.enums.Operations;
+import csvtool.enums.Settings;
 import csvtool.header.CSVHeader;
 import csvtool.utils.CSVWrapper;
 import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.List;
 
-public class OperationTest extends Operation
+public class OperationTest extends Operation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
+
+    private final HashMap<Integer, List<String>> LINES;
 
     public OperationTest(Operations op)
     {
         super(op);
-        LOGGER.debug("TEST!");
+        this.LINES = new HashMap<>();
     }
 
     @Override
     public boolean runOperation(Context ctx)
     {
-        try (CSVWrapper wrapper = new CSVWrapper(ctx.getInputFile()))
+        LOGGER.debug("runOperation(): --> TEST");
+
+        if (readFileAndDump(ctx.getInputFile()))
+        {
+            LOGGER.debug("runOperation(): --> File [{}] read successfully.", ctx.getInputFile());
+
+            if (ctx.getOpt().hasOutput())
+            {
+                if (writeFileAndDump(ctx.getOpt().getOutput(), ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput()))
+                {
+                    LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
+                    this.clear();
+                    return true;
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Write file FAILED.");
+                }
+            }
+            else
+            {
+                LOGGER.error("runOperation(): No Output given!");
+            }
+        }
+
+        return false;
+    }
+
+    private boolean readFileAndDump(String file)
+    {
+        try (CSVWrapper wrapper = new CSVWrapper(file))
         {
             if (wrapper.read())
             {
-                LOGGER.info("File read!");
+                LOGGER.info("readFileAndDump(): File read!");
                 dumpFile(wrapper);
+                cacheFile(wrapper);
+                wrapper.close();
                 return true;
             }
         }
         catch (Exception e)
         {
-            LOGGER.error("Exception reading file! Error: {}", e.getMessage());
+            LOGGER.error("readFileAndDump(): Exception reading file! Error: {}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    private void cacheFile(CSVWrapper wrapper)
+    {
+        if (!this.LINES.isEmpty())
+        {
+            this.LINES.clear();
+        }
+
+        LOGGER.debug("cacheFile(): Caching file [{} lines] ...", wrapper.getSize());
+
+        this.LINES.putAll(wrapper.getAllLines());
+    }
+
+    private boolean writeFileAndDump(String file, boolean applyQuotes, boolean append)
+    {
+        try (CSVWrapper wrapper = new CSVWrapper(file, false))
+        {
+            if (wrapper.putAllLines(this.LINES, true))
+            {
+                if (wrapper.write(applyQuotes, append))
+                {
+                    LOGGER.info("writeFileAndDump(): File written!");
+                    dumpFile(wrapper);
+                    wrapper.close();
+                    return true;
+                }
+            }
+            else
+            {
+                LOGGER.error("writeFileAndDump(): Error copying Cache to new file.");
+                wrapper.close();
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("writeFileAndDump(): Exception writing file! Error: {}", e.getMessage());
         }
 
         return false;
@@ -41,11 +118,11 @@ public class OperationTest extends Operation
 
     private void dumpFile(@Nonnull CSVWrapper wrapper)
     {
-        LOGGER.error("Dump file [{}]:", wrapper.getFile());
+        LOGGER.debug("dumpFile(): Dump file [{}]:", wrapper.getFile());
 
         if (wrapper.isEmpty())
         {
-            LOGGER.error("Wrapper is EMPTY!");
+            LOGGER.error("dumpFile(): Wrapper is EMPTY!");
             return;
         }
 
@@ -53,11 +130,11 @@ public class OperationTest extends Operation
 
         if (header == null)
         {
-            LOGGER.error("Header is NULL!");
+            LOGGER.error("dumpFile(): eader is NULL!");
             return;
         }
 
-        LOGGER.warn("Header {} // Line Size: [{}]", header.toString(), wrapper.getSize());
+        LOGGER.debug("dumpFile(): Header {} // Line Size: [{}]", header.toString(), wrapper.getSize());
 
         // Start at Line 1
         for (int i = 1; i < wrapper.getSize(); i++)
@@ -66,18 +143,32 @@ public class OperationTest extends Operation
 
             if (line == null)
             {
-                LOGGER.error("LINE[{}] --> NULL!", i);
+                LOGGER.error("dumpFile(): LINE[{}] --> NULL!", i);
                 continue;
             }
             else if (line.isEmpty())
             {
-                LOGGER.error("LINE[{}] --> EMPTY!", i);
+                LOGGER.error("dumpFile(): LINE[{}] --> EMPTY!", i);
                 continue;
             }
 
-            LOGGER.info("LINE[{}] --> {}", i, line.toString());
+            LOGGER.debug("dumpFile(): LINE[{}] --> {}", i, line.toString());
         }
 
-        LOGGER.error("EOF");
+        LOGGER.debug("dumpFile(): EOF");
+    }
+
+    private void clear()
+    {
+        if (this.LINES != null && !this.LINES.isEmpty())
+        {
+            this.LINES.clear();
+        }
+    }
+
+    @Override
+    public void close()
+    {
+        this.clear();
     }
 }

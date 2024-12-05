@@ -17,7 +17,7 @@ public class OperationHelp extends Operation
     @Override
     public boolean runOperation(Context ctx)
     {
-        LOGGER.debug("displayHelp()");
+        LOGGER.debug("runOperation(): displayHelp()");
         this.displayHelp();
         return true;
     }

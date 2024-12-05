@@ -10,8 +10,12 @@ public abstract class Operation
 
     public Operation(Operations op)
     {
-        LOGGER.debug("new Operation for op [{}]", op.getName());
+        LOGGER.debug("new abstract Operation for op [{}]", op.getName());
     }
 
-    public boolean runOperation(Context ctx) { return false; }
+    public boolean runOperation(Context ctx)
+    {
+        LOGGER.debug("runOperation() [SUPER]");
+        return false;
+    }
 }

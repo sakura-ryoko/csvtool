@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 public class OperationType<T extends Operation>
 {
-    //private final LogUtils LOGGER = new LogUtils(getClass());
+    //private final LogWrapper LOGGER = new LogWrapper(getClass());
 
     public static final OperationType<OperationHelp>  HELP;
     public static final OperationType<OperationTest> TEST;
@@ -33,11 +33,6 @@ public class OperationType<T extends Operation>
     public T init(Operations op)
     {
         return this.factory.create(op);
-    }
-
-    public Operations getOps()
-    {
-        return this.ops;
     }
 
     static

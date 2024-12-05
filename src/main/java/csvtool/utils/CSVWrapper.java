@@ -1,56 +1,64 @@
 package csvtool.utils;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
+import com.opencsv.*;
 import csvtool.header.CSVHeader;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
+import javax.annotation.concurrent.Immutable;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Immutable
 public class CSVWrapper implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private CSVParser parser;
     private CSVReader reader;
+    private CSVWriter writer;
 
     private final String file;
-    private final HashMap<Integer, String> header;
+    private HashMap<Integer, String> header;
     private HashMap<Integer, List<String>> lines;
+    private int columns;
+    private final boolean read;
 
     public CSVWrapper(String file)
+    {
+        this(file, true);
+    }
+
+    public CSVWrapper(String file, boolean read)
     {
         this.file = file;
         this.parser = null;
         this.reader = null;
+        this.writer = null;
         this.header = new HashMap<>();
         this.lines = new HashMap<>();
+        this.columns = -1;
+        this.read = read;
 
-        if (!verifyFile())
+        if (FileUtils.fileExists(file))
         {
-            LOGGER.warn("File: [{}] does not exist!");
+            LOGGER.debug("init: File [{}] exists", file);
         }
-    }
-
-    private boolean verifyFile()
-    {
-        File file = new File(this.file);
-
-        return file.exists();
+        else
+        {
+            LOGGER.debug("init: File [{}] does not exist", file);
+        }
     }
 
     private CSVParser getParser()
     {
         if (this.parser == null)
         {
-            this.LOGGER.debug("Building Parser ...");
+            LOGGER.debug("getParser(): Building Parser ...");
             this.parser = new CSVParserBuilder()
                     .withSeparator(',')
                     .withIgnoreQuotations(true)
@@ -64,14 +72,19 @@ public class CSVWrapper implements AutoCloseable
     {
         try
         {
-            this.LOGGER.debug("Building Reader ...");
+            if (this.reader != null)
+            {
+                this.reader.close();
+            }
+
+            LOGGER.debug("getReader(): Building Reader ...");
             this.reader = new CSVReaderBuilder(new FileReader(this.file))
                     .withCSVParser(this.getParser())
                     .build();
         }
         catch (Exception e)
         {
-            this.LOGGER.error("Exception reading input file [{}], error: [{}]", this.file, e.getMessage());
+            LOGGER.error("getReader(): Exception reading input file [{}], error: [{}]", this.file, e.getMessage());
             return null;
         }
 
@@ -80,55 +93,170 @@ public class CSVWrapper implements AutoCloseable
 
     public boolean read()
     {
-        if (this.reader != null)
+        return this.read(true);
+    }
+
+    public boolean read(boolean withHeader)
+    {
+        if (!this.read)
         {
-            try
-            {
-                this.reader.close();
-            }
-            catch (Exception ignored) { }
+            LOGGER.warn("read(): for file [{}] is not a reader!", this.file);
+            return false;
         }
 
         if (this.getReader() == null)
         {
+            LOGGER.error("read(): for file [{}] failed to build a CSVReader!", this.file);
             return false;
         }
 
         this.lines = new HashMap<>();
         AtomicInteger line = new AtomicInteger();
 
-        this.LOGGER.debug("Reading file ...");
-
+        LOGGER.debug("read(): Reading file ...");
         this.reader.forEach((str) ->
         {
             // Read header
-            if (line.get() == 0)
+            if (withHeader && line.get() == 0)
             {
-                LOGGER.debug("Reading headers... ");
+                LOGGER.debug("read(): Reading headers... ");
 
                 for (int i = 0; i < str.length; i++)
                 {
                     this.header.put(i, str[i]);
                 }
+
+                this.columns = this.header.size();
             }
 
-            this.lines.put((line.getAndIncrement()), new ArrayList<>(Arrays.asList(str)));
+            List<String> entry = this.hasHeader() ? this.truncateLine(new ArrayList<>(Arrays.asList(str))) : new ArrayList<>(Arrays.asList(str));
+            this.lines.put((line.getAndIncrement()), entry);
         });
 
-        LOGGER.debug("Lines read [{}]", this.getSize());
-        return true;
+        try
+        {
+            LOGGER.debug("read(): Lines read [{}]", this.getSize());
+            this.reader.close();
+            this.reader = null;
+            return true;
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("read(): Exception reading file [{}]", this.file);
+        }
+
+        return false;
     }
 
-    @Override
-    public void close() throws Exception
+    private @Nullable CSVWriter getWriter()
     {
-        if (this.reader != null)
+        return this.getWriter(false);
+    }
+
+    private @Nullable CSVWriter getWriter(boolean append)
+    {
+        try
         {
-            this.reader.close();
+            if (this.writer != null)
+            {
+                this.writer.close();
+            }
+
+            if (FileUtils.deleteIfExists(this.file))
+            {
+                LOGGER.debug("getWriter(): File [{}] deleted or not exists.", this.file);
+            }
+            else
+            {
+                LOGGER.error("getWriter(): Exception deleting file [{}]", this.file);
+                return null;
+            }
+
+            LOGGER.debug("getWriter(): Building Writer ...");
+            this.writer = new CSVWriter(new FileWriter(this.file, append));
         }
-        this.parser = null;
-        this.lines.clear();
-        this.header.clear();
+        catch (Exception e)
+        {
+            LOGGER.error("getWriter(): Exception opening output file [{}], error: [{}]", this.file, e.getMessage());
+            return null;
+        }
+
+        return this.writer;
+    }
+
+    public boolean write()
+    {
+        return this.write(false, false);
+    }
+
+    public boolean write(boolean applyQuotes, boolean append)
+    {
+        if (this.read)
+        {
+            LOGGER.warn("write(): for file [{}] is not a writer!", this.file);
+            return false;
+        }
+
+        if (this.isEmpty())
+        {
+            LOGGER.error("write(): for file [{}] is Empty!", this.file);
+            return false;
+        }
+
+        if (append)
+        {
+            // Append mode needs matching headers
+            try (CSVWrapper wrapper = new CSVWrapper(this.file, true))
+            {
+                if (wrapper.read(true))
+                {
+                    CSVHeader csvHeader = wrapper.getHeader();
+                    CSVHeader newHeader = this.getHeader();
+
+                    if (csvHeader == null || newHeader == null)
+                    {
+                        LOGGER.error("write(): Append headers check failed (One or the other heads are missing!)");
+                        return false;
+                    }
+
+                    if (!csvHeader.matches(newHeader))
+                    {
+                        LOGGER.error("write(): Append headers check failed (Not matched!)");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                LOGGER.error("write(): Exception opening output file [{}] for append check, error: [{}]", this.file, e.getMessage());
+                return false;
+            }
+        }
+
+        if (this.getWriter(append) == null)
+        {
+            LOGGER.error("write(): for file [{}] failed to build a CSVWriter!", this.file);
+            return false;
+        }
+
+        for (int i = 0; i < this.lines.size(); i++)
+        {
+            String[] entry = this.lines.get(i).toArray(new String[0]);
+            this.writer.writeNext(entry, applyQuotes);
+        }
+
+        try
+        {
+            this.writer.close();
+            this.writer = null;
+            return true;
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("write(): Exception writing file [{}]", this.file);
+        }
+
+        return false;
     }
 
     public String getFile()
@@ -136,13 +264,20 @@ public class CSVWrapper implements AutoCloseable
         return this.file;
     }
 
+    public boolean hasHeader()
+    {
+        return this.header != null && !this.header.isEmpty();
+    }
+
     public @Nullable CSVHeader getHeader()
     {
         if (this.header.isEmpty())
         {
+            LOGGER.error("getHeader(): Header is empty!");
             return null;
         }
 
+        LOGGER.debug("getHeader(): Building new Header ...");
         CSVHeader csvHeader = new CSVHeader();
         List<String> list = new ArrayList<>();
 
@@ -152,9 +287,37 @@ public class CSVWrapper implements AutoCloseable
         return csvHeader;
     }
 
-    public HashMap<Integer, List<String>> getAllLines()
+    public @Nullable CSVHeader setHeader(@Nonnull List<String> list)
     {
-        return this.lines;
+        if (this.read)
+        {
+            LOGGER.error("setHeader(): Cannot use function when in ReadOnly mode.");
+            return null;
+        }
+
+        if (list.isEmpty())
+        {
+            LOGGER.error("setHeader(): List parameter is empty!");
+            return null;
+        }
+
+        if (this.header != null)
+        {
+            LOGGER.debug("setHeader(): Emptying existing header.");
+            this.header.clear();
+        }
+
+        LOGGER.debug("setHeader(): Building new Header ...");
+        this.header = new HashMap<>();
+
+        for (int i = 0; i < list.size(); i++)
+        {
+            this.header.put(i, list.get(i));
+        }
+
+        this.columns = list.size();
+
+        return new CSVHeader(list);
     }
 
     public int getSize()
@@ -167,22 +330,149 @@ public class CSVWrapper implements AutoCloseable
         return this.getSize() < 1 || this.header.isEmpty();
     }
 
+    public HashMap<Integer, List<String>> getAllLines()
+    {
+        return this.lines;
+    }
+
+    private List<String> truncateLine(List<String> list)
+    {
+        List<String> entry = new ArrayList<>(list);
+
+        if (!this.header.isEmpty() && entry.size() > this.columns)
+        {
+            LOGGER.warn("truncateLine(): Truncating line from [{}] -> [{}]", entry.size(), this.columns);
+
+            while (entry.size() > this.columns)
+            {
+                entry.removeLast();
+            }
+        }
+
+        return entry;
+    }
+
+    public boolean putAllLines(@Nonnull HashMap<Integer, List<String>> mapIn, boolean hasHeader)
+    {
+        if (this.read)
+        {
+            LOGGER.error("putAllLines(): Cannot use function when in ReadOnly mode.");
+            return false;
+        }
+
+        if (mapIn.isEmpty())
+        {
+            LOGGER.error("putAllLines(): HashMap parameter is empty!");
+            return false;
+        }
+
+        if (!this.lines.isEmpty())
+        {
+            LOGGER.debug("putAllLines(): Emptying existing data.");
+            this.lines.clear();
+        }
+
+        LOGGER.debug("putAllLines(): Copying [{}] lines...", mapIn.size());
+        int line = 0;
+
+        for (int i = line; i < mapIn.size(); i++)
+        {
+            List<String> entry = this.hasHeader() ? this.truncateLine(mapIn.get(i)) : mapIn.get(i);
+
+            if (entry.isEmpty())
+            {
+                LOGGER.warn("putAllLines(): LINE[{}] in given parameter is Empty.  Skipping Input line.", i, line);
+            }
+            else
+            {
+                if (i == 0 && hasHeader)
+                {
+                    LOGGER.debug("putAllLines(): Adding Header from line [{}]...", i);
+                    this.setHeader(entry);
+                }
+
+                LOGGER.debug("putAllLines(): IN[{}]: Appending ... LINE[{}]: {}", i, line, entry.toString());
+                this.lines.put(line, entry);
+                line++;
+            }
+        }
+
+        LOGGER.debug("putAllLines(): Done writing [{}/{}] lines.", this.lines.size(), mapIn.size());
+        return true;
+    }
+
+    public boolean putLine(@Nonnull List<String> list, int line, boolean replace)
+    {
+        if (this.read)
+        {
+            LOGGER.error("putLine(): Cannot use function when in ReadOnly mode.");
+            return false;
+        }
+
+        if (list.isEmpty())
+        {
+            LOGGER.error("putLine(): List parameter is Empty!");
+            return false;
+        }
+
+        // Replace
+        if (line > 0)
+        {
+            if (!replace && this.lines.containsKey(line))
+            {
+                LOGGER.error("putLine(): A line parameter is specified [{}]; when ReplaceMode is false, and it is not empty.", line);
+                return false;
+            }
+
+            if (line > this.lines.size())
+            {
+                LOGGER.error("putLine(): A line parameter is specified [{}]; but the value given exceeds the data size [{}].", line, this.lines.size());
+                return false;
+            }
+
+            List<String> entry = this.hasHeader() ? this.truncateLine(new ArrayList<>(list)) : new ArrayList<>(list);
+
+            LOGGER.debug("putLine(): Writing ... LINE[{}]: {}", line, entry.toString());
+            this.lines.replace(line, entry);
+
+            return true;
+        }
+
+        // Append
+        for (int i = 0; i < this.lines.size(); i++)
+        {
+            List<String> entry = this.lines.get(i);
+            line = i;
+
+            if (entry.isEmpty())
+            {
+                break;
+            }
+        }
+
+        line++;
+        LOGGER.debug("putLine(): Appending ... LINE[{}]: {}", line, list.toString());
+        this.lines.put(line, list);
+
+        return true;
+    }
+
     public @Nullable List<String> getLine(int l)
     {
         if (this.lines.isEmpty())
         {
-            this.LOGGER.error("getLine() - File not read!");
+            LOGGER.error("getLine(): File not read!");
             return null;
         }
         else if (this.lines.size() < l)
         {
-            this.LOGGER.error("getLine() - line [{}] does not exist!", l);
+            LOGGER.error("getLine(): line [{}] does not exist!", l);
             return null;
         }
 
         if (!this.lines.containsKey(l))
         {
-            this.LOGGER.error("getLine() - line [{}] Not found!", l);
+            LOGGER.error("getLine(): line [{}] Not found!", l);
             return null;
         }
 
@@ -190,10 +480,28 @@ public class CSVWrapper implements AutoCloseable
 
         if (line == null)
         {
-            this.LOGGER.error("getLine() - line [{}] is empty!", l);
+            LOGGER.error("getLine(): line [{}] is empty!", l);
             return null;
         }
 
         return line;
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        if (this.reader != null)
+        {
+            this.reader.close();
+            this.reader = null;
+        }
+        if (this.writer != null)
+        {
+            this.writer.close();
+            this.writer = null;
+        }
+        this.parser = null;
+        this.lines.clear();
+        this.header.clear();
     }
 }
