@@ -354,6 +354,11 @@ public class CSVWrapper implements AutoCloseable
 
     public boolean putAllLines(@Nonnull HashMap<Integer, List<String>> mapIn, boolean hasHeader)
     {
+        return this.putAllLines(mapIn, hasHeader, -1);
+    }
+
+    public boolean putAllLines(@Nonnull HashMap<Integer, List<String>> mapIn, boolean hasHeader, int startAt)
+    {
         if (this.read)
         {
             LOGGER.error("putAllLines(): Cannot use function when in ReadOnly mode.");
@@ -372,8 +377,8 @@ public class CSVWrapper implements AutoCloseable
             this.lines.clear();
         }
 
-        LOGGER.debug("putAllLines(): Copying [{}] lines...", mapIn.size());
-        int line = 0;
+        LOGGER.debug("putAllLines(): Copying [{}] lines... (Start At: {})", mapIn.size(), startAt);
+        int line = Math.max(startAt, 0);
 
         for (int i = line; i < mapIn.size(); i++)
         {
@@ -399,6 +404,16 @@ public class CSVWrapper implements AutoCloseable
 
         LOGGER.debug("putAllLines(): Done writing [{}/{}] lines.", this.lines.size(), mapIn.size());
         return true;
+    }
+
+    public boolean putLine(@Nonnull List<String> list)
+    {
+        return this.putLine(list, -1, false);
+    }
+
+    public boolean putLine(@Nonnull List<String> list, int line)
+    {
+        return this.putLine(list, line, false);
     }
 
     public boolean putLine(@Nonnull List<String> list, int line, boolean replace)
@@ -452,7 +467,8 @@ public class CSVWrapper implements AutoCloseable
 
         line++;
         LOGGER.debug("putLine(): Appending ... LINE[{}]: {}", line, list.toString());
-        this.lines.put(line, list);
+        List<String> entry = this.hasHeader() ? this.truncateLine(new ArrayList<>(list)) : new ArrayList<>(list);
+        this.lines.put(line, entry);
 
         return true;
     }

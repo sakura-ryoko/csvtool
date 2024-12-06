@@ -18,8 +18,8 @@ public class Main
     public static void main(String[] args)
     {
         processArgs(args);
-        verifyOperation();
         processSettings();
+        verifyOperation();
         displayContext();
         displayOptSettings();
         executeOperations();
@@ -192,7 +192,7 @@ public class Main
             System.out.print(" Key: [NOT_SET]\n");
         }
 
-        //System.out.printf(" UTF8: [%s]\n", opt.isUtf8());
+        System.out.printf(" De-Dupe: [%s]\n", opt.isDeDupe());
         System.out.printf(" Apply Quotes: [%s]\n", opt.isApplyQuotes());
         System.out.printf(" Append Output: [%s]\n", opt.isAppendOutput());
     }
@@ -225,6 +225,10 @@ public class Main
         {
             exit(ExitCode.MISSING_HEADERS);
         }
+        if (ctx.getOpt().isDeDupe() && isSettingMissing(Settings.KEY))
+        {
+            exit(ExitCode.MISSING_KEY);
+        }
     }
 
     private static void processSettings()
@@ -243,7 +247,7 @@ public class Main
                     case OUTPUT -> opt.setOutput(ctx.getSettingValue(entry));
                     case KEY -> opt.setKey(ctx.getSettingValue(entry));
                     case HEADERS -> opt.setHeadersConfig(ctx.getSettingValue(entry));
-                    //case UTF8 -> opt.setUtf8(true);
+                    case DE_DUPE -> opt.setDeDupe(true);
                     case QUOTES -> opt.setApplyQuotes(false);
                     case APPEND -> opt.setAppendOutput(false);
                     case TEST -> {}

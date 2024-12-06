@@ -12,7 +12,7 @@ public class OptSettings
     private String output;
     private String headersConfig;
     private String key;
-    //private boolean utf8;
+    private boolean deDupe;
     private boolean applyQuotes;
     private boolean appendOutput;
 
@@ -22,7 +22,7 @@ public class OptSettings
         this.output = "";
         this.headersConfig = "";
         this.key = "";
-        //this.utf8 = false;
+        this.deDupe = false;
         this.applyQuotes = false;
         this.appendOutput = false;
     }
@@ -67,12 +67,10 @@ public class OptSettings
         return this.key;
     }
 
-    /*
-    public boolean isUtf8()
+    public boolean isDeDupe()
     {
-        return this.utf8;
+        return this.deDupe;
     }
-     */
 
     public boolean isApplyQuotes()
     {
@@ -131,12 +129,10 @@ public class OptSettings
         this.key = key;
     }
 
-    /*
-    public void setUtf8(boolean toggle)
+    public void setDeDupe(boolean toggle)
     {
-        this.utf8 = toggle;
+        this.deDupe = toggle;
     }
-     */
 
     public void setApplyQuotes(boolean toggle)
     {

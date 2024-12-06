@@ -11,7 +11,7 @@ public enum Settings
     OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
     HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers")),
     KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
-    //UTF8        ("utf8",     "--utf8",    false, List.of("--utf", "-utf", "-utf8")),
+    DE_DUPE     ("de-dupe",  "--de-dupe", false, List.of("-de-dupe", "--dd", "-dd")),
     QUOTES      ("quotes",   "--quotes",  false, List.of("--q", "-quotes", "-q")),
     APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a"));
 

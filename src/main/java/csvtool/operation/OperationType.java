@@ -10,7 +10,7 @@ public class OperationType<T extends Operation>
 
     public static final OperationType<OperationHelp>  HELP;
     public static final OperationType<OperationTest> TEST;
-    public static final OperationType<OperationEmpty> MERGE;
+    public static final OperationType<OperationMerge> MERGE;
     public static final OperationType<OperationEmpty> DIFF;
     public static final OperationType<OperationEmpty> GEN;
     public static final OperationType<OperationEmpty> REFORMAT;
@@ -35,11 +35,16 @@ public class OperationType<T extends Operation>
         return this.factory.create(op);
     }
 
+    public Operations getOps()
+    {
+        return this.ops;
+    }
+
     static
     {
         HELP = create(OperationHelp::new, Operations.HELP);
         TEST = create(OperationTest::new, Operations.TEST);
-        MERGE = create(OperationEmpty::new, Operations.MERGE);
+        MERGE = create(OperationMerge::new, Operations.MERGE);
         DIFF = create(OperationEmpty::new, Operations.DIFF);
         GEN = create(OperationEmpty::new, Operations.SAVE_HEADER);
         REFORMAT = create(OperationEmpty::new, Operations.REFORMAT);

@@ -63,6 +63,19 @@ public class CSVHeader
         this.headers.add(header);
     }
 
+    public int getId(String header)
+    {
+        for (int i = 0; i < this.headers.size(); i++)
+        {
+            if (this.headers.get(i).equals(header))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public Stream<String> stream()
     {
         return this.headers.stream();
@@ -76,6 +89,14 @@ public class CSVHeader
     public int size()
     {
         return this.headers.size();
+    }
+
+    public void clear()
+    {
+        if (!this.headers.isEmpty())
+        {
+            this.headers.clear();
+        }
     }
 
     @Override

@@ -11,7 +11,7 @@ public enum Operations
 {
     HELP        ("help",         "--help",         false, false,false,false, OperationType.HELP,     List.of("-h", "-help")),
     TEST        ("test",         "--test",         false, true ,false,false, OperationType.TEST,     List.of("-test", "-t", "--t")),
-    MERGE       ("merge",        "--merge",        true,  true, true, false, OperationType.MERGE,    List.of("-merge", "-m", "--m")),
+    MERGE       ("merge",        "--merge",        true,  true, false,false, OperationType.MERGE,    List.of("-merge", "-m", "--m")),
     DIFF        ("diff",         "--diff",         true,  true, true, false, OperationType.DIFF,     List.of("-diff", "-d", "--d")),
     SAVE_HEADER ("gen-headers",  "--gen-headers",  false, false,false,true,  OperationType.GEN,      List.of("-gen-headers", "--gen", "-gen", "--g", "-g")),
     REFORMAT    ("reformat",     "--reformat",     false, true, false,true,  OperationType.REFORMAT, List.of("-reformat", "--ref", "-ref", "--r", "-r"));
