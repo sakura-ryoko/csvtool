@@ -261,7 +261,7 @@ public class Main
     private static void executeOperations()
     {
         if (ctx.getOp() != Operations.HELP
-                && (ctx.getInputFile() == null || ctx.getInputFile().isEmpty()))
+            && (ctx.getInputFile() == null || ctx.getInputFile().isEmpty()))
         {
             exit(ExitCode.MISSING_INPUT);
         }
