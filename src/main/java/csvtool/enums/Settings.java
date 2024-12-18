@@ -11,6 +11,8 @@ public enum Settings
     OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
     HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers")),
     KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
+    KEY2        ("key2",     "--key2",    true,  List.of("--k2", "-key2", "-k2")),
+    SIDE        ("side",     "--side",    true,  List.of("--sides", "-side", "-sides", "--s", "-s")),
     DE_DUPE     ("de-dupe",  "--de-dupe", false, List.of("-de-dupe", "--dd", "-dd")),
     QUOTES      ("quotes",   "--quotes",  false, List.of("--q", "-quotes", "-q")),
     APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a"));

@@ -12,6 +12,8 @@ public class OptSettings
     private String output;
     private String headersConfig;
     private String key;
+    private String key2;
+    private String side;
     private boolean deDupe;
     private boolean applyQuotes;
     private boolean appendOutput;
@@ -22,6 +24,8 @@ public class OptSettings
         this.output = "";
         this.headersConfig = "";
         this.key = "";
+        this.key2 = "";
+        this.side = "";
         this.deDupe = false;
         this.applyQuotes = false;
         this.appendOutput = false;
@@ -47,6 +51,16 @@ public class OptSettings
         return this.key != null && !this.key.isEmpty();
     }
 
+    public boolean hasKey2()
+    {
+        return this.key2 != null && !this.key2.isEmpty();
+    }
+
+    public boolean hasSide()
+    {
+        return this.side != null && !this.side.isEmpty();
+    }
+
     public @Nullable String getInput2()
     {
         return this.input2;
@@ -65,6 +79,16 @@ public class OptSettings
     public @Nullable String getKey()
     {
         return this.key;
+    }
+
+    public @Nullable String getKey2()
+    {
+        return this.key2;
+    }
+
+    public @Nullable String getSide()
+    {
+        return this.side;
     }
 
     public boolean isDeDupe()
@@ -127,6 +151,16 @@ public class OptSettings
     public void setKey(String key)
     {
         this.key = key;
+    }
+
+    public void setKey2(String key2)
+    {
+        this.key2 = key2;
+    }
+
+    public void setSide(String side)
+    {
+        this.side = side;
     }
 
     public void setDeDupe(boolean toggle)

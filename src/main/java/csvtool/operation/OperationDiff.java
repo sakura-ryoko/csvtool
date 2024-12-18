@@ -7,6 +7,10 @@ import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+
 public class OperationDiff extends Operation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
@@ -15,6 +19,7 @@ public class OperationDiff extends Operation implements AutoCloseable
     private FileCache FILE_2;
     private FileCache DIFF;
     private int keyId;
+    private int key2Id;
 
     public OperationDiff(Operations op)
     {
@@ -23,6 +28,7 @@ public class OperationDiff extends Operation implements AutoCloseable
         this.FILE_2 = new FileCache();
         this.DIFF = new FileCache();
         this.keyId = -1;
+        this.key2Id = -1;
     }
 
     @Override
@@ -40,6 +46,7 @@ public class OperationDiff extends Operation implements AutoCloseable
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
+            // Key for checking the DIFF
             if (!ctx.getOpt().hasKey())
             {
                 LOGGER.error("runOperation(): Diff FAILED, key was not set.");
@@ -49,9 +56,46 @@ public class OperationDiff extends Operation implements AutoCloseable
 
             this.keyId = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY));
 
-            // TODO
+            // 2nd Key Param for checking the DIFF [Optional]
+            if (!ctx.getOpt().hasKey2())
+            {
+                this.key2Id = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY2));
+            }
 
-            return true;
+            this.DIFF = new FileCache(this.FILE_1.getHeader());
+
+            if (!runDiff(true, this.FILE_1, this.FILE_2))
+            {
+                LOGGER.error("runOperation(): Diff FAILED, Diff1 execution attempt has failed.");
+                this.clear();
+                return false;
+            }
+
+            if (!runDiff(true, this.FILE_2, this.FILE_1))
+            {
+                LOGGER.error("runOperation(): Diff FAILED, Diff2 execution attempt has failed.");
+                this.clear();
+                return false;
+            }
+
+            if (!this.DIFF.isEmpty())
+            {
+                if (this.writeFile(ctx.getSettingValue(Settings.OUTPUT), ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput(), Const.DEBUG, this.DIFF, null))
+                {
+                    LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
+                    this.clear();
+                    return true;
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Write file FAILED.");
+                }
+            }
+            else
+            {
+                LOGGER.info("runOperation(): No differences found.");
+                return true;
+            }
         }
 
         return false;
@@ -81,6 +125,68 @@ public class OperationDiff extends Operation implements AutoCloseable
         }
 
         return false;
+    }
+
+    // This has to run twice, once each direction file1 -> file2, then file2 -> file1
+    private boolean runDiff(boolean skipHeaders, @Nonnull FileCache file1, @Nonnull FileCache file2)
+    {
+        if (file1.isEmpty() || file2.isEmpty() || this.keyId < 0)
+        {
+            LOGGER.error("runDiff(): Files are empty, or Key not set!");
+            return false;
+        }
+
+        LOGGER.debug("runDiff(): Attempting to compare files ...");
+        List<List<String>> temp = new ArrayList<>();
+
+        file2.getFile().forEach((i, list) -> temp.add(list));
+
+        // Run DIFF from FILE_1 -> FILE_2
+        for (int i = 0; i < file1.getFile().size(); i++)
+        {
+            List<String> entry = file1.getFile().get(i);
+
+            if (!entry.isEmpty() && (!skipHeaders || i > 0))
+            {
+                String key1 = entry.get(this.keyId);
+                String key2 = this.key2Id > -1 ? entry.get(this.key2Id) : "";
+                boolean matched = false;
+
+                LOGGER.debug("FILE1[{}]: key [{}] (key2 {}) checking FILE2 ...", i, key1, key2.isEmpty() ? "<empty>" : key2);
+
+                for (int j = 0; j < temp.size(); j++)
+                {
+                    List<String> entry2 = temp.get(j);
+
+                    if (!entry2.isEmpty() && (!skipHeaders || j > 0))
+                    {
+                        String key1x = entry2.get(this.keyId);
+                        String key2x = this.key2Id > -1 ? entry2.get(this.key2Id) : "";
+
+                        LOGGER.debug("FILE [{}/{}]:A: key1 [{}] vs [{}] // key2 [{}] vs [{}]", i, j, key1, key1x, key2, key2x);
+
+                        if (key1x.matches(key1) && key2x.matches(key2))
+                        {
+                            LOGGER.debug("FILE [{}/{}]: key1 & key2 MATCHED!", i, j);
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (matched)
+                {
+                    LOGGER.debug("FILE1[{}]: matched [{}] -- OK", i, matched);
+                }
+                else
+                {
+                    LOGGER.debug("FILE1[{}]: matched [{}] -- ADD LINE!", i, matched);
+                    this.DIFF.addLine(entry);
+                }
+            }
+        }
+
+        return true;
     }
 
     private void clear()
