@@ -7,12 +7,13 @@ import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
 
-public class OperationDiff extends Operation
+public class OperationDiff extends Operation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
     private FileCache FILE_1;
     private FileCache FILE_2;
+    private FileCache DIFF;
     private int keyId;
 
     public OperationDiff(Operations op)
@@ -20,6 +21,7 @@ public class OperationDiff extends Operation
         super(op);
         this.FILE_1 = new FileCache();
         this.FILE_2 = new FileCache();
+        this.DIFF = new FileCache();
         this.keyId = -1;
     }
 
@@ -32,11 +34,23 @@ public class OperationDiff extends Operation
             return false;
         }
 
-        LOGGER.debug("runOperation(): --> DIFF [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
+        LOGGER.debug("runOperation(): --> DIFF [{}] of [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
         if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2)))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
+
+            if (!ctx.getOpt().hasKey())
+            {
+                LOGGER.error("runOperation(): Diff FAILED, key was not set.");
+                this.clear();
+                return false;
+            }
+
+            this.keyId = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY));
+
+            // TODO
+
             return true;
         }
 
@@ -67,5 +81,29 @@ public class OperationDiff extends Operation
         }
 
         return false;
+    }
+
+    private void clear()
+    {
+        if (this.FILE_1 != null && !this.FILE_1.isEmpty())
+        {
+            this.FILE_1.clear();
+        }
+
+        if (this.FILE_2 != null && !this.FILE_2.isEmpty())
+        {
+            this.FILE_2.clear();
+        }
+
+        if (this.DIFF != null && !this.DIFF.isEmpty())
+        {
+            this.DIFF.clear();
+        }
+    }
+
+    @Override
+    public void close()
+    {
+        this.clear();
     }
 }

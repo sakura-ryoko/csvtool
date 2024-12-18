@@ -35,7 +35,7 @@ public class OperationMerge extends Operation implements AutoCloseable
             return false;
         }
 
-        LOGGER.debug("runOperation(): --> MERGE [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
+        LOGGER.debug("runOperation(): --> MERGE [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
         if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2)))
         {
