@@ -11,7 +11,7 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationHelp>  HELP;
     public static final OperationType<OperationTest> TEST;
     public static final OperationType<OperationMerge> MERGE;
-    public static final OperationType<OperationEmpty> DIFF;
+    public static final OperationType<OperationDiff> DIFF;
     public static final OperationType<OperationEmpty> GEN;
     public static final OperationType<OperationEmpty> REFORMAT;
     private final OperationFactory<? extends T> factory;
@@ -45,7 +45,7 @@ public class OperationType<T extends Operation>
         HELP = create(OperationHelp::new, Operations.HELP);
         TEST = create(OperationTest::new, Operations.TEST);
         MERGE = create(OperationMerge::new, Operations.MERGE);
-        DIFF = create(OperationEmpty::new, Operations.DIFF);
+        DIFF = create(OperationDiff::new, Operations.DIFF);
         GEN = create(OperationEmpty::new, Operations.SAVE_HEADER);
         REFORMAT = create(OperationEmpty::new, Operations.REFORMAT);
     }

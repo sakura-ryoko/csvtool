@@ -1,26 +1,22 @@
 package csvtool.operation;
 
+import csvtool.data.Const;
 import csvtool.data.Context;
+import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
-import csvtool.header.CSVHeader;
-import csvtool.utils.CSVWrapper;
 import csvtool.utils.LogWrapper;
-
-import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.List;
 
 public class OperationTest extends Operation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
-    private final HashMap<Integer, List<String>> LINES;
+    private FileCache FILE;
 
     public OperationTest(Operations op)
     {
         super(op);
-        this.LINES = new HashMap<>();
+        this.FILE = new FileCache();
     }
 
     @Override
@@ -56,113 +52,20 @@ public class OperationTest extends Operation implements AutoCloseable
 
     private boolean readFileAndDump(String file)
     {
-        try (CSVWrapper wrapper = new CSVWrapper(file))
-        {
-            if (wrapper.read())
-            {
-                LOGGER.info("readFileAndDump(): File read!");
-                dumpFile(wrapper);
-                cacheFile(wrapper);
-                wrapper.close();
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("readFileAndDump(): Exception reading file! Error: {}", e.getMessage());
-        }
-
-        return false;
-    }
-
-    private void cacheFile(CSVWrapper wrapper)
-    {
-        if (!this.LINES.isEmpty())
-        {
-            this.LINES.clear();
-        }
-
-        LOGGER.debug("cacheFile(): Caching file [{} lines] ...", wrapper.getSize());
-
-        this.LINES.putAll(wrapper.getAllLines());
+        this.FILE = this.readFile(file, Const.DEBUG);
+        return this.FILE != null && !this.FILE.isEmpty();
     }
 
     private boolean writeFileAndDump(String file, boolean applyQuotes, boolean append)
     {
-        try (CSVWrapper wrapper = new CSVWrapper(file, false))
-        {
-            if (wrapper.putAllLines(this.LINES, true))
-            {
-                if (wrapper.write(applyQuotes, append))
-                {
-                    LOGGER.info("writeFileAndDump(): File written!");
-                    dumpFile(wrapper);
-                    wrapper.close();
-                    return true;
-                }
-            }
-            else
-            {
-                LOGGER.error("writeFileAndDump(): Error copying Cache to new file.");
-                wrapper.close();
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("writeFileAndDump(): Exception writing file! Error: {}", e.getMessage());
-        }
-
-        return false;
-    }
-
-    private void dumpFile(@Nonnull CSVWrapper wrapper)
-    {
-        LOGGER.debug("dumpFile(): Dump file [{}]:", wrapper.getFile());
-
-        if (wrapper.isEmpty())
-        {
-            LOGGER.error("dumpFile(): Wrapper is EMPTY!");
-            return;
-        }
-
-        CSVHeader header = wrapper.getHeader();
-
-        if (header == null)
-        {
-            LOGGER.error("dumpFile(): eader is NULL!");
-            return;
-        }
-
-        LOGGER.debug("dumpFile(): Header {} // Line Size: [{}]", header.toString(), wrapper.getSize());
-
-        // Start at Line 1
-        for (int i = 1; i < wrapper.getSize(); i++)
-        {
-            List<String> line = wrapper.getLine(i);
-
-            if (line == null)
-            {
-                LOGGER.error("dumpFile(): LINE[{}] --> NULL!", i);
-                continue;
-            }
-            else if (line.isEmpty())
-            {
-                LOGGER.error("dumpFile(): LINE[{}] --> EMPTY!", i);
-                continue;
-            }
-
-            LOGGER.debug("dumpFile(): LINE[{}] --> {}", i, line.toString());
-        }
-
-        LOGGER.debug("dumpFile(): EOF");
+        return this.writeFile(file, applyQuotes, append, Const.DEBUG, this.FILE, null);
     }
 
     private void clear()
     {
-        if (this.LINES != null && !this.LINES.isEmpty())
+        if (this.FILE != null && !this.FILE.isEmpty())
         {
-            this.LINES.clear();
+            this.FILE.clear();
         }
     }
 
