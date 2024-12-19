@@ -40,6 +40,11 @@ public class Context
         return null;
     }
 
+    public boolean hasInputFile()
+    {
+        return this.inputFile != null && !this.inputFile.isEmpty();
+    }
+
     public String getInputFile() { return this.inputFile; }
 
     public Context addSettings(Settings settings, @Nullable String param)

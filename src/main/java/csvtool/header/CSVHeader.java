@@ -58,9 +58,10 @@ public class CSVHeader
         return true;
     }
 
-    public void add(String header)
+    public CSVHeader add(String header)
     {
         this.headers.add(header);
+        return this;
     }
 
     public int getId(String header)

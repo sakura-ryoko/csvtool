@@ -50,6 +50,16 @@ public class OperationTest extends Operation implements AutoCloseable
         return false;
     }
 
+    @Override
+    public void displayHelp()
+    {
+        System.out.print("Test Operation:\n");
+        System.out.printf("\tAliases: %s\n\n", Operations.TEST.getAlias().toString());
+
+        System.out.print("It accepts one input file (--input), and an output (--output).\n");
+        System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");
+    }
+
     private boolean readFileAndDump(String file)
     {
         this.FILE = this.readFile(file, Const.DEBUG);

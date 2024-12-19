@@ -189,4 +189,6 @@ public abstract class Operation
 
         return true;
     }
+
+    public void displayHelp() { }
 }

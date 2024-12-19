@@ -82,6 +82,18 @@ public class OperationMerge extends Operation implements AutoCloseable
         return false;
     }
 
+    @Override
+    public void displayHelp()
+    {
+        System.out.print("Merge Operation:\n");
+        System.out.printf("\tAliases: %s\n\n", Operations.MERGE.getAlias().toString());
+
+        System.out.print("This operation merges two files into a single output file.\n");
+        System.out.print("It accepts two input files (--input), and an output (--output).\n");
+        System.out.print("You can also pass the (--de-dupe) operation with requires a key field (--key) to be set.\n");
+        System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
+    }
+
     private boolean readFiles(String file1, String file2)
     {
         LOGGER.debug("readFiles(): Reading file1 [{}] ...", file1);

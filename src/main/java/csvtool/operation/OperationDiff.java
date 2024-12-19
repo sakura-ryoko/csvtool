@@ -18,6 +18,7 @@ public class OperationDiff extends Operation implements AutoCloseable
     private FileCache FILE_1;
     private FileCache FILE_2;
     private FileCache DIFF;
+    private String side;
     private int keyId;
     private int key2Id;
 
@@ -27,6 +28,7 @@ public class OperationDiff extends Operation implements AutoCloseable
         this.FILE_1 = new FileCache();
         this.FILE_2 = new FileCache();
         this.DIFF = new FileCache();
+        this.side = "";
         this.keyId = -1;
         this.key2Id = -1;
     }
@@ -57,21 +59,30 @@ public class OperationDiff extends Operation implements AutoCloseable
             this.keyId = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY));
 
             // 2nd Key Param for checking the DIFF [Optional]
-            if (!ctx.getOpt().hasKey2())
+            if (ctx.getOpt().hasKey2())
             {
                 this.key2Id = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY2));
             }
 
-            this.DIFF = new FileCache(this.FILE_1.getHeader());
+            // Get Side Column Param
+            if (ctx.getOpt().hasSide())
+            {
+                this.side = ctx.getSettingValue(Settings.SIDE);
+                this.DIFF = new FileCache(this.FILE_1.getHeader().add(this.side));
+            }
+            else
+            {
+                this.DIFF = new FileCache(this.FILE_1.getHeader());
+            }
 
-            if (!runDiff(true, this.FILE_1, this.FILE_2))
+            if (!runDiff(true, ctx.getInputFile(), this.FILE_1, this.FILE_2))
             {
                 LOGGER.error("runOperation(): Diff FAILED, Diff1 execution attempt has failed.");
                 this.clear();
                 return false;
             }
 
-            if (!runDiff(true, this.FILE_2, this.FILE_1))
+            if (!runDiff(true, ctx.getSettingValue(Settings.INPUT2), this.FILE_2, this.FILE_1))
             {
                 LOGGER.error("runOperation(): Diff FAILED, Diff2 execution attempt has failed.");
                 this.clear();
@@ -101,6 +112,18 @@ public class OperationDiff extends Operation implements AutoCloseable
         return false;
     }
 
+    @Override
+    public void displayHelp()
+    {
+        System.out.print("Diff Operation Help:\n");
+        System.out.printf("\tAliases: %s\n\n", Operations.DIFF.getAlias().toString());
+
+        System.out.print("This operation compares two files and returns the differences into an output file.\n");
+        System.out.print("It accepts two input files (--input), and an output (--output); and also requires a key field (--key) to be set.\n");
+        System.out.print("You can also pass the second key field (--key2) and the side key field (--side) as options.\n");
+        System.out.print("The key field #2 adds a secondary comparison point for more-specific comparisons,\nor an optional side field for adding a column displaying which file the difference came from.\n");
+    }
+
     private boolean readFiles(String file1, String file2)
     {
         LOGGER.debug("readFiles(): Reading files ...");
@@ -128,7 +151,7 @@ public class OperationDiff extends Operation implements AutoCloseable
     }
 
     // This has to run twice, once each direction file1 -> file2, then file2 -> file1
-    private boolean runDiff(boolean skipHeaders, @Nonnull FileCache file1, @Nonnull FileCache file2)
+    private boolean runDiff(boolean skipHeaders, String side, @Nonnull FileCache file1, @Nonnull FileCache file2)
     {
         if (file1.isEmpty() || file2.isEmpty() || this.keyId < 0)
         {
@@ -181,7 +204,16 @@ public class OperationDiff extends Operation implements AutoCloseable
                 else
                 {
                     LOGGER.debug("FILE1[{}]: matched [{}] -- ADD LINE!", i, matched);
-                    this.DIFF.addLine(entry);
+
+                    if (this.side.isEmpty())
+                    {
+                        this.DIFF.addLine(entry);
+                    }
+                    else
+                    {
+                        entry.add(side);
+                        this.DIFF.addLine(entry);
+                    }
                 }
             }
         }

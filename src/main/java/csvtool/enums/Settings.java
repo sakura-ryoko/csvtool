@@ -6,10 +6,9 @@ import java.util.List;
 
 public enum Settings
 {
-    TEST        ("test",     "--t",       true,  List.of("-t")),
     INPUT2      ("input2",   "--input",   true,  List.of("--in", "-input", "-i")),
     OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
-    HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers")),
+    HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers", "--hd", "-hd")),
     KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
     KEY2        ("key2",     "--key2",    true,  List.of("--k2", "-key2", "-k2")),
     SIDE        ("side",     "--side",    true,  List.of("--sides", "-side", "-sides", "--s", "-s")),

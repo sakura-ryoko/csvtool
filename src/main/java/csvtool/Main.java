@@ -79,14 +79,16 @@ public class Main
             String inputStr = args[argIndex];
             argIndex++;
 
-            if (FileUtils.fileExists(inputStr))
+            if (ctx.getOp() != Operations.HELP)
             {
-                LOGGER.debug("input file [{}] exists.", inputStr);
-            }
-            else
-            {
-                LOGGER.error("input file [{}] does not exist!", inputStr);
-                exit(ExitCode.FILE_NOT_FOUND);
+                if (FileUtils.fileExists(inputStr))
+                {
+                    LOGGER.debug("input file [{}] exists.", inputStr);
+                } else
+                {
+                    LOGGER.error("input file [{}] does not exist!", inputStr);
+                    exit(ExitCode.FILE_NOT_FOUND);
+                }
             }
 
             ctx = ctx.setInputFile(inputStr);
@@ -270,7 +272,6 @@ public class Main
                     case DE_DUPE -> opt.setDeDupe(true);
                     case QUOTES -> opt.setApplyQuotes(false);
                     case APPEND -> opt.setAppendOutput(false);
-                    case TEST -> {}
                 }
             }
         }
