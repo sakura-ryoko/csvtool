@@ -47,6 +47,7 @@ public class OperationTest extends Operation implements AutoCloseable
             }
         }
 
+        LOGGER.error("runOperation(): General Operation failure.");
         return false;
     }
 
@@ -71,7 +72,8 @@ public class OperationTest extends Operation implements AutoCloseable
         return this.writeFile(file, applyQuotes, append, Const.DEBUG, this.FILE, null);
     }
 
-    private void clear()
+    @Override
+    public void clear()
     {
         if (this.FILE != null && !this.FILE.isEmpty())
         {
@@ -80,8 +82,11 @@ public class OperationTest extends Operation implements AutoCloseable
     }
 
     @Override
-    public void close()
+    public void close() throws Exception
     {
-        this.clear();
+        if (this.FILE != null)
+        {
+            this.FILE.close();
+        }
     }
 }

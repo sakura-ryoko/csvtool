@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class FileCache
+public class FileCache implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
@@ -91,7 +91,6 @@ public class FileCache
 
     public void clear()
     {
-        LOGGER.debug("clear()");
         if (this.FILE != null && !this.FILE.isEmpty())
         {
             this.FILE.clear();
@@ -100,6 +99,19 @@ public class FileCache
         if (this.HEADER != null && this.HEADER.size() > 0)
         {
             this.HEADER.clear();
+        }
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        if (this.FILE != null)
+        {
+            this.FILE.clear();
+        }
+        if (this.HEADER != null)
+        {
+            this.HEADER.close();
         }
     }
 }

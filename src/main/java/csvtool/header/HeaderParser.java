@@ -3,23 +3,73 @@ package csvtool.header;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
-import csvtool.data.OptSettings;
+import csvtool.data.Context;
+import csvtool.enums.Settings;
+import csvtool.utils.FileUtils;
 import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class HeaderParser
+public class HeaderParser implements AutoCloseable
 {
-    private static final LogWrapper LOGGER = new LogWrapper(HeaderParser.class);
+    private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static HeaderConfig CONFIG = new HeaderConfig();
-    private static boolean loaded;
+    private HeaderConfig CONFIG;
+    private String configFile;
+    private boolean loaded;
 
-    public static @Nullable CSVHeader getInputHeader()
+    public HeaderParser()
     {
-        if (CONFIG != null)
+        this.CONFIG = this.newConfig();
+        this.configFile = "";
+        this.loaded = false;
+    }
+
+    public boolean init(Context ctx)
+    {
+        if (!ctx.getOpt().hasHeaders())
+        {
+            LOGGER.error("init():  No headers file provided!");
+            return false;
+        }
+
+        this.configFile = ctx.getSettingValue(Settings.HEADERS);
+
+        // Read file if it exists
+        if (FileUtils.fileExists(this.configFile))
+        {
+            LOGGER.debug("init(): Loading config [{}] ...", this.configFile);
+
+            if (this.loadConfig())
+            {
+                LOGGER.info("init(): Config loaded successfully.");
+            }
+            else
+            {
+                LOGGER.error("init(): Config failed to load.");
+                return false;
+            }
+        }
+
+        // Return true if the file doesn't exist, in case we are saving it.
+        return true;
+    }
+
+    public HeaderConfig newConfig()
+    {
+        return new HeaderConfig();
+    }
+
+    public String getHeaderConfigFile()
+    {
+        return this.configFile;
+    }
+
+    public @Nullable CSVHeader getInputHeader()
+    {
+        if (this.CONFIG != null)
         {
             return CONFIG.input;
         }
@@ -27,86 +77,119 @@ public class HeaderParser
         return null;
     }
 
-    public static @Nullable CSVHeader getOutputHeader()
+    public @Nullable CSVHeader getOutputHeader()
     {
-        if (CONFIG != null)
+        if (this.CONFIG != null)
         {
-            return CONFIG.output;
+            return this.CONFIG.output;
         }
 
         return null;
     }
 
+    public HeaderParser setHeaderConfigFile(String newConfig)
+    {
+        this.configFile = newConfig;
+        return this;
+    }
+
     public void setInputHeader(CSVHeader input)
     {
-        CONFIG.input = input;
+        if (this.CONFIG == null)
+        {
+            this.CONFIG = this.newConfig();
+        }
+
+        this.CONFIG.input = input;
     }
 
     public void setOutputHeader(CSVHeader output)
     {
-        CONFIG.output = output;
+        if (this.CONFIG == null)
+        {
+            this.CONFIG = this.newConfig();
+        }
+
+        this.CONFIG.output = output;
     }
 
-    public static void loadConfig(OptSettings opt)
+    public boolean loadConfig()
     {
         try
         {
-            Path path = Path.of(opt.getHeadersConfig());
+            Path path = Path.of(this.configFile);
             var data = JsonParser.parseString(Files.readString(path));
-            CONFIG = GSON.fromJson(data, HeaderConfig.class);
-            loaded = true;
+            this.CONFIG = GSON.fromJson(data, HeaderConfig.class);
+            this.loaded = true;
+            LOGGER.info("loadConfig(): Loaded Headers config file [{}]", path.toString());
+            return true;
         }
         catch (Exception e)
         {
-            LOGGER.error("Error loading Headers Config: {}", e.getMessage());
-        }
-    }
-
-    public static boolean saveConfig(OptSettings opt, String newFile)
-    {
-        try
-        {
-            Path path = Path.of(opt.getHeadersConfig());
-            Path parent = path.getParent();
-
-            if (parent == null)
-            {
-                parent = path;
-            }
-
-            if (!Files.isDirectory(parent))
-            {
-                Files.createDirectory(parent);
-            }
-
-            var configFile = newFile.contains(".json") ? parent.resolve(newFile) : parent.resolve(newFile + ".json");
-
-            if (Files.exists(configFile))
-            {
-                Files.delete(configFile);
-            }
-
-            if (CONFIG != null)
-            {
-                Path output = Files.writeString(configFile, GSON.toJson(CONFIG));
-                //opt.setHeadersConfig(output.toString());
-                LOGGER.info("Saved Headers config to file [{}] -> resolved as [{}]", newFile, output.toString());
-                return true;
-            }
-            else
-            {
-                LOGGER.error("Error saving Headers file [{}] -- CONFIG is empty!", newFile);
-            }
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Error saving Headers Config: {}", e.getMessage());
+            LOGGER.error("loadConfig(): Error loading Headers Config: {}", e.getMessage());
         }
 
         return false;
     }
 
-    public static boolean isLoaded() { return loaded; }
+    public boolean isLoaded() { return this.loaded; }
 
-    public static HeaderConfig getConfig() { return CONFIG; }
+    public HeaderConfig getConfig() { return this.CONFIG; }
+
+    public boolean isEmpty()
+    {
+        return this.CONFIG == null;
+    }
+
+    public boolean saveConfig()
+    {
+        if (!this.configFile.isEmpty())
+        {
+            return this.saveConfig(this.configFile);
+        }
+
+        return false;
+    }
+
+    public boolean saveConfig(String newConfig)
+    {
+        try
+        {
+            newConfig = newConfig.contains(".json") ? newConfig : newConfig + ".json";
+
+            FileUtils.deleteIfExists(newConfig);
+
+            if (this.CONFIG != null)
+            {
+                Path output = Files.writeString(Path.of(newConfig), GSON.toJson(this.CONFIG));
+                //opt.setHeadersConfig(output.toString());
+                LOGGER.info("saveConfig(): Saved Headers config to file [{}]", output.toString());
+                return true;
+            }
+            else
+            {
+                LOGGER.error("saveConfig(): Error saving Headers file [{}] -- CONFIG is empty!", newConfig);
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("saveConfig(): Error saving Headers Config: {}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    public void clear()
+    {
+        if (this.CONFIG != null)
+        {
+            this.CONFIG = null;
+        }
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        this.clear();
+    }
 }

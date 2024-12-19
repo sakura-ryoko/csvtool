@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class CSVHeader
+public class CSVHeader implements AutoCloseable
 {
     private final AbstractList<String> headers;
 
@@ -113,5 +113,11 @@ public class CSVHeader
         builder.append("]");
         String result = builder.toString();
         return result.replace(",]", "]");
+    }
+
+    @Override
+    public void close() throws Exception
+    {
+        this.clear();
     }
 }

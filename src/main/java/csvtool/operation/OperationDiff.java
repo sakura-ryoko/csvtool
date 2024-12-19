@@ -109,6 +109,7 @@ public class OperationDiff extends Operation implements AutoCloseable
             }
         }
 
+        LOGGER.error("runOperation(): General Operation failure.");
         return false;
     }
 
@@ -221,7 +222,8 @@ public class OperationDiff extends Operation implements AutoCloseable
         return true;
     }
 
-    private void clear()
+    @Override
+    public void clear()
     {
         if (this.FILE_1 != null && !this.FILE_1.isEmpty())
         {
@@ -240,8 +242,21 @@ public class OperationDiff extends Operation implements AutoCloseable
     }
 
     @Override
-    public void close()
+    public void close() throws Exception
     {
-        this.clear();
+        if (this.FILE_1 != null)
+        {
+            this.FILE_1.close();
+        }
+
+        if (this.FILE_2 != null)
+        {
+            this.FILE_2.close();
+        }
+
+        if (this.DIFF != null)
+        {
+            this.DIFF.close();
+        }
     }
 }

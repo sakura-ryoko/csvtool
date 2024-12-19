@@ -79,6 +79,7 @@ public class OperationMerge extends Operation implements AutoCloseable
             }
         }
 
+        LOGGER.error("runOperation(): General Operation failure.");
         return false;
     }
 
@@ -182,7 +183,8 @@ public class OperationMerge extends Operation implements AutoCloseable
         return true;
     }
 
-    private void clear()
+    @Override
+    public void clear()
     {
         if (this.FILE_1 != null && !this.FILE_1.isEmpty())
         {

@@ -159,4 +159,10 @@ public class OperationHelp extends Operation
         System.out.print("--append:\n");
         System.out.printf("Aliases: %s\n", Settings.APPEND.getAlias().toString());
     }
+
+    @Override
+    public void clear()
+    {
+        // NO-OP
+    }
 }

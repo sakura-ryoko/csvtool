@@ -1,6 +1,7 @@
 package csvtool.utils;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileUtils
 {
@@ -10,8 +11,7 @@ public class FileUtils
     {
         try
         {
-            File file = new File(path);
-            return file.exists();
+            return Files.exists(Path.of(path));
         }
         catch (Exception err)
         {
@@ -25,12 +25,12 @@ public class FileUtils
     {
         try
         {
-            File file = new File(path);
+            Path file = Path.of(path);
 
-            if (file.exists())
+            if (Files.exists(file))
             {
                 LOGGER.debug("deleteIfExists(): Deleting file [{}] ...", path);
-                return file.delete();
+                Files.delete(file);
             }
 
             return true;

@@ -26,6 +26,8 @@ public abstract class Operation
         return false;
     }
 
+    public void displayHelp() { }
+
     protected @Nullable FileCache readFile(String file)
     {
         return this.readFile(file, false);
@@ -190,5 +192,5 @@ public abstract class Operation
         return true;
     }
 
-    public void displayHelp() { }
+    public void clear() { }
 }
