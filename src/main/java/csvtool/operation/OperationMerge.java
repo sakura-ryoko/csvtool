@@ -37,7 +37,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> MERGE [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2)))
+        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -95,12 +95,12 @@ public class OperationMerge extends Operation implements AutoCloseable
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
     }
 
-    private boolean readFiles(String file1, String file2)
+    private boolean readFiles(String file1, String file2, boolean ignoreQuotes)
     {
         LOGGER.debug("readFiles(): Reading file1 [{}] ...", file1);
 
-        this.FILE_1 = this.readFile(file1, Const.DEBUG);
-        this.FILE_2 = this.readFile(file2, Const.DEBUG);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, Const.DEBUG);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, Const.DEBUG);
 
         if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty())
         {

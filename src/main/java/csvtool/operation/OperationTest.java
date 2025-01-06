@@ -24,7 +24,7 @@ public class OperationTest extends Operation implements AutoCloseable
     {
         LOGGER.debug("runOperation(): --> TEST");
 
-        if (readFileAndDump(ctx.getInputFile()))
+        if (readFileAndDump(ctx.getInputFile(), false))
         {
             LOGGER.debug("runOperation(): --> File [{}] read successfully.", ctx.getInputFile());
 
@@ -61,9 +61,9 @@ public class OperationTest extends Operation implements AutoCloseable
         System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");
     }
 
-    private boolean readFileAndDump(String file)
+    private boolean readFileAndDump(String file, boolean ignoreQuotes)
     {
-        this.FILE = this.readFile(file, Const.DEBUG);
+        this.FILE = this.readFile(file, ignoreQuotes, Const.DEBUG);
         return this.FILE != null && !this.FILE.isEmpty();
     }
 

@@ -30,16 +30,16 @@ public abstract class Operation
 
     protected @Nullable FileCache readFile(String file)
     {
-        return this.readFile(file, false);
+        return this.readFile(file, true, false);
     }
 
-    protected @Nullable FileCache readFile(String file, boolean dump)
+    protected @Nullable FileCache readFile(String file, boolean ignoreQuotes, boolean dump)
     {
         LOGGER.debug("readFile(): Reading file [{}] ...", file);
 
         try (CSVWrapper wrapper = new CSVWrapper(file))
         {
-            if (wrapper.read())
+            if (wrapper.read(true, ignoreQuotes))
             {
                 LOGGER.info("readFile(): File read!");
 

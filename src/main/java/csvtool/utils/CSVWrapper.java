@@ -54,21 +54,22 @@ public class CSVWrapper implements AutoCloseable
         }
     }
 
-    private CSVParser getParser()
+    private CSVParser getParser(boolean ignoreQuotes)
     {
         if (this.parser == null)
         {
             LOGGER.debug("getParser(): Building Parser ...");
             this.parser = new CSVParserBuilder()
                     .withSeparator(',')
-                    .withIgnoreQuotations(true)
+                    .withIgnoreQuotations(ignoreQuotes)
+                    //.withStrictQuotes(!ignoreQuotes)
                     .build();
         }
 
         return this.parser;
     }
 
-    private @Nullable CSVReader getReader()
+    private @Nullable CSVReader getReader(boolean ignoreQuotes)
     {
         try
         {
@@ -79,7 +80,7 @@ public class CSVWrapper implements AutoCloseable
 
             LOGGER.debug("getReader(): Building Reader ...");
             this.reader = new CSVReaderBuilder(new FileReader(this.file))
-                    .withCSVParser(this.getParser())
+                    .withCSVParser(this.getParser(ignoreQuotes))
                     .build();
         }
         catch (Exception e)
@@ -93,10 +94,10 @@ public class CSVWrapper implements AutoCloseable
 
     public boolean read()
     {
-        return this.read(true);
+        return this.read(true, true);
     }
 
-    public boolean read(boolean withHeader)
+    public boolean read(boolean withHeader, boolean ignoreQuotes)
     {
         if (!this.read)
         {
@@ -104,7 +105,7 @@ public class CSVWrapper implements AutoCloseable
             return false;
         }
 
-        if (this.getReader() == null)
+        if (this.getReader(ignoreQuotes) == null)
         {
             LOGGER.error("read(): for file [{}] failed to build a CSVReader!", this.file);
             return false;
@@ -208,7 +209,7 @@ public class CSVWrapper implements AutoCloseable
             // Append mode needs matching headers
             try (CSVWrapper wrapper = new CSVWrapper(this.file, true))
             {
-                if (wrapper.read(true))
+                if (wrapper.read(true, false))
                 {
                     CSVHeader csvHeader = wrapper.getHeader();
                     CSVHeader newHeader = this.getHeader();

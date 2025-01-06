@@ -270,8 +270,8 @@ public class Main
                     case SIDE -> opt.setSide(ctx.getSettingValue(entry));
                     case HEADERS -> opt.setHeadersConfig(ctx.getSettingValue(entry));
                     case DE_DUPE -> opt.setDeDupe(true);
-                    case QUOTES -> opt.setApplyQuotes(false);
-                    case APPEND -> opt.setAppendOutput(false);
+                    case QUOTES -> opt.setApplyQuotes(true);
+                    case APPEND -> opt.setAppendOutput(true);
                 }
             }
         }

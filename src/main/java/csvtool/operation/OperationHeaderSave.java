@@ -36,7 +36,7 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> Input [{}], Headers Config [{}], Optional Output [{}]", ctx.getInputFile(), ctx.getSettingValue(Settings.HEADERS), ctx.getOpt().hasOutput() ? ctx.getSettingValue(Settings.OUTPUT) : "<not_used>");
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.OUTPUT)))
+        if (readFiles(ctx.getInputFile(), false, ctx.getSettingValue(Settings.OUTPUT)))
         {
             LOGGER.debug("runOperation(): --> Input [{}] & Output [{}] read successfully.", ctx.getInputFile(), ctx.getOpt().hasOutput() ? ctx.getSettingValue(Settings.OUTPUT) : "<not_used>");
 
@@ -76,11 +76,11 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
         System.out.printf("\tAliases: %s\n\n", Operations.HEADER_SAVE.getAlias().toString());
     }
 
-    private boolean readFiles(String input, @Nullable String output)
+    private boolean readFiles(String input, boolean ignoreQuotes, @Nullable String output)
     {
         LOGGER.debug("readFiles(): Reading files ...");
 
-        this.FILE = this.readFile(input, Const.DEBUG);
+        this.FILE = this.readFile(input, ignoreQuotes, Const.DEBUG);
 
         if (this.FILE == null || this.FILE.isEmpty())
         {
@@ -90,7 +90,7 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
 
         if (output != null && !output.isEmpty())
         {
-            this.OUT = this.readFile(output, Const.DEBUG);
+            this.OUT = this.readFile(output, ignoreQuotes, Const.DEBUG);
 
             if (this.OUT == null || this.OUT.isEmpty())
             {

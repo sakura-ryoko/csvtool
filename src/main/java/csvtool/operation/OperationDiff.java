@@ -44,7 +44,7 @@ public class OperationDiff extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> DIFF [{}] of [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2)))
+        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -125,12 +125,12 @@ public class OperationDiff extends Operation implements AutoCloseable
         System.out.print("The key field #2 adds a secondary comparison point for more-specific comparisons,\nor an optional side field for adding a column displaying which file the difference came from.\n");
     }
 
-    private boolean readFiles(String file1, String file2)
+    private boolean readFiles(String file1, String file2, boolean ignoreQuotes)
     {
         LOGGER.debug("readFiles(): Reading files ...");
 
-        this.FILE_1 = this.readFile(file1, Const.DEBUG);
-        this.FILE_2 = this.readFile(file2, Const.DEBUG);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, Const.DEBUG);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, Const.DEBUG);
 
         if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty())
         {
