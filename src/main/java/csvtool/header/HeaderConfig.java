@@ -12,4 +12,7 @@ public class HeaderConfig
 
     @SerializedName("output")
     public CSVHeader output;
+
+    @SerializedName("remaps")
+    public CSVRemapList remapList;
 }

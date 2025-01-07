@@ -8,6 +8,7 @@ import csvtool.enums.Settings;
 import csvtool.utils.FileUtils;
 import csvtool.utils.LogWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,13 +88,23 @@ public class HeaderParser implements AutoCloseable
         return null;
     }
 
-    public HeaderParser setHeaderConfigFile(String newConfig)
+    public @Nullable CSVRemapList getRemapList()
+    {
+        if (this.CONFIG != null)
+        {
+            return this.CONFIG.remapList;
+        }
+
+        return null;
+    }
+
+    public HeaderParser setHeaderConfigFile(@Nonnull String newConfig)
     {
         this.configFile = newConfig;
         return this;
     }
 
-    public void setInputHeader(CSVHeader input)
+    public void setInputHeader(@Nonnull CSVHeader input)
     {
         if (this.CONFIG == null)
         {
@@ -103,7 +114,7 @@ public class HeaderParser implements AutoCloseable
         this.CONFIG.input = input;
     }
 
-    public void setOutputHeader(CSVHeader output)
+    public void setOutputHeader(@Nonnull CSVHeader output)
     {
         if (this.CONFIG == null)
         {
@@ -111,6 +122,16 @@ public class HeaderParser implements AutoCloseable
         }
 
         this.CONFIG.output = output;
+    }
+
+    public void setRemapList(@Nonnull CSVRemapList remaps)
+    {
+        if (this.CONFIG == null)
+        {
+            this.CONFIG = this.newConfig();
+        }
+
+        this.CONFIG.remapList = remaps;
     }
 
     public boolean loadConfig()
@@ -190,6 +211,13 @@ public class HeaderParser implements AutoCloseable
     @Override
     public void close() throws Exception
     {
+        if (this.CONFIG != null)
+        {
+            this.CONFIG.input.close();
+            this.CONFIG.output.close();
+            this.CONFIG.remapList.close();
+        }
+
         this.clear();
     }
 }
