@@ -5,7 +5,11 @@ import java.util.List;
 
 public enum RemapType
 {
-    SWAP        ("swap", "--swap", true);
+    NONE        ("none",   "--none",   false),
+    STATIC      ("static", "--static", true),
+    SWAP        ("swap",   "--swap",   true),
+    PAD         ("pad",    "--pad",    true),
+    DATE        ("date",   "--date",   true);
 
     public static final List<RemapType> VALUES = List.of(values());
 

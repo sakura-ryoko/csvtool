@@ -22,6 +22,16 @@ public class OperationTest extends Operation implements AutoCloseable
     @Override
     public boolean runOperation(Context ctx)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         LOGGER.debug("runOperation(): --> TEST");
 
         if (readFileAndDump(ctx.getInputFile(), false))

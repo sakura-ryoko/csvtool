@@ -6,6 +6,7 @@ import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
+import csvtool.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
     private FileCache FILE_1;
     private FileCache FILE_2;
+    private FileCache FILE_DUPES;
     private int keyId;
 
     public OperationMerge(Operations op)
@@ -23,12 +25,23 @@ public class OperationMerge extends Operation implements AutoCloseable
         super(op);
         this.FILE_1 = new FileCache();
         this.FILE_2 = new FileCache();
+        this.FILE_DUPES = new FileCache();
         this.keyId = -1;
     }
 
     @Override
     public boolean runOperation(Context ctx)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         if (!ctx.getOpt().hasInput2() || !ctx.getOpt().hasOutput())
         {
             LOGGER.error("runOperation(): Merge FAILED, Second input file and an output is required.");
@@ -64,6 +77,21 @@ public class OperationMerge extends Operation implements AutoCloseable
                     LOGGER.error("runOperation(): Merge FAILED, DeDuplication attempt has failed.");
                     this.clear();
                     return false;
+                }
+
+                // Write DUPES file, if anything was found
+                if (!this.FILE_DUPES.isEmpty() && ctx.getOpt().getOutput() != null)
+                {
+                    String dupesFile = StringUtils.addFileSuffix(ctx.getOpt().getOutput(), "-dupes");
+
+                    if (this.writeFile(dupesFile, ctx.getOpt().isApplyQuotes(), false, Const.DEBUG, this.FILE_DUPES, null))
+                    {
+                        LOGGER.debug("runOperation(): --> Dupes File [{}] written successfully.", dupesFile);
+                    }
+                    else
+                    {
+                        LOGGER.error("runOperation(): Write dupes file FAILED.");
+                    }
                 }
             }
 
@@ -135,6 +163,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
         this.FILE_2.getFile().forEach((i, list) -> temp.add(list));
         this.FILE_2.clear();
+        this.FILE_DUPES.setHeader(this.FILE_1.getHeader());
 
         for (int i = 0; i < this.FILE_1.getFile().size(); i++)
         {
@@ -159,6 +188,7 @@ public class OperationMerge extends Operation implements AutoCloseable
                         if (key2.equals(key) && (!skipHeader || j > 0))
                         {
                             LOGGER.info("FILE2[{}]: skipping duplicate ...", j);
+                            this.FILE_DUPES.addLine(entry2);
                             dupes.add(j);
                         }
                     }
@@ -194,6 +224,11 @@ public class OperationMerge extends Operation implements AutoCloseable
         if (this.FILE_2 != null && !this.FILE_2.isEmpty())
         {
             this.FILE_2.clear();
+        }
+
+        if (this.FILE_DUPES != null && !this.FILE_DUPES.isEmpty())
+        {
+            this.FILE_DUPES.clear();
         }
     }
 

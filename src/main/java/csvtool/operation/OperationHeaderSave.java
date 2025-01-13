@@ -28,6 +28,16 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
     @Override
     public boolean runOperation(Context ctx)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         if (!ctx.getOpt().hasHeaders())
         {
             LOGGER.error("runOperation(): SaveHeaders FAILED, a Headers Config file is required.");
@@ -44,7 +54,7 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
             {
                 LOGGER.debug("runOperation(): --> Config Parser initialized.");
 
-                this.PARSER.setInputHeader(this.FILE.getHeader());
+                this.PARSER.setInputHeader(this.FILE.getHeader(), ctx.getInputFile());
 
                 if (ctx.getOpt().hasOutput())
                 {
@@ -54,7 +64,8 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
                         return false;
                     }
 
-                    this.PARSER.setOutputHeader(this.OUT.getHeader());
+                    this.PARSER.setOutputHeader(this.OUT.getHeader(), ctx.getSettingValue(Settings.OUTPUT));
+                    this.PARSER.buildRemapList();
                 }
 
                 if (this.PARSER.saveConfig())

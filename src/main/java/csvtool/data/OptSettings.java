@@ -17,6 +17,8 @@ public class OptSettings
     private boolean deDupe;
     private boolean applyQuotes;
     private boolean appendOutput;
+    private boolean quiet;
+    private boolean debug;
 
     public OptSettings()
     {
@@ -29,6 +31,8 @@ public class OptSettings
         this.deDupe = false;
         this.applyQuotes = false;
         this.appendOutput = false;
+        this.quiet = Const.QUIET;
+        this.debug = Const.DEBUG;
     }
 
     public boolean hasInput2()
@@ -106,6 +110,16 @@ public class OptSettings
         return this.appendOutput;
     }
 
+    public boolean isQuiet()
+    {
+        return this.quiet;
+    }
+
+    public boolean isDebug()
+    {
+        return this.debug;
+    }
+
     public void setInput2(String input2)
     {
         this.input2 = input2;
@@ -176,5 +190,15 @@ public class OptSettings
     public void setAppendOutput(boolean toggle)
     {
         this.appendOutput = toggle;
+    }
+
+    public void setQuiet(boolean toggle)
+    {
+        this.quiet = toggle;
+    }
+
+    public void setDebug(boolean toggle)
+    {
+        this.debug = toggle;
     }
 }

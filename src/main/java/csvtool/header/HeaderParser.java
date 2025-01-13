@@ -45,6 +45,11 @@ public class HeaderParser implements AutoCloseable
 
             if (this.loadConfig())
             {
+                if (this.checkRemapList())
+                {
+                    LOGGER.info("init(): Config Remap List loaded/rebuilt successfully.");
+                }
+
                 LOGGER.info("init(): Config loaded successfully.");
             }
             else
@@ -104,23 +109,25 @@ public class HeaderParser implements AutoCloseable
         return this;
     }
 
-    public void setInputHeader(@Nonnull CSVHeader input)
+    public void setInputHeader(@Nonnull CSVHeader input, String fileName)
     {
         if (this.CONFIG == null)
         {
             this.CONFIG = this.newConfig();
         }
 
+        this.CONFIG.inputFile = fileName;
         this.CONFIG.input = input;
     }
 
-    public void setOutputHeader(@Nonnull CSVHeader output)
+    public void setOutputHeader(@Nonnull CSVHeader output, String fileName)
     {
         if (this.CONFIG == null)
         {
             this.CONFIG = this.newConfig();
         }
 
+        this.CONFIG.outputFile = fileName;
         this.CONFIG.output = output;
     }
 
@@ -132,6 +139,65 @@ public class HeaderParser implements AutoCloseable
         }
 
         this.CONFIG.remapList = remaps;
+    }
+
+    public boolean ensureOutputExists()
+    {
+        if (this.CONFIG.output == null || this.CONFIG.output.isEmpty())
+        {
+            if (this.CONFIG.input == null || this.CONFIG.input.isEmpty())
+            {
+                LOGGER.error("ensureOutputExists(): Error Input headers are empty!");
+                return false;
+            }
+
+            this.CONFIG.outputFile = this.CONFIG.inputFile;
+            this.CONFIG.output = new CSVHeader();
+            this.CONFIG.output.setHeaders(this.CONFIG.input.stream().toList());
+            this.buildRemapList();
+        }
+
+        return true;
+    }
+
+    public void buildRemapList()
+    {
+        if (this.CONFIG.input.isEmpty() || this.CONFIG.output.isEmpty())
+        {
+            LOGGER.error("buildRemapList(): Error building Remap List; Input/Output headers are empty!");
+            return;
+        }
+
+        LOGGER.debug("buildRemapList(): Creating default (NONE) Remap List.");
+
+        if (this.CONFIG.remapList == null)
+        {
+            this.CONFIG.remapList = new CSVRemapList();
+        }
+
+        this.CONFIG.remapList.clear();
+
+        for (int i = 0; i < this.CONFIG.input.size(); i++)
+        {
+            this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE, null));
+        }
+    }
+
+    public boolean checkRemapList()
+    {
+        if (this.CONFIG.input.isEmpty() || this.CONFIG.output.isEmpty())
+        {
+            LOGGER.error("checkRemapList(): Error checking Remap List; Input/Output headers are empty!");
+            return false;
+        }
+
+        if (this.CONFIG.input.size() != this.CONFIG.remapList.size() || this.CONFIG.remapList.isEmpty())
+        {
+            LOGGER.warn("checkRemapList(): Remap List is invalid, rebuilding with defaults.");
+            this.buildRemapList();
+        }
+
+        return true;
     }
 
     public boolean loadConfig()
@@ -166,7 +232,10 @@ public class HeaderParser implements AutoCloseable
     {
         if (!this.configFile.isEmpty())
         {
-            return this.saveConfig(this.configFile);
+            if (this.ensureOutputExists())
+            {
+                return this.saveConfig(this.configFile);
+            }
         }
 
         return false;

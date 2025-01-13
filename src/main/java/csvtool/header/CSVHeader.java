@@ -92,6 +92,11 @@ public class CSVHeader implements AutoCloseable
         return this.headers.size();
     }
 
+    public boolean isEmpty()
+    {
+        return this.headers.isEmpty();
+    }
+
     public void clear()
     {
         if (!this.headers.isEmpty())

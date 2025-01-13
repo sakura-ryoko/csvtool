@@ -36,6 +36,16 @@ public class OperationDiff extends Operation implements AutoCloseable
     @Override
     public boolean runOperation(Context ctx)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         if (!ctx.getOpt().hasInput2() || !ctx.getOpt().hasOutput())
         {
             LOGGER.error("runOperation(): Diff FAILED, Second input file and an output is required.");
@@ -75,14 +85,14 @@ public class OperationDiff extends Operation implements AutoCloseable
                 this.DIFF = new FileCache(this.FILE_1.getHeader());
             }
 
-            if (!runDiff(true, ctx.getInputFile(), this.FILE_1, this.FILE_2))
+            if (!this.runDiff(true, ctx.getInputFile(), this.FILE_1, this.FILE_2))
             {
                 LOGGER.error("runOperation(): Diff FAILED, Diff1 execution attempt has failed.");
                 this.clear();
                 return false;
             }
 
-            if (!runDiff(true, ctx.getSettingValue(Settings.INPUT2), this.FILE_2, this.FILE_1))
+            if (!this.runDiff(true, ctx.getSettingValue(Settings.INPUT2), this.FILE_2, this.FILE_1))
             {
                 LOGGER.error("runOperation(): Diff FAILED, Diff2 execution attempt has failed.");
                 this.clear();

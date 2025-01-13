@@ -18,6 +18,16 @@ public class OperationHelp extends Operation
     @Override
     public boolean runOperation(Context ctx)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         LOGGER.debug("runOperation(): displayHelp()");
 
         if (ctx.hasInputFile())
@@ -84,9 +94,11 @@ public class OperationHelp extends Operation
         System.out.print("\t--key (key):\n\t\tSets the CSV Key field.  This is used in MERGE and DIFF Operations so that they can compare the data.\n");
         System.out.print("\t--key2 (key):\n\t\tSets the CSV Key2 field for the DIFF Operation.  This is used in DIFF matching operations as a secondary data comparison.\n");
         System.out.print("\t--side (key):\n\t\tSets the CSV Side field for the DIFF Operation.  This informs of which \"Side\" the DIFF output came from.\n");
-        System.out.print("\t--de-dupe:\n\t\tSets the MERGE Operation in \"De-Duplication\" mode, which removes rows that already exists.\n");
+        System.out.print("\t--de-dupe:\n\t\tSets the MERGE Operation in \"De-Duplication\" mode, which removes rows that already exists, and outputs this data to a separate file.\n");
         System.out.print("\t--quotes:\n\t\tSets the CSV Output in \"Apply Quotes\" mode, which adds Quotes to all data, and not only when it is required.\n");
         System.out.print("\t--append:\n\t\tSets the CSV Output in \"Append\" mode, which causes the Output to not be Overwritten, but appended to.\n");
+        System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
+        System.out.print("\t--debug:\n\t\tSets the Operation in \"Debug\" mode, which causes the Logger to output Debug Level messages.\n");
     }
 
     private void displayHelpForSetting(Settings setting)
@@ -102,6 +114,8 @@ public class OperationHelp extends Operation
             case DE_DUPE -> this.displayHelpForDeDupe();
             case QUOTES -> this.displayHelpForQuotes();
             case APPEND -> this.displayHelpForAppend();
+            case QUIET -> this.displayHelpForQuiet();
+            case DEBUG -> this.displayHelpForDebug();
             default -> this.displayHelp();
         }
     }
@@ -158,6 +172,18 @@ public class OperationHelp extends Operation
     {
         System.out.print("--append:\n");
         System.out.printf("Aliases: %s\n", Settings.APPEND.getAlias().toString());
+    }
+
+    private void displayHelpForQuiet()
+    {
+        System.out.print("--quiet:\n");
+        System.out.printf("Aliases: %s\n", Settings.QUIET.getAlias().toString());
+    }
+
+    private void displayHelpForDebug()
+    {
+        System.out.print("--debug:\n");
+        System.out.printf("Aliases: %s\n", Settings.DEBUG.getAlias().toString());
     }
 
     @Override

@@ -272,6 +272,8 @@ public class Main
                     case DE_DUPE -> opt.setDeDupe(true);
                     case QUOTES -> opt.setApplyQuotes(true);
                     case APPEND -> opt.setAppendOutput(true);
+                    case QUIET -> opt.setQuiet(true);
+                    case DEBUG -> opt.setDebug(true);
                 }
             }
         }

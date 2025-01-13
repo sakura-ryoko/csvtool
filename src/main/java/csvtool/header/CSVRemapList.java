@@ -8,6 +8,11 @@ import java.util.List;
 
 public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
 {
+    public CSVRemapList()
+    {
+        this(null);
+    }
+
     public CSVRemapList(@Nullable List<CSVRemap> list)
     {
         if (list == null || list.isEmpty())
@@ -30,7 +35,7 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
         return this;
     }
 
-    public @Nullable CSVRemap buildRemap(String type, String... params)
+    public @Nullable CSVRemap buildRemap(int id, String type, String... params)
     {
         RemapType remapType = RemapType.fromArg(type);
 
@@ -47,10 +52,20 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
                 list = new ArrayList<>();
             }
 
-            return new CSVRemap(remapType, list);
+            return new CSVRemap(id, remapType, list);
         }
 
         return null;
+    }
+
+    public int size()
+    {
+        return this.list.size();
+    }
+
+    public boolean isEmpty()
+    {
+        return this.list.isEmpty();
     }
 
     public CSVRemapList addRemap(@Nonnull CSVRemap remap)
@@ -76,6 +91,8 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
         {
             for (int i = 0; i < this.list().size(); i++)
             {
+                builder.append(i);
+
                 if (i == 0)
                 {
                     builder.append("{");

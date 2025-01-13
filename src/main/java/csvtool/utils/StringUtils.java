@@ -13,4 +13,12 @@ public class StringUtils
 
         return result;
     }
+
+    public static String addFileSuffix(String file, String suffix)
+    {
+        StringBuilder result = new StringBuilder();
+        String[] split = file.split("\\.(?=[^\\.]+$)");
+        result.append(split[0]).append(suffix).append(".").append(split[1]);
+        return result.toString();
+    }
 }

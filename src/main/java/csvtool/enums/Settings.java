@@ -12,9 +12,11 @@ public enum Settings
     KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
     KEY2        ("key2",     "--key2",    true,  List.of("--k2", "-key2", "-k2")),
     SIDE        ("side",     "--side",    true,  List.of("--sides", "-side", "-sides", "--s", "-s")),
-    DE_DUPE     ("de-dupe",  "--de-dupe", false, List.of("-de-dupe", "--dd", "-dd")),
-    QUOTES      ("quotes",   "--quotes",  false, List.of("--q", "-quotes", "-q")),
-    APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a"));
+    DE_DUPE     ("de-dupe",  "--de-dupe", false, List.of("-de-dupe", "--dedupe", "-dedupe", "--dd", "-dd")),
+    QUOTES      ("quotes",   "--quotes",  false, List.of("-quotes")),
+    APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a")),
+    QUIET       ("quiet",    "--quiet",   false, List.of("-quiet", "--q", "-q")),
+    DEBUG       ("debug",    "--debug",   false, List.of("--db", "-db", "-debug", "--d", "-d"));
 
     public static final List<Settings> VALUES = List.of(values());
 

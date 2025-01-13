@@ -6,11 +6,13 @@ import java.util.List;
 
 public class CSVRemap implements AutoCloseable
 {
+    private int id;
     private RemapType type;
     private List<String> params;
 
-    public CSVRemap(@Nonnull RemapType type, List<String> params)
+    public CSVRemap(int id, @Nonnull RemapType type, List<String> params)
     {
+        this.id = id;
         this.type = type;
 
         if (params == null || params.isEmpty())
@@ -23,6 +25,11 @@ public class CSVRemap implements AutoCloseable
         }
     }
 
+    public int getId()
+    {
+        return this.id;
+    }
+
     public RemapType getType()
     {
         return this.type;
@@ -31,6 +38,12 @@ public class CSVRemap implements AutoCloseable
     public List<String> getParams()
     {
         return this.params;
+    }
+
+    public CSVRemap setId(int id)
+    {
+        this.id = id;
+        return this;
     }
 
     public CSVRemap setType(@Nonnull RemapType type)
@@ -65,6 +78,7 @@ public class CSVRemap implements AutoCloseable
     public String toString()
     {
         StringBuilder builder = new StringBuilder("CSVRemap[");
+        builder.append("id=").append(this.getId());
         builder.append("type={").append(this.getType().toString()).append("}");
 
         if (this.getType().needsParam())
