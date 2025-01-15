@@ -1,6 +1,6 @@
 package csvtool.utils;
 
-public class StringUtils
+public class StringUtils extends org.apache.commons.lang3.StringUtils
 {
     public static String format(final String format, final Object... args)
     {

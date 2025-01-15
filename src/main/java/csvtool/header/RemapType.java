@@ -5,28 +5,26 @@ import java.util.List;
 
 public enum RemapType
 {
-    NONE        ("none",   "--none",   false),
-    STATIC      ("static", "--static", true),
-    SWAP        ("swap",   "--swap",   true),
-    PAD         ("pad",    "--pad",    true),
-    DATE        ("date",   "--date",   true);
+    NONE        ("none",   false),
+    DROP        ("drop",   false),
+    STATIC      ("static", true),
+    SWAP        ("swap",   true),
+    EXCLUDE     ("exclude",true),
+    PAD         ("pad",    true),
+    DATE        ("date",   true);
 
     public static final List<RemapType> VALUES = List.of(values());
 
     private final String name;
-    private final String setting;
     private final boolean param;
 
-    RemapType(String name, String setting, boolean param)
+    RemapType(String name, boolean param)
     {
         this.name = name;
-        this.setting = setting;
         this.param = param;
     }
 
     public String getName() { return this.name; }
-
-    public String getSetting() { return this.setting; }
 
     public boolean needsParam() { return this.param; }
 
@@ -35,7 +33,7 @@ public enum RemapType
     {
         for (RemapType val : VALUES)
         {
-            if (val.getSetting().equalsIgnoreCase(name))
+            if (val.getName().equalsIgnoreCase(name))
             {
                 return val;
             }

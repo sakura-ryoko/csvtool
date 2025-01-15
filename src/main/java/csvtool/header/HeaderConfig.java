@@ -22,6 +22,9 @@ public class HeaderConfig
     @SerializedName("__remap_example_NONE")
     public String remap_ex_none = "NONE (Performs no remap)";
 
+    @SerializedName("__remap_example_DROP")
+    public String remap_ex_drop = "DROP (Performs a Column Removal, and advances to the next)";
+
     @SerializedName("__remap_example_SWAP")
     public String remap_ex_swap = "SWAP (field-id) (Performs a field swap with field-id, and also copies the remap)";
 

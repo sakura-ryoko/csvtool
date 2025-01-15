@@ -179,7 +179,14 @@ public class HeaderParser implements AutoCloseable
 
         for (int i = 0; i < this.CONFIG.input.size(); i++)
         {
-            this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE, null));
+            if (i < this.CONFIG.output.size())
+            {
+                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE, null));
+            }
+            else
+            {
+                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.DROP, null));
+            }
         }
     }
 
@@ -191,10 +198,35 @@ public class HeaderParser implements AutoCloseable
             return false;
         }
 
-        if (this.CONFIG.input.size() != this.CONFIG.remapList.size() || this.CONFIG.remapList.isEmpty())
+        if (this.CONFIG.input.size() < this.CONFIG.remapList.size() || this.CONFIG.remapList.isEmpty())
         {
             LOGGER.warn("checkRemapList(): Remap List is invalid, rebuilding with defaults.");
             this.buildRemapList();
+        }
+
+        if (this.CONFIG.input.size() > this.CONFIG.output.size())
+        {
+            int dropCount = 0;
+
+            // Count the DROP's
+            for (int i = 0; i < this.CONFIG.remapList.size(); i++)
+            {
+                if (this.CONFIG.remapList.list().get(i).getType() == RemapType.DROP)
+                {
+                    dropCount++;
+                }
+            }
+
+            if (this.CONFIG.input.size() - dropCount > this.CONFIG.output.size())
+            {
+                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too low!");
+                return false;
+            }
+            else if (this.CONFIG.output.size() + dropCount > this.CONFIG.input.size())
+            {
+                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too high!");
+                return false;
+            }
         }
 
         return true;

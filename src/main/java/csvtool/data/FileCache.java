@@ -15,17 +15,27 @@ public class FileCache implements AutoCloseable
 
     public HashMap<Integer, List<String>> FILE;
     public CSVHeader HEADER;
+    public String fileName;
 
     public FileCache()
     {
         this.FILE = new HashMap<>();
         this.HEADER = new CSVHeader();
+        this.fileName = "";
     }
 
     public FileCache(@Nonnull CSVHeader newHeader)
     {
         this.FILE = new HashMap<>();
         this.setHeader(newHeader);
+        this.fileName = "";
+    }
+
+    public FileCache(@Nonnull CSVHeader newHeader, String fileName)
+    {
+        this.FILE = new HashMap<>();
+        this.setHeader(newHeader);
+        this.fileName = fileName;
     }
 
     public void copyFile(CSVWrapper wrapper)
@@ -51,6 +61,12 @@ public class FileCache implements AutoCloseable
         return this.FILE;
     }
 
+    // TODO simplify file name handling
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+
     public void setHeader(CSVHeader header)
     {
         LOGGER.debug("setHeader(): Setting Header");
@@ -61,6 +77,13 @@ public class FileCache implements AutoCloseable
         {
             this.FILE.put(0, header.stream().toList());
         }
+    }
+
+    // TODO simplify file name handling
+    public FileCache setFileName(String name)
+    {
+        this.fileName = name;
+        return this;
     }
 
     public void addLine(List<String> line)
