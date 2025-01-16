@@ -1,6 +1,5 @@
 package csvtool.operation;
 
-import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
@@ -46,11 +45,11 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> Input [{}], Headers Config [{}], Optional Output [{}]", ctx.getInputFile(), ctx.getSettingValue(Settings.HEADERS), ctx.getOpt().hasOutput() ? ctx.getSettingValue(Settings.OUTPUT) : "<not_used>");
 
-        if (readFiles(ctx.getInputFile(), false, ctx.getSettingValue(Settings.OUTPUT)))
+        if (readFiles(ctx.getInputFile(), false, ctx.getOpt().isDebug(), ctx.getSettingValue(Settings.OUTPUT)))
         {
             LOGGER.debug("runOperation(): --> Input [{}] & Output [{}] read successfully.", ctx.getInputFile(), ctx.getOpt().hasOutput() ? ctx.getSettingValue(Settings.OUTPUT) : "<not_used>");
 
-            if (this.PARSER.init(ctx))
+            if (this.PARSER.init(ctx, true))
             {
                 LOGGER.debug("runOperation(): --> Config Parser initialized.");
 
@@ -87,13 +86,13 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
         System.out.printf("\tAliases: %s\n\n", Operations.HEADER_SAVE.getAlias().toString());
     }
 
-    private boolean readFiles(String input, boolean ignoreQuotes, @Nullable String output)
+    private boolean readFiles(String input, boolean ignoreQuotes, boolean debug, @Nullable String output)
     {
         LOGGER.debug("readFiles(): Reading files ...");
 
-        this.FILE = this.readFile(input, ignoreQuotes, Const.DEBUG);
+        this.FILE = this.readFileHeadersOnly(input, ignoreQuotes, debug);
 
-        if (this.FILE == null || this.FILE.isEmpty())
+        if (this.FILE == null || this.FILE.getHeader().isEmpty())
         {
             LOGGER.error("readFiles(): Input File Cache is Empty!");
             return false;
@@ -101,9 +100,9 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
 
         if (output != null && !output.isEmpty())
         {
-            this.OUT = this.readFile(output, ignoreQuotes, Const.DEBUG);
+            this.OUT = this.readFileHeadersOnly(output, ignoreQuotes, debug);
 
-            if (this.OUT == null || this.OUT.isEmpty())
+            if (this.OUT == null || this.OUT.getHeader().isEmpty())
             {
                 LOGGER.error("readFiles(): Output File Cache is Empty!");
                 return false;

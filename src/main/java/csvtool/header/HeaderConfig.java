@@ -2,9 +2,11 @@ package csvtool.header;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class HeaderConfig
 {
-    @SerializedName("__header_config")
+    @SerializedName("__header_config_description")
     public String comment = "CSV Headers config";
 
     @SerializedName("__input_file")
@@ -19,24 +21,25 @@ public class HeaderConfig
     @SerializedName("output")
     public CSVHeader output;
 
-    @SerializedName("__remap_example_NONE")
-    public String remap_ex_none = "NONE (Performs no remap)";
+    @SerializedName("__remap_example_list")
+    public List<String> remap_example_list = List.of(
+        "NONE (Performs no remap)",
+        "DROP (Performs a Column Removal, and advances to the next)",
+        "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
+        "INCLUDE (...) (Performs a row exclusion if this field does not match items on a list)",
+        "EXCLUDE (...) (Performs a row exclusion if this field matches items in a list)",
+        "INCLUDE_REGEX (RegEx) (Performs a row exclusion if this field does not match the RegEx)",
+        "EXCLUDE_REGEX (RegEx) (Performs a row exclusion if this field matches the RegEx)",
+        "PAD { (count), [data] } (Pads this value with (count) and optional [data])",
+        "TRUNCATE { (length) } (Truncates the value to a length of (length))",
+        "STATIC { (old), [new], ... } (Performs a static 1-to-1 swap if (old) exists, swap it with [new], or if only 1 parameter, set data to (old) regardless, and optionally an extended list)",
+        "DATE { (old-fmt), (new-fmt) } (Performs a date reformat based on (old-fmt) into (new-fmt); this uses SimpleDateFormat patterns)",
+        "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
+    );
 
-    @SerializedName("__remap_example_DROP")
-    public String remap_ex_drop = "DROP (Performs a Column Removal, and advances to the next)";
+    @SerializedName("remap_examples")
+    public CSVRemapList remap_examples = CSVRemapList.EXAMPLES;
 
-    @SerializedName("__remap_example_SWAP")
-    public String remap_ex_swap = "SWAP (field-id) (Performs a field swap with field-id, and also copies the remap)";
-
-    @SerializedName("__remap_example_PAD")
-    public String remap_ex_pad = "PAD { (count), [data] } (Pads this value with (count) and optional [data])";
-
-    @SerializedName("__remap_example_STATIC")
-    public String remap_ex_static = "STATIC { (old), [new] } (Performs a static 1-to-1 swap if (old) exists, swap it with [new], or if only 1 parameter, set data to (old) regardless)";
-
-    @SerializedName("__remap_example_DATE")
-    public String remap_ex_date = "DATE { (old-fmt), (new-fmt) } (Performs a date reformat based on (old-fmt) into (new-fmt); this uses SimpleDateFormat patterns)";
-
-    @SerializedName("remaps")
+    @SerializedName("remap_list")
     public CSVRemapList remapList;
 }

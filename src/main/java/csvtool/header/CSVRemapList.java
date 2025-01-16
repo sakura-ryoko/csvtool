@@ -3,11 +3,28 @@ package csvtool.header;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
 {
+    public static final CSVRemapList EXAMPLES = new CSVRemapList(
+        List.of(
+                new CSVRemap(0, RemapType.NONE),
+                new CSVRemap(1, RemapType.DROP),
+                new CSVRemap(2, RemapType.STATIC, List.of("apple", "orange")),
+                new CSVRemap(3, RemapType.DATE, List.of("yyyyMMdd", "yyyy-MM-dd")),
+                new CSVRemap(4, RemapType.INCLUDE, List.of("01", "02", "03")),
+                new CSVRemap(5, RemapType.EXCLUDE, List.of("04", "05", "06")),
+                new CSVRemap(6, RemapType.INCLUDE_REGEX, List.of("(?:^|\\W)included(?:$|\\W)")),
+                new CSVRemap(7, RemapType.EXCLUDE_REGEX, List.of("(?:^|\\W)excluded(?:$|\\W)")),
+                new CSVRemap(8, RemapType.PAD, List.of("3", "0")),
+                new CSVRemap(9, RemapType.TRUNCATE, List.of("1")),
+                new CSVRemap(10, RemapType.SWAP, List.of("2"),
+                        new CSVRemap(2, RemapType.STATIC, List.of("orange", "banana"))
+                )
+        )
+    );
+
     public CSVRemapList()
     {
         this(null);
@@ -25,39 +42,6 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
         }
     }
 
-    public CSVRemapList addToList(CSVRemap remap)
-    {
-        if (remap != null && remap.getType() != null)
-        {
-            this.list.add(remap);
-        }
-
-        return this;
-    }
-
-    public @Nullable CSVRemap buildRemap(int id, String type, String... params)
-    {
-        RemapType remapType = RemapType.fromArg(type);
-
-        if (remapType != null)
-        {
-            List<String> list;
-
-            if (remapType.needsParam())
-            {
-                list = new ArrayList<>(Arrays.asList(params));
-            }
-            else
-            {
-                list = new ArrayList<>();
-            }
-
-            return new CSVRemap(id, remapType, list);
-        }
-
-        return null;
-    }
-
     public int size()
     {
         return this.list.size();
@@ -70,6 +54,11 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
 
     public CSVRemapList addRemap(@Nonnull CSVRemap remap)
     {
+        if (remap.getType().needsParam() && remap.getParams() == null)
+        {
+            remap = remap.setParams(List.of());
+        }
+
         this.list.add(remap);
         return this;
     }

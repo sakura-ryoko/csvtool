@@ -13,55 +13,67 @@ public class FileCache implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
-    public HashMap<Integer, List<String>> FILE;
-    public CSVHeader HEADER;
+    public HashMap<Integer, List<String>> file;
+    public CSVHeader header;
     public String fileName;
 
     public FileCache()
     {
-        this.FILE = new HashMap<>();
-        this.HEADER = new CSVHeader();
+        this.file = new HashMap<>();
+        this.header = new CSVHeader();
         this.fileName = "";
     }
 
     public FileCache(@Nonnull CSVHeader newHeader)
     {
-        this.FILE = new HashMap<>();
+        this.file = new HashMap<>();
         this.setHeader(newHeader);
         this.fileName = "";
     }
 
     public FileCache(@Nonnull CSVHeader newHeader, String fileName)
     {
-        this.FILE = new HashMap<>();
+        this.file = new HashMap<>();
         this.setHeader(newHeader);
         this.fileName = fileName;
     }
 
     public void copyFile(CSVWrapper wrapper)
     {
-        if (!this.FILE.isEmpty())
+        if (!this.file.isEmpty())
         {
-            this.FILE.clear();
+            this.file.clear();
         }
 
         LOGGER.debug("copyFile(): Caching file [{} lines] ...", wrapper.getSize());
         this.copyHeader(wrapper);
-        this.FILE.putAll(wrapper.getAllLines());
+        this.setFileName(wrapper.getFile());
+        this.file.putAll(wrapper.getAllLines());
+    }
+
+    public void copyFileHeadersOnly(CSVWrapper wrapper)
+    {
+        if (!this.file.isEmpty())
+        {
+            this.file.clear();
+        }
+
+        LOGGER.debug("copyFileHeadersOnly(): Copying file Headers ...");
+        this.copyHeader(wrapper);
+        this.setFileName(wrapper.getFile());
     }
 
     public void copyHeader(CSVWrapper wrapper)
     {
         LOGGER.debug("copyHeader(): Caching Header ...", wrapper.getSize());
-        this.HEADER = wrapper.getHeader();
+        this.header = wrapper.getHeader();
     }
 
     public HashMap<Integer, List<String>> getFile()
     {
-        return this.FILE;
+        return this.file;
     }
 
-    // TODO simplify file name handling
     public String getFileName()
     {
         return this.fileName;
@@ -70,16 +82,15 @@ public class FileCache implements AutoCloseable
     public void setHeader(CSVHeader header)
     {
         LOGGER.debug("setHeader(): Setting Header");
-        this.HEADER = header;
+        this.header = header;
 
         // Add header to FILE
-        if (this.FILE.isEmpty())
+        if (this.file.isEmpty())
         {
-            this.FILE.put(0, header.stream().toList());
+            this.file.put(0, header.stream().toList());
         }
     }
 
-    // TODO simplify file name handling
     public FileCache setFileName(String name)
     {
         this.fileName = name;
@@ -90,7 +101,7 @@ public class FileCache implements AutoCloseable
     {
         List<String> out = new ArrayList<>();
 
-        for (int i = 0; i < this.HEADER.size(); i++)
+        for (int i = 0; i < this.header.size(); i++)
         {
             if (line.size() >= i)
             {
@@ -98,43 +109,43 @@ public class FileCache implements AutoCloseable
             }
         }
 
-        LOGGER.debug("addLine({}): out [{}]", this.FILE.size(), out.toString());
-        this.FILE.put(this.FILE.size(), out);
+        LOGGER.debug("addLine({}): out [{}]", this.file.size(), out.toString());
+        this.file.put(this.file.size(), out);
     }
 
     public CSVHeader getHeader()
     {
-        return this.HEADER;
+        return this.header;
     }
 
     public boolean isEmpty()
     {
-        return this.FILE.isEmpty() || this.FILE.size() == 1;
+        return this.file.isEmpty() || this.file.size() == 1;
     }
 
     public void clear()
     {
-        if (this.FILE != null && !this.FILE.isEmpty())
+        if (this.file != null && !this.file.isEmpty())
         {
-            this.FILE.clear();
+            this.file.clear();
         }
 
-        if (this.HEADER != null && this.HEADER.size() > 0)
+        if (this.header != null && !this.header.isEmpty())
         {
-            this.HEADER.clear();
+            this.header.clear();
         }
     }
 
     @Override
     public void close() throws Exception
     {
-        if (this.FILE != null)
+        if (this.file != null)
         {
-            this.FILE.clear();
+            this.file.clear();
         }
-        if (this.HEADER != null)
+        if (this.header != null)
         {
-            this.HEADER.close();
+            this.header.close();
         }
     }
 }

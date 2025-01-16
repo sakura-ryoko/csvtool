@@ -1,6 +1,5 @@
 package csvtool.operation;
 
-import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
@@ -34,13 +33,13 @@ public class OperationTest extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> TEST");
 
-        if (readFileAndDump(ctx.getInputFile(), false))
+        if (readFileAndDump(ctx.getInputFile(), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> File [{}] read successfully.", ctx.getInputFile());
 
             if (ctx.getOpt().hasOutput())
             {
-                if (writeFileAndDump(ctx.getOpt().getOutput(), ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput()))
+                if (writeFileAndDump(ctx.getOpt().getOutput(), ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput(), ctx.getOpt().isDebug()))
                 {
                     LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
                     this.clear();
@@ -71,15 +70,16 @@ public class OperationTest extends Operation implements AutoCloseable
         System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");
     }
 
-    private boolean readFileAndDump(String file, boolean ignoreQuotes)
+    private boolean readFileAndDump(String file, boolean ignoreQuotes, boolean debug)
     {
-        this.FILE = this.readFile(file, ignoreQuotes, Const.DEBUG);
+        this.FILE = this.readFile(file, ignoreQuotes, debug);
         return this.FILE != null && !this.FILE.isEmpty();
     }
 
-    private boolean writeFileAndDump(String file, boolean applyQuotes, boolean append)
+    private boolean writeFileAndDump(String file, boolean applyQuotes, boolean append, boolean debug)
     {
-        return this.writeFile(file, applyQuotes, append, Const.DEBUG, this.FILE, null);
+        this.FILE.setFileName(file);
+        return this.writeFile(this.FILE, applyQuotes, append, debug, null);
     }
 
     @Override

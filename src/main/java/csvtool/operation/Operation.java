@@ -62,15 +62,38 @@ public abstract class Operation
         return null;
     }
 
+    protected @Nullable FileCache readFileHeadersOnly(String file, boolean ignoreQuotes, boolean dump)
+    {
+        LOGGER.debug("readFileHeadersOnly(): Reading file [{}] ...", file);
+
+        try (CSVWrapper wrapper = new CSVWrapper(file))
+        {
+            if (wrapper.readHeadersOnly(ignoreQuotes))
+            {
+                LOGGER.info("readFileHeadersOnly(): File read!");
+
+                if (dump)
+                {
+                    dumpFile(wrapper);
+                }
+
+                FileCache cache = new FileCache();
+                cache.copyFileHeadersOnly(wrapper);
+                //wrapper.close();
+                return cache;
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("readFileHeadersOnly(): Exception reading file! Error: {}", e.getMessage());
+        }
+
+        return null;
+    }
+
     protected void dumpFile(@Nonnull CSVWrapper wrapper)
     {
         LOGGER.debug("dumpFile(): Dump file [{}]:", wrapper.getFile());
-
-        if (wrapper.isEmpty())
-        {
-            LOGGER.error("dumpFile(): Wrapper is EMPTY!");
-            return;
-        }
 
         CSVHeader header = wrapper.getHeader();
 
@@ -81,6 +104,12 @@ public abstract class Operation
         }
 
         LOGGER.debug("dumpFile(): Header {} // Line Size: [{}]", header.toString(), wrapper.getSize());
+
+        if (wrapper.isEmpty())
+        {
+            LOGGER.error("dumpFile(): Wrapper is EMPTY!");
+            return;
+        }
 
         // Start at Line 1
         for (int i = 1; i < wrapper.getSize(); i++)
@@ -115,21 +144,21 @@ public abstract class Operation
         return header1.matches(header2);
     }
 
-    protected boolean writeFile(String file, boolean applyQuotes, @Nonnull FileCache FILE)
+    protected boolean writeFile(@Nonnull FileCache FILE, boolean applyQuotes)
     {
-        return this.writeFile(file, applyQuotes, false, false, FILE, null);
+        return this.writeFile(FILE, applyQuotes, false, false, null);
     }
 
-    protected boolean writeFile(String file, boolean applyQuotes, boolean append, @Nonnull FileCache FILE)
+    protected boolean writeFile(@Nonnull FileCache FILE, boolean applyQuotes, boolean append)
     {
-        return this.writeFile(file, applyQuotes, append, false, FILE, null);
+        return this.writeFile(FILE, applyQuotes, append, false, null);
     }
 
-    protected boolean writeFile(String file, boolean applyQuotes, boolean append, boolean dump, @Nonnull FileCache FILE, @Nullable FileCache APPEND)
+    protected boolean writeFile(@Nonnull FileCache FILE, boolean applyQuotes, boolean append, boolean dump, @Nullable FileCache APPEND)
     {
-        LOGGER.debug("writeFile(): Write file [{}]:", file);
+        LOGGER.debug("writeFile(): Write file [{}]:", FILE.getFileName());
 
-        try (CSVWrapper wrapper = new CSVWrapper(file, false))
+        try (CSVWrapper wrapper = new CSVWrapper(FILE.getFileName(), false))
         {
             if (wrapper.putAllLines(FILE.getFile(), true))
             {

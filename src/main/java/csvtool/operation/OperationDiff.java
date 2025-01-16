@@ -1,6 +1,5 @@
 package csvtool.operation;
 
-import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
@@ -54,7 +53,7 @@ public class OperationDiff extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> DIFF [{}] of [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false))
+        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -79,10 +78,12 @@ public class OperationDiff extends Operation implements AutoCloseable
             {
                 this.side = ctx.getSettingValue(Settings.SIDE);
                 this.DIFF = new FileCache(this.FILE_1.getHeader().add(this.side));
+                this.DIFF.setFileName(ctx.getSettingValue(Settings.OUTPUT));
             }
             else
             {
                 this.DIFF = new FileCache(this.FILE_1.getHeader());
+                this.DIFF.setFileName(ctx.getSettingValue(Settings.OUTPUT));
             }
 
             if (!this.runDiff(true, ctx.getInputFile(), this.FILE_1, this.FILE_2))
@@ -101,7 +102,7 @@ public class OperationDiff extends Operation implements AutoCloseable
 
             if (!this.DIFF.isEmpty())
             {
-                if (this.writeFile(ctx.getSettingValue(Settings.OUTPUT), ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput(), Const.DEBUG, this.DIFF, null))
+                if (this.writeFile(this.DIFF, ctx.getOpt().isApplyQuotes(), ctx.getOpt().isAppendOutput(), ctx.getOpt().isDebug(), null))
                 {
                     LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
                     this.clear();
@@ -135,12 +136,12 @@ public class OperationDiff extends Operation implements AutoCloseable
         System.out.print("The key field #2 adds a secondary comparison point for more-specific comparisons,\nor an optional side field for adding a column displaying which file the difference came from.\n");
     }
 
-    private boolean readFiles(String file1, String file2, boolean ignoreQuotes)
+    private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)
     {
         LOGGER.debug("readFiles(): Reading files ...");
 
-        this.FILE_1 = this.readFile(file1, ignoreQuotes, Const.DEBUG);
-        this.FILE_2 = this.readFile(file2, ignoreQuotes, Const.DEBUG);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, debug);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, debug);
 
         if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty())
         {

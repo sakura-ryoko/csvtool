@@ -1,6 +1,5 @@
 package csvtool.operation;
 
-import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
@@ -17,7 +16,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
     private FileCache FILE_1;
     private FileCache FILE_2;
-    private FileCache FILE_DUPES;
+    private final FileCache FILE_DUPES;
     private int keyId;
 
     public OperationMerge(Operations op)
@@ -50,7 +49,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> MERGE [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false))
+        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -83,8 +82,9 @@ public class OperationMerge extends Operation implements AutoCloseable
                 if (!this.FILE_DUPES.isEmpty() && ctx.getOpt().getOutput() != null)
                 {
                     String dupesFile = StringUtils.addFileSuffix(ctx.getOpt().getOutput(), "-dupes");
+                    this.FILE_DUPES.setFileName(dupesFile);
 
-                    if (this.writeFile(dupesFile, ctx.getOpt().isApplyQuotes(), false, Const.DEBUG, this.FILE_DUPES, null))
+                    if (this.writeFile(this.FILE_DUPES, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), null))
                     {
                         LOGGER.debug("runOperation(): --> Dupes File [{}] written successfully.", dupesFile);
                     }
@@ -95,7 +95,7 @@ public class OperationMerge extends Operation implements AutoCloseable
                 }
             }
 
-            if (this.writeFile(ctx.getOpt().getOutput(), ctx.getOpt().isApplyQuotes(), false, Const.DEBUG, this.FILE_1, this.FILE_2))
+            if (this.writeFile(this.FILE_1, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), this.FILE_2))
             {
                 LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
                 this.clear();
@@ -123,12 +123,12 @@ public class OperationMerge extends Operation implements AutoCloseable
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
     }
 
-    private boolean readFiles(String file1, String file2, boolean ignoreQuotes)
+    private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)
     {
         LOGGER.debug("readFiles(): Reading file1 [{}] ...", file1);
 
-        this.FILE_1 = this.readFile(file1, ignoreQuotes, Const.DEBUG);
-        this.FILE_2 = this.readFile(file2, ignoreQuotes, Const.DEBUG);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, debug);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, debug);
 
         if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty())
         {

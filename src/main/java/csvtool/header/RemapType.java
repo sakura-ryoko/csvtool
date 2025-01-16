@@ -5,13 +5,17 @@ import java.util.List;
 
 public enum RemapType
 {
-    NONE        ("none",   false),
-    DROP        ("drop",   false),
-    STATIC      ("static", true),
-    SWAP        ("swap",   true),
-    EXCLUDE     ("exclude",true),
-    PAD         ("pad",    true),
-    DATE        ("date",   true);
+    NONE            ("none",          false),
+    DROP            ("drop",          false),
+    STATIC          ("static",        true),
+    SWAP            ("swap",          true),
+    INCLUDE         ("include",       true),
+    EXCLUDE         ("exclude",       true),
+    INCLUDE_REGEX   ("include-regex", true),
+    EXCLUDE_REGEX   ("exclude-regex", true),
+    PAD             ("pad",           true),
+    TRUNCATE        ("truncate",      true),
+    DATE            ("date",          true);
 
     public static final List<RemapType> VALUES = List.of(values());
 

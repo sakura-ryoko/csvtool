@@ -28,7 +28,7 @@ public class HeaderParser implements AutoCloseable
         this.loaded = false;
     }
 
-    public boolean init(Context ctx)
+    public boolean init(Context ctx, boolean delete)
     {
         if (!ctx.getOpt().hasHeaders())
         {
@@ -38,28 +38,12 @@ public class HeaderParser implements AutoCloseable
 
         this.configFile = ctx.getSettingValue(Settings.HEADERS);
 
-        // Read file if it exists
-        if (FileUtils.fileExists(this.configFile))
+        if (delete)
         {
-            LOGGER.debug("init(): Loading config [{}] ...", this.configFile);
-
-            if (this.loadConfig())
-            {
-                if (this.checkRemapList())
-                {
-                    LOGGER.info("init(): Config Remap List loaded/rebuilt successfully.");
-                }
-
-                LOGGER.info("init(): Config loaded successfully.");
-            }
-            else
-            {
-                LOGGER.error("init(): Config failed to load.");
-                return false;
-            }
+            LOGGER.debug("init(): Deleting existing config [{}] ...", this.configFile);
+            FileUtils.deleteIfExists(this.configFile);
         }
 
-        // Return true if the file doesn't exist, in case we are saving it.
         return true;
     }
 
@@ -181,11 +165,11 @@ public class HeaderParser implements AutoCloseable
         {
             if (i < this.CONFIG.output.size())
             {
-                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE, null));
+                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE));
             }
             else
             {
-                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.DROP, null));
+                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.DROP));
             }
         }
     }

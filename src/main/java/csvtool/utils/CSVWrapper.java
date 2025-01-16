@@ -149,6 +149,56 @@ public class CSVWrapper implements AutoCloseable
         return false;
     }
 
+    public boolean readHeadersOnly(boolean ignoreQuotes)
+    {
+        if (!this.read)
+        {
+            LOGGER.warn("readHeadersOnly(): for file [{}] is not a reader!", this.file);
+            return false;
+        }
+
+        if (this.getReader(ignoreQuotes) == null)
+        {
+            LOGGER.error("readHeadersOnly(): for file [{}] failed to build a CSVReader!", this.file);
+            return false;
+        }
+
+        this.lines = new HashMap<>();
+
+        LOGGER.debug("readHeadersOnly(): Reading file ...");
+
+        try
+        {
+            LOGGER.debug("readHeadersOnly(): Reading headers... ");
+            String[] str = this.reader.readNext();
+
+            for (int i = 0; i < str.length; i++)
+            {
+                this.header.put(i, str[i]);
+            }
+
+            this.columns = this.header.size();
+        }
+        catch (Exception err)
+        {
+            LOGGER.error("readHeadersOnly(): Exception reading file [{}]", this.file);
+        }
+
+        try
+        {
+            LOGGER.debug("readHeadersOnly(): Lines read [{}]", this.getSize());
+            this.reader.close();
+            this.reader = null;
+            return true;
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("readHeadersOnly(): Exception reading file [{}]", this.file);
+        }
+
+        return false;
+    }
+
     private @Nullable CSVWriter getWriter()
     {
         return this.getWriter(false);
