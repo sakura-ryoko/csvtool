@@ -1,15 +1,17 @@
 package csvtool.header;
 
+import csvtool.utils.LogWrapper;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVRemap implements AutoCloseable
+public class CSVRemap
 {
+    //private static final LogWrapper LOGGER = new LogWrapper(CSVRemap.class);
     private int id;
     private RemapType type;
-    @Nullable
     private List<String> params;
     @Nullable
     private final CSVRemap subRemap;
@@ -31,7 +33,7 @@ public class CSVRemap implements AutoCloseable
 
         if (params == null || params.isEmpty())
         {
-            this.params = null;
+            this.params = new ArrayList<>();
         }
         else
         {
@@ -66,7 +68,7 @@ public class CSVRemap implements AutoCloseable
         return this.type;
     }
 
-    public @Nullable List<String> getParams()
+    public List<String> getParams()
     {
         return this.params;
     }
@@ -87,7 +89,7 @@ public class CSVRemap implements AutoCloseable
     {
         if (params == null || params.isEmpty())
         {
-            this.params = null;
+            this.params = new ArrayList<>();
         }
         else
         {
@@ -119,40 +121,43 @@ public class CSVRemap implements AutoCloseable
     public String toString()
     {
         StringBuilder builder = new StringBuilder("CSVRemap[");
-        builder.append("id=").append(this.getId());
+        builder.append("id=").append(this.getId()).append(",");
         builder.append("type={").append(this.getType().toString()).append("}");
 
-        if (this.getType().needsParam() && this.getParams() != null)
+        if (this.getParams() != null && !this.getParams().isEmpty())
         {
             for (int i = 0; i < this.getParams().size(); i++)
             {
                 if (i == 0)
                 {
-                    builder.append("params=[").append("{");
+                    builder.append(",params=[").append("\"");
                 }
                 else
                 {
-                    builder.append(",{");
+                    builder.append(",\"");
                 }
 
-                builder.append(this.getParams().get(i)).append("}");
+                builder.append(this.getParams().get(i)).append("\"");
             }
 
             builder.append("]");
         }
-
-        if (this.subRemap != null)
+        else
         {
-            builder.append("subRemap={").append(this.subRemap).append("}");
+            builder.append(",params=[]");
         }
+
+        if (this.getSubRemap() != null)
+        {
+            builder.append(",subRemap={").append(this.getSubRemap()).append("}");
+        }
+        else
+        {
+            builder.append(",subRemap={}");
+        }
+
 
         builder.append("]");
         return builder.toString();
-    }
-
-    @Override
-    public void close() throws Exception
-    {
-        this.clear();
     }
 }

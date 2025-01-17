@@ -1,10 +1,12 @@
 package csvtool.operation;
 
+import csvtool.data.Const;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.header.CSVRemap;
+import csvtool.header.CSVRemapList;
 import csvtool.header.HeaderParser;
 import csvtool.header.RemapType;
 import csvtool.utils.LogWrapper;
@@ -14,9 +16,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,6 +163,11 @@ public class OperationReformat extends Operation implements AutoCloseable
         this.OUT.setHeader(this.PARSER.getOutputHeader());
         this.EXCEPTIONS.setHeader(this.PARSER.getOutputHeader());
 
+        if (Const.DEBUG)
+        {
+            this.PARSER.dumpRemapList();
+        }
+
         for (int i = 0; i < this.FILE.getFile().size(); i++)
         {
             List<String> entry = this.FILE.getFile().get(i);
@@ -203,14 +208,11 @@ public class OperationReformat extends Operation implements AutoCloseable
             return null;
         }
 
-        List<CSVRemap> remapList = this.PARSER.getRemapList().list();
-        List<String> result = new ArrayList<>(data);
-        List<Integer> handled = new ArrayList<>();
-        boolean exclude = false;
+        CSVRemapList remapList = new CSVRemapList(this.PARSER.getRemapList().getList());
 
-        if (remapList.size() < data.size())
+        if (remapList.size() != data.size())
         {
-            LOGGER.error("applyRemap(): Error, Remap List Config size [{}] does not match Input Data size [{}]!", remapList.size(), data.size());
+            LOGGER.error("applyRemap(): Error; Remap List Config size [{}] does not match Input Data size [{}]!", remapList.size(), data.size());
             return null;
         }
 
@@ -222,21 +224,23 @@ public class OperationReformat extends Operation implements AutoCloseable
 
             if (entry == null)
             {
-                LOGGER.error("applyRemap():1: Error, Entry at pos [{}] is empty!", i);
+                LOGGER.error("applyRemap():1: Error; Entry at pos [{}] is empty!", i);
                 return null;
             }
 
-            LOGGER.debug("[{}] IN:1: [{}]", i, entry);
+            //LOGGER.debug("[{}] IN:1: [{}]", i, entry);
 
-            CSVRemap remap = remapList.get(i);
+            CSVRemap remap = remapList.getRemap(i);
 
-            if (remap.getType() == RemapType.DROP)
+            if (remap == null)
             {
-                // Drop Field & advance (By simply ignoring it from the results)
-                LOGGER.debug("applyRemap():1: Performing Field drop [{}:{}]", i, entry);
-                handled.add(i);
+                LOGGER.error("applyRemap():1: Error; Remap at pos [{}] is empty!", i);
+                return null;
             }
-            else if (remap.getType() == RemapType.SWAP)
+
+            //LOGGER.debug("applyRemap():1: [{}] toString [{}]", i, remap.toString());
+
+            if (remap.getType() == RemapType.SWAP)
             {
                 // Swap Fields
                 List<String> params = remap.getParams();
@@ -250,28 +254,78 @@ public class OperationReformat extends Operation implements AutoCloseable
                 try
                 {
                     int swapId = Integer.parseInt(params.getFirst());
-                    String otherEntry = result.get(swapId);
-                    CSVRemap otherRemap = remapList.get(swapId);
+                    String otherEntry = data.get(swapId);
+                    CSVRemap otherRemap = remapList.getRemap(swapId);
 
                     LOGGER.debug("applyRemap():1: Performing Field swap [{}:{} <-> {}:{}]", i, entry, swapId, otherEntry);
                     data.set(i, otherEntry);
-                    remapList.add(i, otherRemap);
+
+                    if (otherRemap != null)
+                    {
+                        remapList.setRemap(i, otherRemap);
+                    }
+                    else
+                    {
+                        remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+                    }
+
+                    LOGGER.debug("applyRemap():1:SWAP-A: [{}] toString [{}]", i, Objects.requireNonNullElse(remapList.getRemap(i), "<NULL>").toString());
                     data.set(swapId, entry);
 
                     if (remap.getSubRemap() != null)
                     {
-                        remapList.set(swapId, remap.getSubRemap());
+                        remapList.setRemap(swapId, remap.getSubRemap());
                     }
                     else
                     {
-                        remapList.set(swapId, new CSVRemap(swapId, RemapType.NONE));
+                        remapList.setRemap(swapId, new CSVRemap(swapId, RemapType.NONE));
                     }
+
+                    LOGGER.debug("applyRemap():1:SWAP-B: [{}] toString [{}]", swapId, Objects.requireNonNullElse(remapList.getRemap(swapId), "<NULL>").toString());
                 }
-                catch (NumberFormatException err)
+                catch (Exception err)
                 {
                     LOGGER.warn("applyRemap():1: SWAP error; {}", err.getMessage());
                     return null;
                 }
+            }
+        }
+
+        List<String> result = new ArrayList<>(data);
+        boolean exclude = false;
+
+        LOGGER.debug("applyRemap(): begin (Pass 2) with list size [{}]", data.size());
+        // Pass 2 (To process the actual remaps)
+        for (int i = 0; i < data.size(); i++)
+        {
+            String entry = data.get(i);
+
+            if (entry == null)
+            {
+                LOGGER.error("applyRemap():2: Error; Entry at pos [{}] is empty!", i);
+                return null;
+            }
+
+            //LOGGER.debug("[{}] IN:2: [{}]", i, entry);
+
+            CSVRemap remap = remapList.getRemap(i);
+
+            if (remap == null)
+            {
+                LOGGER.error("applyRemap():2: Error; Remap at pos [{}] is empty!", i);
+                return null;
+            }
+
+            //LOGGER.debug("applyRemap():2: [{}] toString [{}]", i, remap.toString());
+
+            if (remap.getType() == RemapType.DROP)
+            {
+                // Drop Field & advance (By simply ignoring it from the results)
+                LOGGER.debug("applyRemap():2: Performing Field drop [{}:{}] (Pass 2)", i, entry);
+            }
+            else if (remap.getType() == RemapType.SWAP)
+            {
+                result.set(i, entry);
             }
             else
             {
@@ -279,7 +333,7 @@ public class OperationReformat extends Operation implements AutoCloseable
 
                 if (resultEach == null || resultEach.getRight() == null)
                 {
-                    LOGGER.warn("applyRemap():1: Error, ResultEach at pos [{}] is empty!", i);
+                    LOGGER.warn("applyRemap():2: Error; ResultEach at pos [{}] is empty!", i);
                     resultEach = Pair.of(false, entry);
                 }
 
@@ -288,132 +342,14 @@ public class OperationReformat extends Operation implements AutoCloseable
                     exclude = true;
                 }
 
-                LOGGER.debug("[{}] OUT:1: [{}]", i, resultEach.getRight());
+                //LOGGER.debug("[{}] OUT:2: [{}]", i, resultEach.getRight());
                 result.set(i, resultEach.getRight());
-                handled.add(i);
             }
         }
 
-        LOGGER.debug("applyRemap(): begin (Pass 2) with list size [{}] and handled size [{}]", data.size(), handled.size());
-        // Pass 2 (To process preceding Swaps that might not yet have been remapped)
-        for (int i = 0; i < data.size(); i++)
-        {
-            String entry = data.get(i);
+        LOGGER.debug("applyRemap(): Post pass 2 data size [{}], result size [{}]", data.size(), result.size());
 
-            if (entry == null)
-            {
-                LOGGER.error("applyRemap():2: Error, Entry at pos [{}] is empty!", i);
-                return null;
-            }
-
-            if (!handled.contains(i))
-            {
-                LOGGER.debug("[{}] IN:2: [{}]", i, entry);
-
-                CSVRemap remap = remapList.get(i);
-
-                if (remap.getType() == RemapType.DROP)
-                {
-                    // Drop Field & advance (By simply ignoring it from the results)
-                    LOGGER.debug("applyRemap():2: Performing Field drop [{}:{}]", i, entry);
-                    handled.add(i);
-                }
-                else if (remap.getType() == RemapType.SWAP)
-                {
-                    // Swap Fields
-                    List<String> params = remap.getParams();
-
-                    if (params == null || params.isEmpty())
-                    {
-                        LOGGER.warn("applyRemap():2: SWAP error; No parameters given");
-                        return null;
-                    }
-
-                    try
-                    {
-                        int swapId = Integer.parseInt(params.getFirst());
-                        String otherEntry = result.get(swapId);
-                        CSVRemap otherRemap = remapList.get(swapId);
-
-                        LOGGER.debug("applyRemap():2: Performing Field swap [{}:{} <-> {}:{}] and executing subRemaps ...", i, entry, swapId, otherEntry);
-                        Pair<Boolean, String> resultEach1 = this.applyRemapEach(otherRemap, otherEntry);
-
-                        if (resultEach1 == null || resultEach1.getRight() == null)
-                        {
-                            LOGGER.warn("applyRemap():2:SWAP: Error, ResultEach at pos [{}] is empty!", i);
-                            resultEach1 = Pair.of(false, otherEntry);
-                        }
-
-                        if (resultEach1.getLeft())
-                        {
-                            exclude = true;
-                        }
-
-                        LOGGER.debug("[{}] OUT:2:SWAP: [{}]", i, resultEach1.getRight());
-                        result.set(i, resultEach1.getRight());
-                        handled.add(i);
-
-                        if (remap.getSubRemap() != null)
-                        {
-                            Pair<Boolean, String> resultEach2 = this.applyRemapEach(remap.getSubRemap(), entry);
-
-                            if (resultEach2 == null || resultEach2.getRight() == null)
-                            {
-                                LOGGER.warn("applyRemap():2:SWAP: Error, ResultEach at pos [{}] is empty!", swapId);
-                                resultEach2 = Pair.of(false, entry);
-                            }
-
-                            if (resultEach2.getLeft())
-                            {
-                                exclude = true;
-                            }
-
-                            LOGGER.debug("[{}] OUT:2:SWAP: [{}]", swapId, resultEach2.getRight());
-                            result.set(swapId, resultEach2.getRight());
-                        }
-                        else
-                        {
-                            result.set(swapId, entry);
-                        }
-
-                        handled.add(swapId);
-                    }
-                    catch (NumberFormatException err)
-                    {
-                        LOGGER.warn("applyRemap():2: SWAP error; {}", err.getMessage());
-                        return null;
-                    }
-                }
-                else
-                {
-                    Pair<Boolean, String> resultEach = this.applyRemapEach(remap, entry);
-
-                    if (resultEach == null || resultEach.getRight() == null)
-                    {
-                        LOGGER.warn("applyRemap():2: Error, ResultEach at pos [{}] is empty!", i);
-                        resultEach = Pair.of(false, entry);
-                    }
-
-                    if (resultEach.getLeft())
-                    {
-                        exclude = true;
-                    }
-
-                    LOGGER.debug("[{}] OUT:2: [{}]", i, resultEach.getRight());
-                    result.set(i, resultEach.getRight());
-                    handled.add(i);
-                }
-            }
-        }
-
-        LOGGER.debug("applyRemap(): Post pass 2 data size [{}], result size [{}], handled size [{}]", data.size(), result.size(), handled.size());
-
-        if (data.size() != handled.size())
-        {
-            LOGGER.warn("applyRemap(): Unhandled remaps detected!");
-        }
-
-        if (result.size() > handled.size() || result.size() > data.size())
+        if (result.size() > data.size())
         {
             LOGGER.warn("applyRemap(): Excess Results detected!");
         }
@@ -500,6 +436,8 @@ public class OperationReformat extends Operation implements AutoCloseable
 
                 if (params.size() > 1)
                 {
+                    boolean found = false;
+
                     // Allow for multi-matching
                     for (int i = 0; i < params.size(); i++)
                     {
@@ -507,7 +445,13 @@ public class OperationReformat extends Operation implements AutoCloseable
                         {
                             i++;
                             result = params.get(i);
+                            found = true;
                         }
+                    }
+
+                    if (!found)
+                    {
+                        result = data;
                     }
                 }
                 else
@@ -653,7 +597,7 @@ public class OperationReformat extends Operation implements AutoCloseable
 
             if (resultEach == null || resultEach.getRight() == null)
             {
-                LOGGER.warn("applySubRemapNested(): Error, ResultEach is empty!");
+                LOGGER.warn("applySubRemapNested(): Error; ResultEach is empty!");
                 resultEach = Pair.of(false, data);
             }
 

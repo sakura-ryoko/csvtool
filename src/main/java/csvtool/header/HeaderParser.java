@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class HeaderParser implements AutoCloseable
 {
@@ -85,6 +86,36 @@ public class HeaderParser implements AutoCloseable
         }
 
         return null;
+    }
+
+    public int getRemapListSize()
+    {
+        if (this.CONFIG != null && this.CONFIG.remapList != null)
+        {
+            return this.CONFIG.remapList.size();
+        }
+
+        return -1;
+    }
+
+    public @Nullable CSVRemap getRemapListEntry(int entry)
+    {
+        if (this.CONFIG.remapList.size() < entry)
+        {
+            return null;
+        }
+
+        return this.CONFIG.remapList.getRemap(entry);
+    }
+
+    public void setRemapListEntry(int entry, @Nonnull CSVRemap newRemap)
+    {
+        if (this.CONFIG.remapList.size() < entry)
+        {
+            return;
+        }
+
+        this.CONFIG.remapList.setRemap(entry, newRemap);
     }
 
     public HeaderParser setHeaderConfigFile(@Nonnull String newConfig)
@@ -165,11 +196,11 @@ public class HeaderParser implements AutoCloseable
         {
             if (i < this.CONFIG.output.size())
             {
-                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE));
+                this.CONFIG.remapList = this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.NONE));
             }
             else
             {
-                this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.DROP));
+                this.CONFIG.remapList = this.CONFIG.remapList.addRemap(new CSVRemap(i, RemapType.DROP));
             }
         }
     }
@@ -195,7 +226,9 @@ public class HeaderParser implements AutoCloseable
             // Count the DROP's
             for (int i = 0; i < this.CONFIG.remapList.size(); i++)
             {
-                if (this.CONFIG.remapList.list().get(i).getType() == RemapType.DROP)
+                CSVRemap entry = this.CONFIG.remapList.getRemap(i);
+
+                if (entry != null && entry.getType() == RemapType.DROP)
                 {
                     dropCount++;
                 }
@@ -214,6 +247,23 @@ public class HeaderParser implements AutoCloseable
         }
 
         return true;
+    }
+
+    public void dumpRemapList()
+    {
+        if (this.CONFIG.remapList == null || this.CONFIG.remapList.isEmpty())
+        {
+            LOGGER.error("dumpRemapList(): Error; List is empty/null!");
+            return;
+        }
+
+        LOGGER.warn("dumpRemapList(): Dumping Remap List ...");
+        for (int i = 0; i < this.getRemapListSize(); i++)
+        {
+            LOGGER.warn("[{}] remap: [{}]", i, Objects.requireNonNullElse(this.getRemapListEntry(i), "<NULL>").toString());
+        }
+
+        LOGGER.warn("dumpRemapList(): EOL");
     }
 
     public boolean loadConfig()
@@ -289,6 +339,26 @@ public class HeaderParser implements AutoCloseable
     {
         if (this.CONFIG != null)
         {
+            if (this.CONFIG.input != null)
+            {
+                this.CONFIG.input.clear();
+            }
+
+            if (this.CONFIG.output != null)
+            {
+                this.CONFIG.output.clear();
+            }
+
+            if (this.CONFIG.remapList != null)
+            {
+                this.CONFIG.remapList.clear();
+            }
+
+            if (this.CONFIG.remap_examples != null)
+            {
+                this.CONFIG.remap_examples.clear();
+            }
+
             this.CONFIG = null;
         }
     }
@@ -296,13 +366,6 @@ public class HeaderParser implements AutoCloseable
     @Override
     public void close() throws Exception
     {
-        if (this.CONFIG != null)
-        {
-            this.CONFIG.input.close();
-            this.CONFIG.output.close();
-            this.CONFIG.remapList.close();
-        }
-
         this.clear();
     }
 }

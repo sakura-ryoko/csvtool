@@ -1,12 +1,15 @@
 package csvtool.header;
 
+import csvtool.utils.LogWrapper;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
+public class CSVRemapList
 {
+    private static final LogWrapper LOGGER = new LogWrapper(CSVRemapList.class);
     public static final CSVRemapList EXAMPLES = new CSVRemapList(
         List.of(
                 new CSVRemap(0, RemapType.NONE),
@@ -24,6 +27,8 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
                 )
         )
     );
+
+    private final List<CSVRemap> list;
 
     public CSVRemapList()
     {
@@ -54,13 +59,50 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
 
     public CSVRemapList addRemap(@Nonnull CSVRemap remap)
     {
-        if (remap.getType().needsParam() && remap.getParams() == null)
+        if (remap.getParams() == null)
         {
             remap = remap.setParams(List.of());
         }
 
         this.list.add(remap);
         return this;
+    }
+
+    public boolean hasRemap(int entry)
+    {
+        if (entry > this.list.size())
+        {
+            return false;
+        }
+
+        return this.list.get(entry) != null;
+    }
+
+    public @Nullable CSVRemap getRemap(int entry)
+    {
+        if (entry > this.list.size())
+        {
+            LOGGER.error("setRemap(): Error; Entry: [{}] > size [{}]", entry, this.list.size());
+            return null;
+        }
+
+        return this.list.get(entry);
+    }
+
+    public void setRemap(int entry, @Nonnull CSVRemap newRemap)
+    {
+        if (entry > this.list.size())
+        {
+            LOGGER.error("setRemap(): Error; Entry: [{}] > size [{}]", entry, this.list.size());
+            return;
+        }
+
+        this.list.set(entry, newRemap);
+    }
+
+    public List<CSVRemap> getList()
+    {
+        return this.list;
     }
 
     public void clear()
@@ -78,7 +120,7 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
 
         if (!this.list.isEmpty())
         {
-            for (int i = 0; i < this.list().size(); i++)
+            for (int i = 0; i < this.list.size(); i++)
             {
                 builder.append(i);
 
@@ -91,17 +133,11 @@ public record CSVRemapList(List<CSVRemap> list) implements AutoCloseable
                     builder.append(",{");
                 }
 
-                builder.append(this.list().get(i).toString()).append("}");
+                builder.append(this.list.get(i).toString()).append("}");
             }
         }
 
         builder.append("]");
         return builder.toString();
-    }
-
-    @Override
-    public void close() throws Exception
-    {
-        this.clear();
     }
 }
