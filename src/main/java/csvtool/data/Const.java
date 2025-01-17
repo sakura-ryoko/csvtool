@@ -11,5 +11,5 @@ public class Const
     // Defaults
     public static final boolean DEBUG = false;
     public static final boolean QUIET = false;
-    public static final boolean ANSI_COLOR = true;
+    public static final boolean ANSI_COLOR = false;
 }

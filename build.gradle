@@ -27,8 +27,10 @@ dependencies {
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }
 
-group = project.group
-//base.archivesName = project.file_name + '-' + project.version
+base {
+    group = project.group
+    //archivesName = project.file_name + '-' + project.version
+}
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"

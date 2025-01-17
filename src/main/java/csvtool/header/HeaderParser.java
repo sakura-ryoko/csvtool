@@ -31,6 +31,16 @@ public class HeaderParser implements AutoCloseable
 
     public boolean init(Context ctx, boolean delete)
     {
+        if (ctx.getOpt().isQuiet())
+        {
+            LOGGER.toggleQuiet(true);
+        }
+
+        if (ctx.getOpt().isDebug())
+        {
+            LOGGER.toggleDebug(true);
+        }
+
         if (!ctx.getOpt().hasHeaders())
         {
             LOGGER.error("init():  No headers file provided!");
