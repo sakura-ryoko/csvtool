@@ -2,7 +2,7 @@
 A basic utlity meant to perform operations on multiple CSV files, such as merging, diff, and reformatting.
 
 Most functions use a particular 'Operation' (aka mode of execution) per a task; and this needs to always be the first run paremeter.
-See the `--help` menu for more information on use; and refer to the example / documentation under the Reformatting file config generated via the `--header-save` Operation.  There are several 'CSVRemap' functions available that can be used.
+See the `--help` menu for more information on use; and refer to the example / documentation under the Reformatting JSON config file generated via the `--header-save` Operation.  There are several 'CSVRemap' functions available that can be used.
 
 Valid Operations:
 - `--help` - Help
