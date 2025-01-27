@@ -11,3 +11,6 @@ Valid Operations:
 - `--diff` - Compare two CSV files' data and output a DIFF CSV, assuming that the headers match.
 - `--header-save` - Saves the Headers of a pair of CSV files (Input, Output) to a JSON Headers config file.
 - `--reformat` - Performs a CSV reformat (Input / Output) based on the saved JSON Headers configuration; utilizing the CSV Remap system as outlined in the JSON Config examples.  This method can only match or Shrink the size of the Input CSV Headers.
+
+Building manually:
+- `./gradlew shadowJar` - Builds the full JAR file with all of it's dependancies.
