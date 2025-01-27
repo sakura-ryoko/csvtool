@@ -5,7 +5,7 @@ Most functions use a particular 'Operation' (aka mode of execution) per a task; 
 See the `--help` menu for more information on use; and refer to the example / documentation under the Reformatting JSON config file generated via the `--header-save` Operation.  There are several 'CSVRemap' functions available that can be used.
 
 Valid Operations:
-- `--help` - Help system.  Use `--help --operation` for more details and optional config settings and syntax for each operation.
+- `--help` - Help system.  Use `--help --operation` for more details, optional config settings, and typical syntax used for each operation.
 - `--test` - A simple test routine to make a copy of an existing CSV file using it's internal mechanisms.
 - `--merge` - Merge two CSV files' data assuming that the headers match.
 - `--diff` - Compare two CSV files' data and output a DIFF CSV, assuming that the headers match.
