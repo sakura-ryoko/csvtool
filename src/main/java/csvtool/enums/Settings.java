@@ -6,17 +6,19 @@ import java.util.List;
 
 public enum Settings
 {
-    INPUT2      ("input2",   "--input",   true,  List.of("--in", "-input", "-i")),
-    OUTPUT      ("output",   "--output",  true,  List.of("--out", "-output", "-out")),
-    HEADERS     ("headers",  "--headers", true,  List.of("--header", "--head", "-head", "-header", "-headers", "--hd", "-hd")),
-    KEY         ("key",      "--key",     true,  List.of("--k", "-key", "-k")),
-    KEY2        ("key2",     "--key2",    true,  List.of("--k2", "-key2", "-k2")),
-    SIDE        ("side",     "--side",    true,  List.of("--sides", "-side", "-sides", "--s", "-s")),
-    DE_DUPE     ("de-dupe",  "--de-dupe", false, List.of("-de-dupe", "--dedupe", "-dedupe", "--dd", "-dd")),
-    QUOTES      ("quotes",   "--quotes",  false, List.of("-quotes")),
-    APPEND      ("append",   "--append",  false, List.of("--a", "-append", "-a")),
-    QUIET       ("quiet",    "--quiet",   false, List.of("-quiet", "--q", "-q")),
-    DEBUG       ("debug",    "--debug",   false, List.of("--db", "-db", "-debug", "--d", "-d"));
+    INPUT2      ("input2",      "--input",      true,  List.of("--in", "-input", "-i")),
+    OUTPUT      ("output",      "--output",     true,  List.of("--out", "-output", "-out")),
+    HEADERS     ("headers",     "--headers",    true,  List.of("--header", "--head", "-head", "-header", "-headers", "--hd", "-hd")),
+    KEY         ("key",         "--key",        true,  List.of("--k", "-key", "-k")),
+    KEY2        ("key2",        "--key2",       true,  List.of("--k2", "-key2", "-k2")),
+    SIDE        ("side",        "--side",       true,  List.of("--sides", "-side", "-sides", "--s", "-s")),
+    DE_DUPE     ("de-dupe",     "--de-dupe",    false, List.of("-de-dupe", "--dedupe", "-dedupe", "--dd", "-dd")),
+    QUOTES      ("quotes",      "--quotes",     false, List.of("-quotes")),
+    APPEND      ("append",      "--append",     false, List.of("--a", "-append", "-a")),
+    QUIET       ("quiet",       "--quiet",      false, List.of("-quiet", "--q", "-q")),
+    DEBUG       ("debug",       "--debug",      false, List.of("--db", "-db", "-debug", "--d", "-d")),
+    ANSI_COLORS ("ansi-colors", "--ansi-colors",false, List.of("--colors", "--color", "--ansi", "-colors", "-color", "-ansi")),
+    ;
 
     public static final List<Settings> VALUES = List.of(values());
 

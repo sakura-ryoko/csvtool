@@ -41,6 +41,11 @@ public class HeaderParser implements AutoCloseable
             LOGGER.toggleDebug(true);
         }
 
+        if (ctx.getOpt().isAnsiColors())
+        {
+            LOGGER.toggleAnsiColor(true);
+        }
+
         if (!ctx.getOpt().hasHeaders())
         {
             LOGGER.error("init():  No headers file provided!");

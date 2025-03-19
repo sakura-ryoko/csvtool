@@ -28,6 +28,21 @@ public abstract class Operation
 
     public void displayHelp() { }
 
+    protected void toggleDebug(boolean toggle)
+    {
+        LOGGER.toggleDebug(toggle);
+    }
+
+    protected void toggleQuiet(boolean toggle)
+    {
+        LOGGER.toggleQuiet(toggle);
+    }
+
+    protected void toggleAnsiColor(boolean toggle)
+    {
+        LOGGER.toggleAnsiColor(toggle);
+    }
+
     protected @Nullable FileCache readFile(String file)
     {
         return this.readFile(file, true, false);

@@ -19,6 +19,7 @@ public class OptSettings
     private boolean appendOutput;
     private boolean quiet;
     private boolean debug;
+    private boolean ansiColors;
 
     public OptSettings()
     {
@@ -33,6 +34,7 @@ public class OptSettings
         this.appendOutput = false;
         this.quiet = Const.QUIET;
         this.debug = Const.DEBUG;
+        this.ansiColors = Const.ANSI_COLOR;
     }
 
     public boolean hasInput2()
@@ -120,6 +122,11 @@ public class OptSettings
         return this.debug;
     }
 
+    public boolean isAnsiColors()
+    {
+        return this.ansiColors;
+    }
+
     public void setInput2(String input2)
     {
         this.input2 = input2;
@@ -200,5 +207,10 @@ public class OptSettings
     public void setDebug(boolean toggle)
     {
         this.debug = toggle;
+    }
+
+    public void setAnsiColors(boolean toggle)
+    {
+        this.ansiColors = toggle;
     }
 }

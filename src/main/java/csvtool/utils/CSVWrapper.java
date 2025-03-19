@@ -562,11 +562,13 @@ public class CSVWrapper implements AutoCloseable
             this.reader.close();
             this.reader = null;
         }
+
         if (this.writer != null)
         {
             this.writer.close();
             this.writer = null;
         }
+
         this.parser = null;
         this.lines.clear();
         this.header.clear();

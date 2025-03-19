@@ -17,10 +17,9 @@ public class OperationType<T extends Operation>
     private final OperationFactory<? extends T> factory;
     private final Operations ops;
 
-    @SuppressWarnings("unchecked")
     private static <T extends Operation> OperationType<T> create(OperationFactory<? extends T> factory, Operations ops)
     {
-        return (OperationType) new OperationType(factory, ops);
+        return new OperationType<>(factory, ops);
     }
 
     private OperationType(OperationFactory<? extends T> factory, Operations ops)

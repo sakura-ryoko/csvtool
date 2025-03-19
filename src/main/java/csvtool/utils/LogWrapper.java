@@ -11,22 +11,24 @@ public class LogWrapper
     private final String log;
     private boolean debug;
     private boolean quiet;
+    private boolean ansiColor;
 
     public LogWrapper(Class<?> clazz)
     {
-        this(clazz, Const.DEBUG, Const.QUIET);
+        this(clazz, Const.DEBUG, Const.QUIET, Const.ANSI_COLOR);
     }
 
     public LogWrapper(Class<?> clazz, boolean debug)
     {
-        this(clazz, debug, Const.QUIET);
+        this(clazz, debug, Const.QUIET, Const.ANSI_COLOR);
     }
 
-    public LogWrapper(Class<?> clazz, boolean debug, boolean quiet)
+    public LogWrapper(Class<?> clazz, boolean debug, boolean quiet, boolean ansiColor)
     {
         this.log = clazz.getName();
         this.debug = debug;
         this.quiet = quiet;
+        this.ansiColor = ansiColor;
     }
 
     public void toggleDebug(boolean toggle)
@@ -39,13 +41,18 @@ public class LogWrapper
         this.quiet = toggle;
     }
 
+    public void toggleAnsiColor(boolean toggle)
+    {
+        this.ansiColor = toggle;
+    }
+
     public void info(String fmt, Object... args)
     {
         if (this.log != null && !this.quiet)
         {
             String msg = StringUtils.format(fmt, args);
 
-            if (Const.ANSI_COLOR)
+            if (this.ansiColor)
             {
                 System.out.printf(Colors.WHITE + "[INFO/" + this.log + "]: %s" + Colors.RESET + "\n", msg);
             }
@@ -58,11 +65,11 @@ public class LogWrapper
 
     public void debug(String fmt, Object... args)
     {
-        if (this.log != null && this.debug)
+        if (this.log != null && this.debug && !this.quiet)
         {
             String msg = StringUtils.format(fmt, args);
 
-            if (Const.ANSI_COLOR)
+            if (this.ansiColor)
             {
                 System.out.printf(Colors.PURPLE_BOLD + "[DEBUG/" + this.log + "]: %s" + Colors.RESET + "\n", msg);
             }
@@ -79,7 +86,7 @@ public class LogWrapper
         {
             String msg = StringUtils.format(fmt, args);
 
-            if (Const.ANSI_COLOR)
+            if (this.ansiColor)
             {
                 System.out.printf(Colors.YELLOW_BOLD + "[WARN/" + this.log + "]: %s" + Colors.RESET + "\n", msg);
             }
@@ -96,7 +103,7 @@ public class LogWrapper
         {
             String msg = StringUtils.format(fmt, args);
 
-            if (Const.ANSI_COLOR)
+            if (this.ansiColor)
             {
                 System.out.printf(Colors.RED_BOLD + "[ERROR/" + this.log + "]: %s" + Colors.RESET + "\n", msg);
             }
@@ -113,7 +120,7 @@ public class LogWrapper
         {
             String msg = StringUtils.format(fmt, args);
 
-            if (Const.ANSI_COLOR)
+            if (this.ansiColor)
             {
                 System.out.printf(Colors.RED_BOLD_BRIGHT + "[FATAL/" + this.log + "]: %s" + Colors.RESET + "\n", msg);
             }

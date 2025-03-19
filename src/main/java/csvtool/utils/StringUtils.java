@@ -2,7 +2,7 @@ package csvtool.utils;
 
 public class StringUtils extends org.apache.commons.lang3.StringUtils
 {
-    private static final LogWrapper LOGGER = new LogWrapper(StringUtils.class);
+//    private static final LogWrapper LOGGER = new LogWrapper(StringUtils.class);
 
     public static String format(final String format, final Object... args)
     {
@@ -27,7 +27,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         StringBuilder result = new StringBuilder();
         String[] split = file.split("\\.(?=[^\\.]+$)");
 
-        LOGGER.debug("addFileSuffix({}, {})", file, suffix);
+//        LOGGER.debug("addFileSuffix({}, {})", file, suffix);
 
         if (split.length > 1)
         {

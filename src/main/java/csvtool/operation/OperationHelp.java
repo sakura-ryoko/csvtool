@@ -2,6 +2,7 @@ package csvtool.operation;
 
 import csvtool.data.Const;
 import csvtool.data.Context;
+import csvtool.data.OptSettings;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
@@ -20,12 +21,20 @@ public class OperationHelp extends Operation
     {
         if (ctx.getOpt().isQuiet())
         {
+            super.toggleQuiet(true);
             LOGGER.toggleQuiet(true);
         }
 
         if (ctx.getOpt().isDebug())
         {
+            super.toggleDebug(true);
             LOGGER.toggleDebug(true);
+        }
+
+        if (ctx.getOpt().isAnsiColors())
+        {
+            super.toggleAnsiColor(true);
+            LOGGER.toggleAnsiColor(true);
         }
 
         LOGGER.debug("runOperation(): displayHelp()");
@@ -56,6 +65,11 @@ public class OperationHelp extends Operation
                 this.displayHelpForSetting(setting);
                 return true;
             }
+        }
+
+        if (this.checkOptSettings(ctx.getOpt()))
+        {
+            return true;
         }
 
         // Generic Help
@@ -99,6 +113,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--append:\n\t\tSets the CSV Output in \"Append\" mode, which causes the Output to not be Overwritten, but appended to.\n");
         System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
         System.out.print("\t--debug:\n\t\tSets the Operation in \"Debug\" mode, which causes the Logger to output Debug Level messages.\n");
+        System.out.print("\t--ansi-colors:\n\t\tSets the Operation in \"Ansi-Color\" mode, which causes the Logger to output messages with ANSI-style color codes.\n");
     }
 
     private void displayHelpForSetting(Settings setting)
@@ -116,8 +131,89 @@ public class OperationHelp extends Operation
             case APPEND -> this.displayHelpForAppend();
             case QUIET -> this.displayHelpForQuiet();
             case DEBUG -> this.displayHelpForDebug();
+            case ANSI_COLORS -> this.displayHelpForAnsiColors();
             default -> this.displayHelp();
         }
+    }
+
+    private boolean checkOptSettings(OptSettings opt)
+    {
+        boolean hasOpt = false;
+
+        if (opt.hasInput2())
+        {
+            this.displayVersion();
+            this.displayHelpForInput2();
+            hasOpt = true;
+        }
+        else if (opt.hasOutput())
+        {
+            this.displayVersion();
+            this.displayHelpForOutput();
+            hasOpt = true;
+        }
+        else if (opt.hasHeaders())
+        {
+            this.displayVersion();
+            this.displayHelpForHeaders();
+            hasOpt = true;
+        }
+        else if (opt.hasKey())
+        {
+            this.displayVersion();
+            this.displayHelpForKey();
+            hasOpt = true;
+        }
+        else if (opt.hasKey2())
+        {
+            this.displayVersion();
+            this.displayHelpForKey2();
+            hasOpt = true;
+        }
+        else if (opt.hasSide())
+        {
+            this.displayVersion();
+            this.displayHelpForSide();
+            hasOpt = true;
+        }
+        else if (opt.isDeDupe())
+        {
+            this.displayVersion();
+            this.displayHelpForDeDupe();
+            hasOpt = true;
+        }
+        else if (opt.isApplyQuotes())
+        {
+            this.displayVersion();
+            this.displayHelpForQuotes();
+            hasOpt = true;
+        }
+        else if (opt.isAppendOutput())
+        {
+            this.displayVersion();
+            this.displayHelpForAppend();
+            hasOpt = true;
+        }
+        else if (opt.isDebug() && !Const.DEBUG)
+        {
+            this.displayVersion();
+            this.displayHelpForDebug();
+            hasOpt = true;
+        }
+        else if (opt.isQuiet() && !Const.QUIET)
+        {
+            this.displayVersion();
+            this.displayHelpForQuiet();
+            hasOpt = true;
+        }
+        else if (opt.isAnsiColors() && !Const.ANSI_COLOR)
+        {
+            this.displayVersion();
+            this.displayHelpForAnsiColors();
+            hasOpt = true;
+        }
+
+        return hasOpt;
     }
 
     private void displayHelpForInput2()
@@ -184,6 +280,12 @@ public class OperationHelp extends Operation
     {
         System.out.print("--debug:\n");
         System.out.printf("Aliases: %s\n", Settings.DEBUG.getAlias().toString());
+    }
+
+    private void displayHelpForAnsiColors()
+    {
+        System.out.print("--ansi-colors:\n");
+        System.out.printf("Aliases: %s\n", Settings.ANSI_COLORS.getAlias().toString());
     }
 
     @Override

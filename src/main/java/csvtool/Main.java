@@ -68,7 +68,8 @@ public class Main
                     String param = args[argIndex];
                     argIndex++;
                     ctx = ctx.addSettings(setting, param);
-                } else
+                }
+                else
                 {
                     ctx = ctx.addSettings(setting, null);
                 }
@@ -76,22 +77,25 @@ public class Main
             }
 
             // Get Input File
-            String inputStr = args[argIndex];
-            argIndex++;
-
-            if (ctx.getOp() != Operations.HELP)
+            if (argIndex < args.length)
             {
-                if (FileUtils.fileExists(inputStr))
-                {
-                    LOGGER.debug("input file [{}] exists.", inputStr);
-                } else
-                {
-                    LOGGER.error("input file [{}] does not exist!", inputStr);
-                    exit(ExitCode.FILE_NOT_FOUND);
-                }
-            }
+                String inputStr = args[argIndex];
+                argIndex++;
 
-            ctx = ctx.setInputFile(inputStr);
+                if (ctx.getOp() != Operations.HELP)
+                {
+                    if (FileUtils.fileExists(inputStr))
+                    {
+                        LOGGER.debug("input file [{}] exists.", inputStr);
+                    } else
+                    {
+                        LOGGER.error("input file [{}] does not exist!", inputStr);
+                        exit(ExitCode.FILE_NOT_FOUND);
+                    }
+                }
+
+                ctx = ctx.setInputFile(inputStr);
+            }
         }
 
         if (argIndex < args.length)
@@ -215,6 +219,9 @@ public class Main
         System.out.printf(" De-Dupe: [%s]\n", opt.isDeDupe());
         System.out.printf(" Apply Quotes: [%s]\n", opt.isApplyQuotes());
         System.out.printf(" Append Output: [%s]\n", opt.isAppendOutput());
+        System.out.printf(" Debug Log: [%s]\n", opt.isDebug());
+        System.out.printf(" Quiet Log: [%s]\n", opt.isQuiet());
+        System.out.printf(" Ansi Colors: [%s]\n", opt.isAnsiColors());
     }
 
     private static boolean isSettingMissing(Settings entry)
@@ -272,8 +279,21 @@ public class Main
                     case DE_DUPE -> opt.setDeDupe(true);
                     case QUOTES -> opt.setApplyQuotes(true);
                     case APPEND -> opt.setAppendOutput(true);
-                    case QUIET -> opt.setQuiet(true);
-                    case DEBUG -> opt.setDebug(true);
+                    case QUIET ->
+                    {
+                        LOGGER.toggleQuiet(true);
+                        opt.setQuiet(true);
+                    }
+                    case DEBUG ->
+                    {
+                        LOGGER.toggleDebug(true);
+                        opt.setDebug(true);
+                    }
+                    case ANSI_COLORS ->
+                    {
+                        LOGGER.toggleAnsiColor(true);
+                        opt.setAnsiColors(true);
+                    }
                 }
             }
         }

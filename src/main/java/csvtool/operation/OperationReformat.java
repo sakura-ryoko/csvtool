@@ -42,12 +42,20 @@ public class OperationReformat extends Operation implements AutoCloseable
     {
         if (ctx.getOpt().isQuiet())
         {
+            super.toggleQuiet(true);
             LOGGER.toggleQuiet(true);
         }
 
         if (ctx.getOpt().isDebug())
         {
+            super.toggleDebug(true);
             LOGGER.toggleDebug(true);
+        }
+
+        if (ctx.getOpt().isAnsiColors())
+        {
+            super.toggleAnsiColor(true);
+            LOGGER.toggleAnsiColor(true);
         }
 
         if (!ctx.getOpt().hasHeaders())
