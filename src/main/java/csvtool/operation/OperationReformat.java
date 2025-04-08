@@ -225,7 +225,7 @@ public class OperationReformat extends Operation implements AutoCloseable
         }
 
         LOGGER.debug("applyRemap(): begin (pass 1) with list size [{}]", data.size());
-
+        // Pass 1 (To process any IF-STATIC/COPY)
         for (int i = 0; i < data.size(); i++)
         {
             String entry = data.get(i);
@@ -236,7 +236,7 @@ public class OperationReformat extends Operation implements AutoCloseable
                 return null;
             }
 
-            //LOGGER.debug("[{}] IN:1: [{}]", i, entry);
+            LOGGER.debug("[{}] IN:1: [{}]", i, entry);
 
             CSVRemap remap = remapList.getRemap(i);
 
@@ -246,64 +246,81 @@ public class OperationReformat extends Operation implements AutoCloseable
                 return null;
             }
 
-            //LOGGER.debug("applyRemap():1: [{}] toString [{}]", i, remap.toString());
-
-            if (remap.getType() == RemapType.SWAP)
+            LOGGER.debug("applyRemap():1: [{}] toString [{}]", i, remap.toString());
+            if (remap.getType() == RemapType.IF_STATIC)
             {
-                // Swap Fields
+                // If-Static
                 List<String> params = remap.getParams();
 
-                if (params == null || params.isEmpty())
+                if (params == null || params.isEmpty() || params.size() < 3)
                 {
-                    LOGGER.warn("applyRemap():1: SWAP error; No parameters given");
+                    LOGGER.warn("applyRemap():1: IF_STATIC error; Invalid parameters given");
                     return null;
                 }
 
                 try
                 {
-                    int swapId = Integer.parseInt(params.getFirst());
-                    String otherEntry = data.get(swapId);
-                    CSVRemap otherRemap = remapList.getRemap(swapId);
+                    int fieldId = Integer.parseInt(params.getFirst());
+                    String otherEntry = data.get(fieldId);
 
-                    LOGGER.debug("applyRemap():1: Performing Field swap [{}:{} <-> {}:{}]", i, entry, swapId, otherEntry);
-                    data.set(i, otherEntry);
+                    LOGGER.debug("applyRemap():1: IF_STATIC test [{}/{}] // otherField [{}/{}]", i, entry, fieldId, otherEntry);
+                    String ifResult = this.applyIfStaticEach(entry, otherEntry, params);
 
-                    if (otherRemap != null)
+                    if (!ifResult.equalsIgnoreCase(entry))
                     {
-                        remapList.setRemap(i, otherRemap);
+                        LOGGER.debug("applyRemap():1: IF_STATIC applied to [{}/{}]", i, entry);
+                        data.set(i, ifResult);
+                    }
+                    else
+                    {
+                        LOGGER.debug("applyRemap():1: IF_STATIC no match found!");
+                    }
+
+                    if (remap.getSubRemap() != null)
+                    {
+                        remapList.setRemap(i, remap.getSubRemap());
                     }
                     else
                     {
                         remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
                     }
-
-                    LOGGER.debug("applyRemap():1:SWAP-A: [{}] toString [{}]", i, Objects.requireNonNullElse(remapList.getRemap(i), "<NULL>").toString());
-                    data.set(swapId, entry);
-
-                    if (remap.getSubRemap() != null)
-                    {
-                        remapList.setRemap(swapId, remap.getSubRemap());
-                    }
-                    else
-                    {
-                        remapList.setRemap(swapId, new CSVRemap(swapId, RemapType.NONE));
-                    }
-
-                    LOGGER.debug("applyRemap():1:SWAP-B: [{}] toString [{}]", swapId, Objects.requireNonNullElse(remapList.getRemap(swapId), "<NULL>").toString());
                 }
                 catch (Exception err)
                 {
-                    LOGGER.warn("applyRemap():1: SWAP error; {}", err.getMessage());
+                    LOGGER.warn("applyRemap():1: IF_STATIC Exception; {}", err.getMessage());
+                    return null;
+                }
+            }
+            else if (remap.getType() == RemapType.COPY)
+            {
+                // Copy (Pass 1)
+                List<String> params = remap.getParams();
+
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemap():1: COPY error; No parameters given");
+                    return null;
+                }
+
+                try
+                {
+                    int copyId = Integer.parseInt(params.getFirst());
+                    String otherEntry = data.get(copyId);
+
+                    LOGGER.debug("applyRemap():1: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
+                    data.set(i, otherEntry);
+                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemap():1: COPY Exception; {}", err.getMessage());
                     return null;
                 }
             }
         }
 
-        List<String> result = new ArrayList<>(data);
-        boolean exclude = false;
-
         LOGGER.debug("applyRemap(): begin (Pass 2) with list size [{}]", data.size());
-        // Pass 2 (To process the actual remaps)
+        // Pass 2 (To process the swaps)
         for (int i = 0; i < data.size(); i++)
         {
             String entry = data.get(i);
@@ -326,14 +343,118 @@ public class OperationReformat extends Operation implements AutoCloseable
 
             //LOGGER.debug("applyRemap():2: [{}] toString [{}]", i, remap.toString());
 
+            if (remap.getType() == RemapType.SWAP)
+            {
+                // Swap Fields
+                List<String> params = remap.getParams();
+
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemap():2: SWAP error; No parameters given");
+                    return null;
+                }
+
+                try
+                {
+                    int swapId = Integer.parseInt(params.getFirst());
+                    String otherEntry = data.get(swapId);
+                    CSVRemap otherRemap = remapList.getRemap(swapId);
+
+                    LOGGER.debug("applyRemap():2: Performing Field swap [{}:{} <-> {}:{}]", i, entry, swapId, otherEntry);
+                    data.set(i, otherEntry);
+
+                    if (otherRemap != null)
+                    {
+                        remapList.setRemap(i, otherRemap);
+                    }
+                    else
+                    {
+                        remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+                    }
+
+                    LOGGER.debug("applyRemap():2:SWAP-A: [{}] toString [{}]", i, Objects.requireNonNullElse(remapList.getRemap(i), "<NULL>").toString());
+                    data.set(swapId, entry);
+
+                    if (remap.getSubRemap() != null)
+                    {
+                        remapList.setRemap(swapId, remap.getSubRemap());
+                    }
+                    else
+                    {
+                        remapList.setRemap(swapId, new CSVRemap(swapId, RemapType.NONE));
+                    }
+
+                    LOGGER.debug("applyRemap():2:SWAP-B: [{}] toString [{}]", swapId, Objects.requireNonNullElse(remapList.getRemap(swapId), "<NULL>").toString());
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemap():2: SWAP error; {}", err.getMessage());
+                    return null;
+                }
+            }
+        }
+
+        List<String> result = new ArrayList<>(data);
+        boolean exclude = false;
+
+        LOGGER.debug("applyRemap(): begin (Pass 3) with list size [{}]", data.size());
+        // Pass 3 (To process the actual each-remaps)
+        for (int i = 0; i < data.size(); i++)
+        {
+            String entry = data.get(i);
+
+            if (entry == null)
+            {
+                LOGGER.error("applyRemap():3: Error; Entry at pos [{}] is empty!", i);
+                return null;
+            }
+
+            //LOGGER.debug("[{}] IN:2: [{}]", i, entry);
+
+            CSVRemap remap = remapList.getRemap(i);
+
+            if (remap == null)
+            {
+                LOGGER.error("applyRemap():3: Error; Remap at pos [{}] is empty!", i);
+                return null;
+            }
+
+            //LOGGER.debug("applyRemap():2: [{}] toString [{}]", i, remap.toString());
+
             if (remap.getType() == RemapType.DROP)
             {
                 // Drop Field & advance (By simply ignoring it from the results)
-                LOGGER.debug("applyRemap():2: Performing Field drop [{}:{}] (Pass 2)", i, entry);
+                LOGGER.debug("applyRemap():3: Performing Field drop [{}:{}] (Pass 2)", i, entry);
             }
             else if (remap.getType() == RemapType.SWAP)
             {
                 result.set(i, entry);
+            }
+            else if (remap.getType() == RemapType.COPY)
+            {
+                // Copy (Pass 3 -- from post-swap)
+                List<String> params = remap.getParams();
+
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemap():3: COPY error; No parameters given");
+                    return null;
+                }
+
+                try
+                {
+                    int copyId = Integer.parseInt(params.getFirst());
+                    String otherEntry = data.get(copyId);
+
+                    LOGGER.debug("applyRemap():3: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
+                    data.set(i, otherEntry);
+                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemap():3: COPY Exception; {}", err.getMessage());
+                    return null;
+                }
             }
             else
             {
@@ -341,7 +462,7 @@ public class OperationReformat extends Operation implements AutoCloseable
 
                 if (resultEach == null || resultEach.getRight() == null)
                 {
-                    LOGGER.warn("applyRemap():2: Error; ResultEach at pos [{}] is empty!", i);
+                    LOGGER.warn("applyRemap():3: Error; ResultEach at pos [{}] is empty!", i);
                     resultEach = Pair.of(false, entry);
                 }
 
@@ -355,7 +476,7 @@ public class OperationReformat extends Operation implements AutoCloseable
             }
         }
 
-        LOGGER.debug("applyRemap(): Post pass 2 data size [{}], result size [{}]", data.size(), result.size());
+        LOGGER.debug("applyRemap(): Post pass 3 data size [{}], result size [{}]", data.size(), result.size());
 
         if (result.size() > data.size())
         {
@@ -378,6 +499,10 @@ public class OperationReformat extends Operation implements AutoCloseable
 
         switch (remap.getType())
         {
+            case EMPTY ->
+            {
+                return Pair.of(false, "");
+            }
             case PAD ->
             {
                 if (params == null || params.isEmpty())
@@ -619,6 +744,33 @@ public class OperationReformat extends Operation implements AutoCloseable
         }
 
         return Pair.of(false, data);
+    }
+
+    private String applyIfStaticEach(String orig, String target, List<String> conditionalPairs)
+    {
+//        LOGGER.debug("applyIfStaticEach(): orig: [{}], target: [{}], conditional size [{}]", orig, target, conditionalPairs.size());
+
+        // Skip first Entry
+        for (int i = 1; i < conditionalPairs.size(); i++)
+        {
+            if (i % 2 != 0 && // if Odd & only process if i+1 < size()
+                (i+1) < conditionalPairs.size())
+            {
+                String condition = conditionalPairs.get(i);
+                String value = conditionalPairs.get(i+1);
+
+//                LOGGER.warn("applyIfStaticEach(): TEST [{}] vs [{}]", target, condition);
+
+                if (target.equalsIgnoreCase(condition))
+                {
+                    LOGGER.debug("applyIfStaticEach(): RETURN-MATCH [{}]", value);
+                    return value;
+                }
+            }
+        }
+
+        LOGGER.debug("applyIfStaticEach(): RETURN-ORIG [{}]", orig);
+        return orig;
     }
 
     @Override

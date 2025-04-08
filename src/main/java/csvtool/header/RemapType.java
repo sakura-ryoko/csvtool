@@ -7,15 +7,19 @@ public enum RemapType
 {
     NONE            ("none",          false),
     DROP            ("drop",          false),
+    EMPTY           ("empty",         false),
     STATIC          ("static",        true),
     SWAP            ("swap",          true),
+    COPY            ("copy",          true),
+    IF_STATIC       ("if-static",     true),
     INCLUDE         ("include",       true),
     EXCLUDE         ("exclude",       true),
     INCLUDE_REGEX   ("include-regex", true),
     EXCLUDE_REGEX   ("exclude-regex", true),
     PAD             ("pad",           true),
     TRUNCATE        ("truncate",      true),
-    DATE            ("date",          true);
+    DATE            ("date",          true),
+    ;
 
     public static final List<RemapType> VALUES = List.of(values());
 
