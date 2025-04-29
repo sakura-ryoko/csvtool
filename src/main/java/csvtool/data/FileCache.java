@@ -91,6 +91,15 @@ public class FileCache implements AutoCloseable
         }
     }
 
+    public void appendHeader(String header)
+    {
+        LOGGER.debug("appendHeader(): Appending Header");
+        this.header.add(header);
+
+        // Replace headers to FILE
+        this.file.put(0, this.header.stream().toList());
+    }
+
     public FileCache setFileName(String name)
     {
         this.fileName = name;

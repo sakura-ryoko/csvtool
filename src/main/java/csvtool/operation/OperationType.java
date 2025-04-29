@@ -13,7 +13,9 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationMerge> MERGE;
     public static final OperationType<OperationDiff> DIFF;
     public static final OperationType<OperationHeaderSave> HEADER_SAVE;
+    public static final OperationType<OperationTransformSave> TRANSFORM_SAVE;
     public static final OperationType<OperationReformat> REFORMAT;
+    public static final OperationType<OperationTransformExpand> TRANSFORM_EXPAND;
     private final OperationFactory<? extends T> factory;
     private final Operations ops;
 
@@ -46,7 +48,9 @@ public class OperationType<T extends Operation>
         MERGE = create(OperationMerge::new, Operations.MERGE);
         DIFF = create(OperationDiff::new, Operations.DIFF);
         HEADER_SAVE = create(OperationHeaderSave::new, Operations.HEADER_SAVE);
+        TRANSFORM_SAVE = create(OperationTransformSave::new, Operations.TRANSFORM_SAVE);
         REFORMAT = create(OperationReformat::new, Operations.REFORMAT);
+        TRANSFORM_EXPAND = create(OperationTransformExpand::new, Operations.TRANSFORM_EXPAND);
     }
 
     @FunctionalInterface

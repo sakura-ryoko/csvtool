@@ -75,7 +75,7 @@ public class OperationReformat extends Operation implements AutoCloseable
         this.FILE.setFileName(ctx.getInputFile());
         this.OUT.setFileName(ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), false, ctx.getOpt().isDebug()))
+        if (this.readFiles(ctx.getInputFile(), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> Input [{}] read successfully.", ctx.getInputFile());
 

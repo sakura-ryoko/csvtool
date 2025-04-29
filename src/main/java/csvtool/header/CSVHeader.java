@@ -77,6 +77,16 @@ public class CSVHeader implements AutoCloseable
         return -1;
     }
 
+    public @Nullable String getFromId(int id)
+    {
+        if (id > this.size())
+        {
+            return null;
+        }
+
+        return this.headers.get(id);
+    }
+
     public Stream<String> stream()
     {
         return this.headers.stream();
