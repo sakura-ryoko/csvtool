@@ -14,6 +14,9 @@ public class HeaderTransformConfig
     @SerializedName("input")
     public CSVHeader input;
 
+    @SerializedName("subkey")
+    public String subkey;
+
     @SerializedName("transforms")
     public HeaderTransformList transformList;
 }

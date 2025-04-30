@@ -106,58 +106,76 @@ public class HeaderTransformList
         return builder.toString();
     }
 
-    public record Entry(int id, String format, List<String> args)
+    public record Entry(int id, String format, int data, List<String> args)
     {
-        public String reformat()
+        public String reformat(String key, int index, List<String> data)
         {
             String[] split1 = this.format.split("\\{");
+
+            LOGGER.debug("reformat(): id [{}] // key [{}], index [{}]", this.id(), key, index);
 
             if (split1.length > 1)
             {
                 StringBuilder result = new StringBuilder(split1[0]);
-                int p = 0;
+                int dataIndex = 0;
+
+                LOGGER.debug("reformat(): 0: [{}], 1: [{}]", split1[0], split1[1]);
 
                 for (int i = 0; i < split1.length; i++)
                 {
                     String substring = split1[i];
-                    String[] split2 = substring.split("}", 1);
-                    String token = "{" + split2[0] + "}";
-                    TransformType type = TransformType.matchFormatter(token);
 
-                    LOGGER.debug("Token[{}]: token [{}]", i, token);
+                    if (substring.isEmpty())
+                    {
+                        continue;
+                    }
+
+                    String[] split2 = substring.split("}");
+                    LOGGER.debug("reformat(): token[{}]: substring [{}], split2 0: [{}] 1: [{}]", i, substring, split2[0], split2.length > 1 ? split2[1] : "<>");
+
+                    String token = "{" + split2[0] + "}";
+                    LOGGER.debug("reformat(): token[{}]: match [{}]", i, token);
+                    TransformType type = TransformType.matchFormatter(token);
 
                     if (type != null)
                     {
                         String fmt;
+                        LOGGER.debug("reformat(): token[{}]: type [{}]", i, type.getName());
 
-                        if (type.needsParam() && this.args.size() > p)
+                        switch (type)
                         {
-                            fmt = type.apply(this.args.get(p));
-                            p++;
-                        }
-                        else
-                        {
-                            fmt = type.apply();
+                            case KEY -> fmt = key;
+                            case DATA ->
+                                    {
+                                        if (this.args.size() > dataIndex && data.size() > dataIndex)
+                                        {
+                                            int f = Integer.getInteger(this.args.get(dataIndex));
+                                            fmt = data.get(f);
+                                        }
+                                        else
+                                        {
+                                            fmt = "";
+                                        }
+
+                                        dataIndex++;
+                                    }
+                            case INDEX -> fmt = String.valueOf(index);
+                            case HYPHEN -> fmt = "-";
+                            case UNDERSCORE -> fmt = "_";
+                            default -> fmt = "";
                         }
 
-                        if (fmt != null)
-                        {
-                            LOGGER.debug("Append[{}]: fmt [{}]", i, fmt);
-                            result.append(fmt);
-                        }
-                        else
-                        {
-                            LOGGER.error("Entry.reformat(): Error applying token for TransformType '{}'", type.toString());
-                        }
-                    }
-                    else
-                    {
-                        LOGGER.error("Entry.reformat(): Error parsing token for TransformType '{}'", token);
+                        result.append(fmt);
                     }
 
                     if (split2.length > 1)
                     {
+                        LOGGER.debug("Append[{}]: split2 [{}]", i, split2[1]);
                         result.append(split2[1]);
+                    }
+                    else
+                    {
+                        LOGGER.debug("Skip[{}] (No Data)", i);
                     }
                 }
 
@@ -170,7 +188,7 @@ public class HeaderTransformList
         @Override
         public @Nonnull String toString()
         {
-            return "Entry["+this.id()+",["+ this.format() + "],{" + this.args().toString()+"}]";
+            return "Entry["+this.id()+",["+ this.format() + "],{" + this.args.toString()+"}]";
         }
     }
 }

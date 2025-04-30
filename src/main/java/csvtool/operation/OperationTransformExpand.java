@@ -6,26 +6,24 @@ import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.header.CSVHeader;
+import csvtool.transform.HeaderTransformList;
 import csvtool.transform.HeaderTransformParser;
 import csvtool.utils.LogWrapper;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class OperationTransformExpand extends Operation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
-    private HeaderTransformParser PARSER;
+
+    private final HeaderTransformParser PARSER;
     private FileCache FILE;
-    private FileCache OUT;
-    private String lineKey;
-    private List<String> lineBuffer;
-    private int lineNum;
+    private final FileCache OUT;
+    private final HashMap<String, Integer> transformKeys;
+    private final HashMap<String, Integer> transformSubkeys;
     private int colNum;
-    private int totalColumns;
 
     public OperationTransformExpand(Operations op)
     {
@@ -33,11 +31,9 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         this.PARSER = new HeaderTransformParser();
         this.FILE = new FileCache();
         this.OUT = new FileCache();
-        this.lineKey = "";
-        this.lineBuffer = new ArrayList<>();
-        this.lineNum = 0;
+        this.transformKeys = new HashMap<>();
+        this.transformSubkeys = new HashMap<>();
         this.colNum = 0;
-        this.totalColumns = 0;
     }
 
     @Override
@@ -79,18 +75,6 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
             return false;
         }
 
-        if (!ctx.getOpt().hasKey2())
-        {
-            LOGGER.error("runOperation(): Transform FAILED, a key2 (SubKey) field is required.");
-            return false;
-        }
-
-        if (!ctx.getOpt().hasSide())
-        {
-            LOGGER.error("runOperation(): Transform FAILED, a side (Data) field is required.");
-            return false;
-        }
-
         LOGGER.debug("runOperation(): --> Input [{}], Transform Config [{}], Output [{}]", ctx.getInputFile(), ctx.getSettingValue(Settings.HEADERS), ctx.getSettingValue(Settings.OUTPUT));
         this.FILE.setFileName(ctx.getInputFile());
         this.OUT.setFileName(ctx.getSettingValue(Settings.OUTPUT));
@@ -113,7 +97,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
 
                     LOGGER.debug("runOperation(): --> Transform Parser loaded config from [{}].", this.PARSER.getHeaderConfigFile());
 
-                    if (this.applyTransforms(ctx.getOpt().getKey(), ctx.getOpt().getKey2(), ctx.getOpt().getSide()))
+                    if (this.applyTransforms(ctx.getOpt().getKey()))
                     {
                         LOGGER.info("runOperation(): --> File transform successful.");
 
@@ -161,7 +145,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         return true;
     }
 
-    private boolean applyTransforms(String key, String key2, String side)
+    private boolean applyTransforms(String key)
     {
         if (this.FILE == null || this.FILE.isEmpty())
         {
@@ -181,10 +165,8 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         }
 
         this.OUT.setHeader(inHeader);
-        CSVHeader newHeader = new CSVHeader(inHeader.stream().toList());
         final int keyId = inHeader.getId(key);
-        final int subkeyId = inHeader.getId(key2);
-        final int dataId = inHeader.getId(side);
+        final int subkeyId = inHeader.getId(this.PARSER.getSubkey());
 
         if (Const.DEBUG)
         {
@@ -199,25 +181,11 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
             if (i != 0 && !entry.isEmpty())
             {
                 LOGGER.debug("[{}] IN: [{}]", i, entry.toString());
-                Pair<Boolean, List<String>> result = this.applyTransformEachLine(newHeader, keyId, subkeyId, dataId, entry);
 
-                if (result == null)
+                if (!this.applyTransformEachLine(keyId, subkeyId, entry))
                 {
                     LOGGER.error("applyTransforms(): Transform failure on line [{}]", i);
                     return false;
-                }
-
-                LOGGER.debug("HEADERS: {}", newHeader.toString());
-
-                if (result.getLeft() && !result.getRight().isEmpty())
-                {
-                    LOGGER.debug("[{}/{}] OUT (AddLine): [{}]", i, this.lineNum, result.toString());
-                    this.OUT.addLine(result.getRight());
-                    this.lineNum++;
-                }
-                else
-                {
-                    LOGGER.debug("[{}/{}] OUT (Each): [{}]", i, this.lineNum, result.toString());
                 }
             }
         }
@@ -225,69 +193,142 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         return true;
     }
 
-    private Pair<Boolean, List<String>> applyTransformEachLine(CSVHeader headers, final int keyId, final int subkeyId, final int dataId, List<String> list)
+    private boolean applyTransformEachLine(final int keyId, final int subkeyId, List<String> list)
     {
-        if (keyId > list.size() || subkeyId > list.size() || dataId > list.size())
+        if (keyId > list.size() || subkeyId > list.size())
         {
             LOGGER.error("applyTransformEachLine(): Transform failure; keyIds are too large!");
-            return null;
+            return false;
         }
 
-        // TODO
         String keyEntry = list.get(keyId);
         String subkeyEntry = list.get(subkeyId);
-        String dataEntry = list.get(dataId);
-        boolean newLine = false;
 
-        if (this.lineKey.isEmpty())
+        LOGGER.debug("applyTransformEachLine(): key [{}], subkey [{}], list [{}]", keyEntry, subkeyEntry, list.toString());
+
+        final int lineKeyIndex = this.calcLineKeyIndex(keyEntry);
+        final int subkeyIndex = this.calcTransformSubkeyIndex(subkeyEntry);
+        LOGGER.debug("applyTransformEachLine(): lineKeyIndex [{}], subkeyIndex [{}], colNum [{}]", lineKeyIndex, subkeyIndex, this.colNum);
+        HeaderTransformList transforms = this.PARSER.getTransformList();
+
+        if (transforms == null)
         {
-            // First entry
-            this.lineBuffer.clear();
-            this.colNum = list.size();
+            LOGGER.error("applyTransformEachLine(): transforms is null!");
+            return false;
         }
-        else if (this.lineKey.equals(keyEntry))
+
+        for (int i = 0; i < transforms.size(); i++)
         {
-            // Continue the line
+            HeaderTransformList.Entry entry = transforms.getEntry(i);
+
+            if (entry != null)
+            {
+                LOGGER.debug("applyTransformEachLine(): Transform [{}] debug [{}]", i, entry.toString());
+                String result = entry.reformat(subkeyEntry, subkeyIndex, list);
+                LOGGER.debug("applyTransformEachLine(): Transform [{}] result [{}]", i, result);
+
+                final int col = this.calcHeaderColumn(result);
+
+                if (col > 0)
+                {
+                    List<String> data = new ArrayList<>(this.OUT.getHeader().size());
+
+                    if (this.OUT.hasLine(lineKeyIndex))
+                    {
+                        data.addAll(this.OUT.getLine(lineKeyIndex));
+                    }
+                    else
+                    {
+                        data.addAll(list);
+                    }
+
+                    if (data.size() < this.OUT.getHeader().size())
+                    {
+                        for (int j = data.size(); j < this.OUT.getHeader().size(); j++)
+                        {
+                            data.add("");
+                        }
+                    }
+
+                    if (entry.data() < 0 || entry.data() > list.size())
+                    {
+                        data.set(col, "");
+                    }
+                    else
+                    {
+                        data.set(col, list.get(entry.data()));
+                    }
+
+                    LOGGER.debug("applyTransformEachLine(): Setline [{}] data [{}]", lineKeyIndex, data.toString());
+                    this.OUT.setLine(lineKeyIndex, data);
+                }
+                else
+                {
+                    LOGGER.error("applyTransformEachLine(): Transform Entry [{}] checkHeaderColumn() result is false", i);
+                    return false;
+                }
+            }
+            else
+            {
+                LOGGER.error("applyTransformEachLine(): Transform Entry [{}] is null!", i);
+                return false;
+            }
+        }
+
+        // Default OK, move onto next line
+        return true;
+    }
+
+    private int calcLineKeyIndex(String key)
+    {
+        if (this.transformKeys.isEmpty())
+        {
+            this.transformKeys.put(key, 1);
+            return 1;
+        }
+        else if (this.transformKeys.containsKey(key))
+        {
+            return this.transformKeys.get(key);
         }
         else
         {
-            // New Line
-            this.lineKey = keyEntry;
-            this.colNum = list.size();
-            newLine = true;
+            int result = this.transformKeys.size() + 1;
+            this.transformKeys.put(key, result);
+            return result;
         }
-
-        return Pair.of(newLine, list);
     }
 
-    private String buildTransformedName(String in)
+    private int calcTransformSubkeyIndex(String subkey)
     {
-        return in;
+        if (this.transformSubkeys.containsKey(subkey))
+        {
+            int result = this.transformSubkeys.get(subkey);
+            this.transformSubkeys.put(subkey, ++result);
+            return result;
+        }
+        else
+        {
+            this.transformSubkeys.put(subkey, 0);
+            return 0;
+        }
     }
 
-    private @Nullable CSVHeader checkHeaderColumn(@Nonnull CSVHeader header, final String column)
+    private int calcHeaderColumn(final String column)
     {
-        String colHeader = header.getFromId(this.colNum);
+        String colHeader = this.OUT.getHeader().getFromId(this.colNum);
+        final int col = this.OUT.getHeader().getId(column);
 
-        if (colHeader == null)
+        if (colHeader == null || col == -1)
         {
             // Not found, add column
-            header.add(column);
             this.colNum++;
-            this.totalColumns++;
-            return header;
+            LOGGER.debug("calcHeaderColumn(): Add column number [{}] with [{}]", this.colNum, column);
+            this.OUT.appendHeader(column);
         }
-        else if (colHeader.equals(column))
-        {
-            // OK
-            return header;
-        }
-        else
-        {
-            // Not matched!
-            LOGGER.error("checkHeaderColumn(): Invalid match at column number [{}] ('{}' != '{}')", this.colNum, colHeader, column);
-            return null;
-        }
+
+        final int check = this.OUT.getHeader().getId(column);
+        LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
+        return check;
     }
 
     @Override

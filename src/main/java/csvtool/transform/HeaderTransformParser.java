@@ -85,6 +85,16 @@ public class HeaderTransformParser implements AutoCloseable
         return null;
     }
 
+    public @Nullable String getSubkey()
+    {
+        if (this.CONFIG != null)
+        {
+            return CONFIG.subkey;
+        }
+
+        return null;
+    }
+
     public @Nullable HeaderTransformList getTransformList()
     {
         if (this.CONFIG != null)
@@ -142,6 +152,16 @@ public class HeaderTransformParser implements AutoCloseable
         this.CONFIG.input = input;
     }
 
+    public void setSubkey(String key)
+    {
+        if (this.CONFIG == null)
+        {
+            this.CONFIG = this.newConfig();
+        }
+
+        this.CONFIG.subkey = key;
+    }
+
     public void setTransformList(@Nonnull HeaderTransformList transformList)
     {
         if (this.CONFIG == null)
@@ -171,7 +191,7 @@ public class HeaderTransformParser implements AutoCloseable
 
         for (int i = 0; i < this.CONFIG.input.size(); i++)
         {
-            this.CONFIG.transformList = this.CONFIG.transformList.addEntry(new HeaderTransformList.Entry(i, "{u}", List.of()));
+            this.CONFIG.transformList = this.CONFIG.transformList.addEntry(new HeaderTransformList.Entry(i, "{u}", -1, List.of()));
         }
     }
 

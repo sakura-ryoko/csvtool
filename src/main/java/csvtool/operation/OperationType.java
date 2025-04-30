@@ -16,6 +16,7 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationTransformSave> TRANSFORM_SAVE;
     public static final OperationType<OperationReformat> REFORMAT;
     public static final OperationType<OperationTransformExpand> TRANSFORM_EXPAND;
+    public static final OperationType<OperationTransformSquash> TRANSFORM_SQUASH;
     private final OperationFactory<? extends T> factory;
     private final Operations ops;
 
@@ -51,6 +52,7 @@ public class OperationType<T extends Operation>
         TRANSFORM_SAVE = create(OperationTransformSave::new, Operations.TRANSFORM_SAVE);
         REFORMAT = create(OperationReformat::new, Operations.REFORMAT);
         TRANSFORM_EXPAND = create(OperationTransformExpand::new, Operations.TRANSFORM_EXPAND);
+        TRANSFORM_SQUASH = create(OperationTransformSquash::new, Operations.TRANSFORM_SQUASH);
     }
 
     @FunctionalInterface

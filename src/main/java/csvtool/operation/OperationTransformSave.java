@@ -83,7 +83,7 @@ public class OperationTransformSave extends Operation implements AutoCloseable
     {
         LOGGER.debug("readFiles(): Reading files ...");
 
-        this.FILE = this.readFileHeadersOnly(input, ignoreQuotes, debug);
+        this.FILE = this.readFileHeadersOnly(input, ignoreQuotes, false);
 
         if (this.FILE == null || this.FILE.getHeader().isEmpty())
         {

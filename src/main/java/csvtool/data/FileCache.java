@@ -97,13 +97,29 @@ public class FileCache implements AutoCloseable
         this.header.add(header);
 
         // Replace headers to FILE
-        this.file.put(0, this.header.stream().toList());
+        List<String> newHeaders = this.header.stream().toList();
+        this.file.put(0, newHeaders);
     }
 
     public FileCache setFileName(String name)
     {
         this.fileName = name;
         return this;
+    }
+
+    public boolean hasLine(int line)
+    {
+        return this.file.containsKey(line);
+    }
+
+    public List<String> getLine(int line)
+    {
+        if (this.file.size() < line)
+        {
+            return List.of();
+        }
+
+        return this.file.get(line);
     }
 
     public void addLine(List<String> line)
@@ -120,6 +136,22 @@ public class FileCache implements AutoCloseable
 
         LOGGER.debug("addLine({}): out [{}]", this.file.size(), out.toString());
         this.file.put(this.file.size(), out);
+    }
+
+    public void setLine(int line, List<String> data)
+    {
+        List<String> out = new ArrayList<>();
+
+        for (int i = 0; i < this.header.size(); i++)
+        {
+            if (data.size() >= i)
+            {
+                out.add(data.get(i));
+            }
+        }
+
+        LOGGER.debug("setLine({}): out [{}]", this.file.size(), out.toString());
+        this.file.put(line, out);
     }
 
     public CSVHeader getHeader()

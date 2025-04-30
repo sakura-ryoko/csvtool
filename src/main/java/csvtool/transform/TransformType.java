@@ -6,25 +6,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public enum TransformType
 {
-    KEY             ("key",         "{k}",   true,   List.of("{key}")),
-    UNDERSCORE      ("underscore",  "{us}",  false,  List.of("{underscore}")),
-    HYPHEN          ("hyphen",      "{h}",   false,  List.of("{hyphen}")),
-    INDEX           ("index",       "{i}",   true,   List.of("{index}")),
-    STRING          ("string",      "{s}",   true,   List.of("{string}")),
+    KEY             ("key",         "{k}",   List.of("{key}")),
+    UNDERSCORE      ("underscore",  "{u}",   List.of("{underscore}", "{us}")),
+    HYPHEN          ("hyphen",      "{h}",   List.of("{hyphen}", "{hy}")),
+    INDEX           ("index",       "{i}",   List.of("{index}", "{idx}")),
+    FIELD           ("field",       "{f}",   List.of("{field}")),
+    DATA            ("data",        "{d}",   List.of("{data}", "{str}", "{string}")),
     ;
 
     public static final List<TransformType> VALUES = List.of(values());
 
     private final String name;
     private final String formatter;
-    private final boolean param;
     private final List<String> alias;
 
-    TransformType(String name, String formatter, boolean param, List<String> alias)
+    TransformType(String name, String formatter, List<String> alias)
     {
         this.name = name;
         this.formatter = formatter;
-        this.param = param;
         this.alias = alias;
     }
 
@@ -32,50 +31,7 @@ public enum TransformType
 
     public String getFormatter() { return this.formatter; }
 
-    public boolean needsParam() { return this.param; }
-
     public List<String> getFormatterAlias() { return this.alias; }
-
-    public @Nullable String apply()
-    {
-        if (this.needsParam())
-        {
-            return null;
-        }
-
-        return this.apply(null);
-    }
-
-    public @Nullable String apply(@Nullable String param)
-    {
-        if (this.needsParam() && (param == null || param.isEmpty()))
-        {
-            return null;
-        }
-
-        switch (this)
-        {
-            case KEY, STRING -> { return param; }
-            case UNDERSCORE -> { return "_"; }
-            case HYPHEN -> { return "-"; }
-            case INDEX ->
-            {
-                if (param == null) return null;
-
-                try
-                {
-                    int prev = Integer.getInteger(param);
-                    prev++;
-                    return String.format("%d", prev);
-                }
-                catch (Exception e)
-                {
-                    return null;
-                }
-            }
-            default -> { return null; }
-        }
-    }
 
     @Nullable
     public static TransformType fromName(String name)

@@ -79,7 +79,7 @@ public class CSVHeader implements AutoCloseable
 
     public @Nullable String getFromId(int id)
     {
-        if (id > this.size())
+        if (id >= this.size())
         {
             return null;
         }
