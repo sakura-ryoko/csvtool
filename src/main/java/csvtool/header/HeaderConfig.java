@@ -26,6 +26,7 @@ public class HeaderConfig
         "NONE (Performs no remap)",
         "DROP (Performs a Column Removal, and advances to the next)",
         "IF-STATIC { (field-id), (condition), (value) } (Performs a value static if the value in (field-id) matches (condition), then this field becomes (value))",
+        "IF-EMPTY { (value), [subRemap] } (Performs a value static if the value is empty, then this field becomes (value), or applies the optional [subRemap])",
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
         "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
         "EMPTY (Performs a field empty which deletes any existing data)",
@@ -37,6 +38,7 @@ public class HeaderConfig
         "PAD { (count), [data] } (Pads this value with (count) and optional [data])",
         "TRUNCATE { (length) } (Truncates the value to a length of (length))",
         "DATE { (old-fmt), (new-fmt) } (Performs a date reformat based on (old-fmt) into (new-fmt); this uses SimpleDateFormat patterns)",
+        "DATE_NOW { (fmt) } (Performs a date format based on (fmt) of now; using SimpleDateFormat patterns)",
         "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
     );
 

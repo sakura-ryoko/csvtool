@@ -17,6 +17,7 @@ public class CSVRemapList
                 new CSVRemap(2, RemapType.EMPTY),
                 new CSVRemap(3, RemapType.STATIC, List.of("apple", "orange")),
                 new CSVRemap(4, RemapType.DATE, List.of("yyyyMMdd", "yyyy-MM-dd")),
+                new CSVRemap(4, RemapType.DATE_NOW, List.of("yyyy-MM-dd")),
                 new CSVRemap(5, RemapType.INCLUDE, List.of("01", "02", "03")),
                 new CSVRemap(6, RemapType.EXCLUDE, List.of("04", "05", "06")),
                 new CSVRemap(7, RemapType.INCLUDE_REGEX, List.of("(?:^|\\W)included(?:$|\\W)")),
@@ -24,8 +25,9 @@ public class CSVRemapList
                 new CSVRemap(9, RemapType.PAD, List.of("3", "0")),
                 new CSVRemap(10, RemapType.TRUNCATE, List.of("1")),
                 new CSVRemap(11, RemapType.IF_STATIC, List.of("2", "apple", "orange")),
-                new CSVRemap(12, RemapType.COPY, List.of("3")),
-                new CSVRemap(13, RemapType.SWAP, List.of("2"),
+                new CSVRemap(12, RemapType.IF_EMPTY, List.of("was_empty")),
+                new CSVRemap(13, RemapType.COPY, List.of("3")),
+                new CSVRemap(14, RemapType.SWAP, List.of("2"),
                         new CSVRemap(2, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )

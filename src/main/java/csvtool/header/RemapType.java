@@ -12,6 +12,7 @@ public enum RemapType
     SWAP            ("swap",          true),
     COPY            ("copy",          true),
     IF_STATIC       ("if-static",     true),
+    IF_EMPTY        ("if-empty",      true),
     INCLUDE         ("include",       true),
     EXCLUDE         ("exclude",       true),
     INCLUDE_REGEX   ("include-regex", true),
@@ -19,6 +20,7 @@ public enum RemapType
     PAD             ("pad",           true),
     TRUNCATE        ("truncate",      true),
     DATE            ("date",          true),
+    DATE_NOW        ("date-now",      true),
     ;
 
     public static final List<RemapType> VALUES = List.of(values());

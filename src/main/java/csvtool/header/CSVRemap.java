@@ -1,7 +1,5 @@
 package csvtool.header;
 
-import csvtool.utils.LogWrapper;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -14,7 +12,7 @@ public class CSVRemap
     private RemapType type;
     private List<String> params;
     @Nullable
-    private final CSVRemap subRemap;
+    private CSVRemap subRemap;
 
     public CSVRemap(int id, @Nonnull RemapType type)
     {
@@ -102,6 +100,17 @@ public class CSVRemap
     public @Nullable CSVRemap getSubRemap()
     {
         return this.subRemap;
+    }
+
+    public CSVRemap setSubRemap(@Nullable CSVRemap sub)
+    {
+        if (this.subRemap != null)
+        {
+            this.subRemap.clear();
+        }
+
+        this.subRemap = sub;
+        return this;
     }
 
     public void clear()

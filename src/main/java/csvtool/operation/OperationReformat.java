@@ -592,6 +592,28 @@ public class OperationReformat extends Operation implements AutoCloseable
                     result = params.getFirst();
                 }
             }
+            case IF_EMPTY ->
+            {
+                if (data.isEmpty())
+                {
+                    if (params == null || params.isEmpty())
+                    {
+                        LOGGER.warn("applyRemapEach(): STATIC error; params are empty");
+                        return Pair.of(false, data);
+                    }
+
+                    result = params.getFirst();
+                }
+                else if (remap.getSubRemap() != null)
+                {
+                    remap = remap.setSubRemap(null);
+                    result = data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case INCLUDE ->
             {
                 if (params == null || params.isEmpty())
@@ -697,6 +719,25 @@ public class OperationReformat extends Operation implements AutoCloseable
                 catch (Exception err)
                 {
                     LOGGER.warn("applyRemapEach(): DATE error; {}", err.getMessage());
+                }
+            }
+            case DATE_NOW ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_NOW error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    Date now = new Date(System.currentTimeMillis());
+                    SimpleDateFormat outFmt = new SimpleDateFormat(params.getFirst());
+                    result = outFmt.format(now);
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_NOW error; {}", err.getMessage());
                 }
             }
         }
