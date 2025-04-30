@@ -114,7 +114,7 @@ public class FileCache implements AutoCloseable
 
     public List<String> getLine(int line)
     {
-        if (this.file.size() < line)
+        if (line > this.file.size())
         {
             return List.of();
         }
@@ -128,10 +128,10 @@ public class FileCache implements AutoCloseable
 
         for (int i = 0; i < this.header.size(); i++)
         {
-            if (line.size() >= i)
-            {
+//            if (line.size() >= i)
+//            {
                 out.add(line.get(i));
-            }
+//            }
         }
 
         LOGGER.debug("addLine({}): out [{}]", this.file.size(), out.toString());
@@ -144,13 +144,13 @@ public class FileCache implements AutoCloseable
 
         for (int i = 0; i < this.header.size(); i++)
         {
-            if (data.size() >= i)
-            {
+//            if (data.size() >= i)
+//            {
                 out.add(data.get(i));
-            }
+//            }
         }
 
-        LOGGER.debug("setLine({}): out [{}]", this.file.size(), out.toString());
+//        LOGGER.debug("setLine({}): out [{}]", this.file.size(), out.toString());
         this.file.put(line, out);
     }
 

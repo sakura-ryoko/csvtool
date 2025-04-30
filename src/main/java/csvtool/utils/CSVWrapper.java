@@ -447,7 +447,7 @@ public class CSVWrapper implements AutoCloseable
                     this.setHeader(entry);
                 }
 
-                LOGGER.debug("putAllLines(): IN[{}]: Appending ... LINE[{}]: {}", i, line, entry.toString());
+//                LOGGER.debug("putAllLines(): IN[{}]: Appending ... LINE[{}]: {}", i, line, entry.toString());
                 this.lines.put(line, entry);
                 line++;
             }

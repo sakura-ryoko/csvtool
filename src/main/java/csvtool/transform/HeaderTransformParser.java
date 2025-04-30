@@ -193,6 +193,8 @@ public class HeaderTransformParser implements AutoCloseable
         {
             this.CONFIG.transformList = this.CONFIG.transformList.addEntry(new HeaderTransformList.Entry(i, "{u}", -1, List.of()));
         }
+
+        this.setSubkey(this.getInputHeader().getFromId(0));
     }
 
     public boolean checkTransformList()

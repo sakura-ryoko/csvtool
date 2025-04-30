@@ -40,4 +40,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
 
         return result.toString();
     }
+
+    public static String removeFileSuffix(String file)
+    {
+        String[] split = file.split("\\.(?=[^\\.]+$)", 1);
+
+//        LOGGER.debug("addFileSuffix({}, {})", file, suffix);
+
+        if (split.length > 1)
+        {
+            return split[0];
+        }
+
+        return file;
+    }
 }

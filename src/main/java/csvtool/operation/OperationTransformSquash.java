@@ -32,7 +32,7 @@ public class OperationTransformSquash extends Operation implements AutoCloseable
     public void displayHelp()
     {
         System.out.print("Header Squash Operation:\n");
-        System.out.printf("\tAliases: %s\n\n", Operations.TRANSFORM_SQUASH.getAlias().toString());
+//        System.out.printf("\tAliases: %s\n\n", Operations.TRANSFORM_SQUASH.getAlias().toString());
 
 //        System.out.print("It accepts one input file (--input), and an output (--output).\n");
 //        System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");

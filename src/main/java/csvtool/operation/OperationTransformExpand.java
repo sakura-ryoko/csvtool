@@ -180,8 +180,6 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
             // Ignore header
             if (i != 0 && !entry.isEmpty())
             {
-                LOGGER.debug("[{}] IN: [{}]", i, entry.toString());
-
                 if (!this.applyTransformEachLine(keyId, subkeyId, entry))
                 {
                     LOGGER.error("applyTransforms(): Transform failure on line [{}]", i);
@@ -204,11 +202,11 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         String keyEntry = list.get(keyId);
         String subkeyEntry = list.get(subkeyId);
 
-        LOGGER.debug("applyTransformEachLine(): key [{}], subkey [{}], list [{}]", keyEntry, subkeyEntry, list.toString());
+//        LOGGER.debug("applyTransformEachLine(): key [{}], subkey [{}], list [{}]", keyEntry, subkeyEntry, list.toString());
 
         final int lineKeyIndex = this.calcLineKeyIndex(keyEntry);
         final int subkeyIndex = this.calcTransformSubkeyIndex(subkeyEntry);
-        LOGGER.debug("applyTransformEachLine(): lineKeyIndex [{}], subkeyIndex [{}], colNum [{}]", lineKeyIndex, subkeyIndex, this.colNum);
+//        LOGGER.debug("applyTransformEachLine(): lineKeyIndex [{}], subkeyIndex [{}], colNum [{}]", lineKeyIndex, subkeyIndex, this.colNum);
         HeaderTransformList transforms = this.PARSER.getTransformList();
 
         if (transforms == null)
@@ -223,9 +221,9 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
 
             if (entry != null)
             {
-                LOGGER.debug("applyTransformEachLine(): Transform [{}] debug [{}]", i, entry.toString());
+//                LOGGER.debug("applyTransformEachLine(): Transform [{}] debug [{}]", i, entry.toString());
                 String result = entry.reformat(subkeyEntry, subkeyIndex, list);
-                LOGGER.debug("applyTransformEachLine(): Transform [{}] result [{}]", i, result);
+//                LOGGER.debug("applyTransformEachLine(): Transform [{}] result [{}]", i, result);
 
                 final int col = this.calcHeaderColumn(result);
 
@@ -254,12 +252,32 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
                     {
                         data.set(col, "");
                     }
+//                    else if (entry.subRemap() != null)
+//                    {
+//                        Pair<Boolean, String> pair = this.applyRemapEach(entry.subRemap(), list.get(entry.data()));
+//
+//                        if (pair == null || pair.getRight() == null)
+//                        {
+//                            data.set(col, list.get(entry.data()));
+//                        }
+//                        else
+//                        {
+//                            if (pair.getLeft())
+//                            {
+//                                data.set(col, "");
+//                            }
+//                            else
+//                            {
+//                                data.set(col, pair.getRight());
+//                            }
+//                        }
+//                    }
                     else
                     {
                         data.set(col, list.get(entry.data()));
                     }
 
-                    LOGGER.debug("applyTransformEachLine(): Setline [{}] data [{}]", lineKeyIndex, data.toString());
+//                    LOGGER.debug("applyTransformEachLine(): Setline [{}] data [{}]", lineKeyIndex, data.toString());
                     this.OUT.setLine(lineKeyIndex, data);
                 }
                 else
@@ -322,12 +340,12 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         {
             // Not found, add column
             this.colNum++;
-            LOGGER.debug("calcHeaderColumn(): Add column number [{}] with [{}]", this.colNum, column);
+//            LOGGER.debug("calcHeaderColumn(): Add column number [{}] with [{}]", this.colNum, column);
             this.OUT.appendHeader(column);
         }
 
         final int check = this.OUT.getHeader().getId(column);
-        LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
+//        LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
         return check;
     }
 

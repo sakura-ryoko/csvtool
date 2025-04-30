@@ -1,7 +1,5 @@
 package csvtool.transform;
 
-import csvtool.utils.LogWrapper;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.AbstractList;
@@ -12,7 +10,7 @@ import java.util.stream.Stream;
 
 public class HeaderTransformList
 {
-    private static final LogWrapper LOGGER = new LogWrapper(HeaderTransformList.class);
+//    private static final LogWrapper LOGGER = new LogWrapper(HeaderTransformList.class);
     private final AbstractList<Entry> entryList = new ArrayList<>();
 
     public HeaderTransformList() {}
@@ -42,7 +40,7 @@ public class HeaderTransformList
     {
         if (index > this.entryList.size())
         {
-            LOGGER.error("setEntry(): Error; Entry: [{}] > size [{}]", index, this.entryList.size());
+//            LOGGER.error("setEntry(): Error; Entry: [{}] > size [{}]", index, this.entryList.size());
             return this;
         }
 
@@ -112,14 +110,14 @@ public class HeaderTransformList
         {
             String[] split1 = this.format.split("\\{");
 
-            LOGGER.debug("reformat(): id [{}] // key [{}], index [{}]", this.id(), key, index);
+//            LOGGER.debug("reformat(): id [{}] // key [{}], index [{}]", this.id(), key, index);
 
             if (split1.length > 1)
             {
                 StringBuilder result = new StringBuilder(split1[0]);
                 int dataIndex = 0;
 
-                LOGGER.debug("reformat(): 0: [{}], 1: [{}]", split1[0], split1[1]);
+//                LOGGER.debug("reformat(): 0: [{}], 1: [{}]", split1[0], split1[1]);
 
                 for (int i = 0; i < split1.length; i++)
                 {
@@ -131,16 +129,16 @@ public class HeaderTransformList
                     }
 
                     String[] split2 = substring.split("}");
-                    LOGGER.debug("reformat(): token[{}]: substring [{}], split2 0: [{}] 1: [{}]", i, substring, split2[0], split2.length > 1 ? split2[1] : "<>");
+//                    LOGGER.debug("reformat(): token[{}]: substring [{}], split2 0: [{}] 1: [{}]", i, substring, split2[0], split2.length > 1 ? split2[1] : "<>");
 
                     String token = "{" + split2[0] + "}";
-                    LOGGER.debug("reformat(): token[{}]: match [{}]", i, token);
+//                    LOGGER.debug("reformat(): token[{}]: match [{}]", i, token);
                     TransformType type = TransformType.matchFormatter(token);
 
                     if (type != null)
                     {
                         String fmt;
-                        LOGGER.debug("reformat(): token[{}]: type [{}]", i, type.getName());
+//                        LOGGER.debug("reformat(): token[{}]: type [{}]", i, type.getName());
 
                         switch (type)
                         {
@@ -170,13 +168,13 @@ public class HeaderTransformList
 
                     if (split2.length > 1)
                     {
-                        LOGGER.debug("Append[{}]: split2 [{}]", i, split2[1]);
+//                        LOGGER.debug("Append[{}]: split2 [{}]", i, split2[1]);
                         result.append(split2[1]);
                     }
-                    else
-                    {
-                        LOGGER.debug("Skip[{}] (No Data)", i);
-                    }
+//                    else
+//                    {
+//                        LOGGER.debug("Skip[{}] (No Data)", i);
+//                    }
                 }
 
                 return result.toString();
