@@ -22,8 +22,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
     private FileCache FILE;
     private final FileCache OUT;
     private final HashMap<String, Integer> transformKeys;
-    private final HashMap<String, Integer> transformSubkeys;
-    private int colNum;
+    private final HashMap<String, HashMap<String, Integer>> transformSubkeys;
 
     public OperationTransformExpand(Operations op)
     {
@@ -33,7 +32,6 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         this.OUT = new FileCache();
         this.transformKeys = new HashMap<>();
         this.transformSubkeys = new HashMap<>();
-        this.colNum = 0;
     }
 
     @Override
@@ -205,8 +203,8 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
 //        LOGGER.debug("applyTransformEachLine(): key [{}], subkey [{}], list [{}]", keyEntry, subkeyEntry, list.toString());
 
         final int lineKeyIndex = this.calcLineKeyIndex(keyEntry);
-        final int subkeyIndex = this.calcTransformSubkeyIndex(subkeyEntry);
-//        LOGGER.debug("applyTransformEachLine(): lineKeyIndex [{}], subkeyIndex [{}], colNum [{}]", lineKeyIndex, subkeyIndex, this.colNum);
+        final int subkeyIndex = this.calcTransformSubkeyIndex(keyEntry, subkeyEntry);
+//        LOGGER.debug("applyTransformEachLine(): lineKeyIndex [{}], subkeyIndex [{}]", lineKeyIndex, subkeyIndex);
         HeaderTransformList transforms = this.PARSER.getTransformList();
 
         if (transforms == null)
@@ -252,26 +250,6 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
                     {
                         data.set(col, "");
                     }
-//                    else if (entry.subRemap() != null)
-//                    {
-//                        Pair<Boolean, String> pair = this.applyRemapEach(entry.subRemap(), list.get(entry.data()));
-//
-//                        if (pair == null || pair.getRight() == null)
-//                        {
-//                            data.set(col, list.get(entry.data()));
-//                        }
-//                        else
-//                        {
-//                            if (pair.getLeft())
-//                            {
-//                                data.set(col, "");
-//                            }
-//                            else
-//                            {
-//                                data.set(col, pair.getRight());
-//                            }
-//                        }
-//                    }
                     else
                     {
                         data.set(col, list.get(entry.data()));
@@ -316,36 +294,42 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         }
     }
 
-    private int calcTransformSubkeyIndex(String subkey)
+    private int calcTransformSubkeyIndex(String key, String subkey)
     {
-        if (this.transformSubkeys.containsKey(subkey))
+        HashMap<String, Integer> subMap;
+
+        if (this.transformSubkeys.containsKey(key))
         {
-            int result = this.transformSubkeys.get(subkey);
-            this.transformSubkeys.put(subkey, ++result);
-            return result;
+            subMap = this.transformSubkeys.get(key);
+
+            if (subMap.containsKey(subkey))
+            {
+                int result = subMap.get(subkey);
+                subMap.put(subkey, ++result);
+                this.transformSubkeys.put(key, subMap);
+                return result;
+            }
         }
-        else
-        {
-            this.transformSubkeys.put(subkey, 0);
-            return 0;
-        }
+
+        subMap = new HashMap<>();
+        subMap.put(subkey, 0);
+        this.transformSubkeys.put(key, subMap);
+        return 0;
     }
 
     private int calcHeaderColumn(final String column)
     {
-        String colHeader = this.OUT.getHeader().getFromId(this.colNum);
         final int col = this.OUT.getHeader().getId(column);
 
-        if (colHeader == null || col == -1)
+        if (col == -1)
         {
             // Not found, add column
-            this.colNum++;
-//            LOGGER.debug("calcHeaderColumn(): Add column number [{}] with [{}]", this.colNum, column);
+            LOGGER.debug("calcHeaderColumn(): Add column [{}] (size: {})", column, this.OUT.getHeader().size());
             this.OUT.appendHeader(column);
         }
 
         final int check = this.OUT.getHeader().getId(column);
-//        LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
+        LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
         return check;
     }
 
@@ -376,6 +360,9 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         {
             this.PARSER.clear();
         }
+
+        this.transformKeys.clear();
+        this.transformSubkeys.clear();
     }
 
     @Override
@@ -395,5 +382,8 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         {
             this.PARSER.close();
         }
+
+        this.transformKeys.clear();
+        this.transformSubkeys.clear();
     }
 }
