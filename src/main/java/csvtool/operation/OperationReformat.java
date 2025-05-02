@@ -456,7 +456,7 @@ public class OperationReformat extends Operation implements AutoCloseable
             }
             else
             {
-                Pair<Boolean, String> resultEach = this.applyRemapEach(remap, entry);
+                Pair<Boolean, String> resultEach = this.applyRemapEach(remap, entry, data);
 
                 if (resultEach == null || resultEach.getRight() == null)
                 {

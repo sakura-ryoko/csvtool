@@ -243,7 +243,7 @@ public abstract class Operation
         return true;
     }
 
-    protected Pair<Boolean, String> applyRemapEach(@Nonnull CSVRemap remap, String data)
+    protected Pair<Boolean, String> applyRemapEach(@Nonnull CSVRemap remap, String data, List<String> row)
     {
         List<String> params = remap.getParams();
         String result = null;
@@ -349,13 +349,58 @@ public abstract class Operation
                     result = params.getFirst();
                 }
             }
+            case APPEND ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): APPEND error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                result = data + " " + params.getFirst();
+            }
+            case MERGE ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): MERGE error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                StringBuilder builder = new StringBuilder(data);
+
+                for (String param : params)
+                {
+                    try
+                    {
+                        int obj = Integer.parseInt(param);
+
+                        if (obj >= 0 && obj < row.size())
+                        {
+                            builder.append(" ").append(row.get(obj));
+                        }
+                        else
+                        {
+                            LOGGER.warn("applyRemapEach(): MERGE error; params are out of bounds");
+                            return Pair.of(false, builder.toString());
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        LOGGER.warn("applyRemapEach(): MERGE error; params are invalid; {}", e.getLocalizedMessage());
+                        return Pair.of(false, builder.toString());
+                    }
+                }
+
+                result = builder.toString();
+            }
             case IF_EMPTY ->
             {
                 if (data.isEmpty())
                 {
                     if (params == null || params.isEmpty())
                     {
-                        LOGGER.warn("applyRemapEach(): STATIC error; params are empty");
+                        LOGGER.warn("applyRemapEach(): IF_EMPTY error; params are empty");
                         return Pair.of(false, data);
                     }
 
@@ -369,6 +414,29 @@ public abstract class Operation
                 else
                 {
                     result = data;
+                }
+            }
+            case NOT_EMPTY ->
+            {
+                if (data.isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    if (params == null || params.isEmpty())
+                    {
+                        result = data;
+                    }
+                    else
+                    {
+                        result = params.getFirst();
+                    }
                 }
             }
             case INCLUDE ->
@@ -500,7 +568,7 @@ public abstract class Operation
 
         if (remap.getSubRemap() != null)
         {
-            Pair<Boolean, String> subPair = this.applySubRemapNested(remap, result);
+            Pair<Boolean, String> subPair = this.applySubRemapNested(remap, result, row);
 
             if (subPair == null || subPair.getRight() == null)
             {
@@ -518,11 +586,11 @@ public abstract class Operation
         return Pair.of(exclude, result != null ? result : data);
     }
 
-    private Pair<Boolean, String> applySubRemapNested(@Nonnull CSVRemap remap, String data)
+    private Pair<Boolean, String> applySubRemapNested(@Nonnull CSVRemap remap, String data, List<String> row)
     {
         if (remap.getSubRemap() != null)
         {
-            Pair<Boolean, String> resultEach = this.applyRemapEach(remap.getSubRemap(), data);
+            Pair<Boolean, String> resultEach = this.applyRemapEach(remap.getSubRemap(), data, row);
             boolean exclude = false;
 
             if (resultEach == null || resultEach.getRight() == null)
