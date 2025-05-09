@@ -75,6 +75,7 @@ public class OperationHelp extends Operation
         // Generic Help
         this.displayVersion();
         this.displayHelp();
+        System.out.print("\n");
         return true;
     }
 
@@ -119,6 +120,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
         System.out.print("\t--debug:\n\t\tSets the Operation in \"Debug\" mode, which causes the Logger to output Debug Level messages.\n");
         System.out.print("\t--ansi-colors:\n\t\tSets the Operation in \"Ansi-Color\" mode, which causes the Logger to output messages with ANSI-style color codes.\n");
+        System.out.print("\n");
     }
 
     private void displayHelpForSetting(Settings setting)
@@ -141,6 +143,8 @@ public class OperationHelp extends Operation
             case ANSI_COLORS -> this.displayHelpForAnsiColors();
             default -> this.displayHelp();
         }
+
+        System.out.print("\n");
     }
 
     private boolean checkOptSettings(OptSettings opt)
@@ -231,6 +235,8 @@ public class OperationHelp extends Operation
             this.displayHelpForAnsiColors();
             hasOpt = true;
         }
+
+        System.out.print("\n");
 
         return hasOpt;
     }

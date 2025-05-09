@@ -130,6 +130,7 @@ public class OperationMerge extends Operation implements AutoCloseable
         System.out.print("You can also pass the (--de-dupe) operation with requires a key field (--key) to be set.\n");
         System.out.print("Optionally, you can enable (--squash-dupe) which combines de-duplicated data values.\n");
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)

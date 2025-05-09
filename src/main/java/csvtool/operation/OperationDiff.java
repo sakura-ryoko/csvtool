@@ -142,6 +142,7 @@ public class OperationDiff extends Operation implements AutoCloseable
         System.out.print("It accepts two input files (--input), and an output (--output); and also requires a key field (--key) to be set.\n");
         System.out.print("You can also pass the second key field (--key2) and the side key field (--side) as options.\n");
         System.out.print("The key field #2 adds a secondary comparison point for more-specific comparisons,\nor an optional side field for adding a column displaying which file the difference came from.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)

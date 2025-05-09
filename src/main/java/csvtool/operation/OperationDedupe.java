@@ -178,6 +178,7 @@ public class OperationDedupe extends Operation implements AutoCloseable
         System.out.print("You can use multiple key fields (--key, --key2, --key3) which can be set.\n");
         System.out.print("Optionally, you can enable (--squash-dupe) which combines de-duplicated data values.\n");
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field(s) given.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String file1, boolean ignoreQuotes, boolean debug)

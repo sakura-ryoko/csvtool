@@ -182,6 +182,7 @@ public class OperationSplit extends Operation implements AutoCloseable
 //        System.out.print("It accepts two input files (--input), and an output (--output).\n");
 //        System.out.print("You can also pass the (--de-dupe) operation with requires a key field (--key) to be set.\n");
 //        System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String file, boolean ignoreQuotes, boolean debug)

@@ -36,6 +36,7 @@ public class OperationTransformSquash extends Operation implements AutoCloseable
 
 //        System.out.print("It accepts one input file (--input), and an output (--output).\n");
 //        System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");
+        System.out.print("\n");
     }
 
     @Override

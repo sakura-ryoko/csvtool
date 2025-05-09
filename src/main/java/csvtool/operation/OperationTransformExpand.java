@@ -140,6 +140,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         System.out.print("Please see the '--transform-save' operation;\n");
         System.out.print("and the documentation under the generated JSON file for additional usage information.\n");
         System.out.print("The generated file lists example TransformType functionality.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String input, boolean ignoreQuotes, boolean debug)

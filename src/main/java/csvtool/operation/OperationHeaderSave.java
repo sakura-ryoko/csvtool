@@ -98,6 +98,7 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
         System.out.print("Please see the '--reformat' operation to see how it may be used;\n");
         System.out.print("along with the documentation under the generated JSON file for additional usage information.\n");
         System.out.print("The generated file lists example CSVRemap functionality.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String input, boolean ignoreQuotes, boolean debug, @Nullable String output)
