@@ -128,6 +128,20 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         return false;
     }
 
+    @Override
+    public void displayHelp()
+    {
+        System.out.print("Header Expand Operation:\n");
+        System.out.printf("\tAliases: %s\n\n", Operations.TRANSFORM_EXPAND.getAlias().toString());
+
+        System.out.print("This operation transforms a file into a new output file which can 'expand' the columns of a CSV file;\n");
+        System.out.print("Which utilizes the 'transform.json' as a configuration file for a tokenized formatting called a 'TransformType';\n");
+        System.out.print("That defines the behavior of this function.\n");
+        System.out.print("Please see the '--transform-save' operation;\n");
+        System.out.print("and the documentation under the generated JSON file for additional usage information.\n");
+        System.out.print("The generated file lists example TransformType functionality.\n");
+    }
+
     private boolean readFiles(String input, boolean ignoreQuotes, boolean debug)
     {
         LOGGER.debug("readFiles(): Reading files ...");
@@ -331,16 +345,6 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         final int check = this.OUT.getHeader().getId(column);
         LOGGER.debug("calcHeaderColumn(): column '{}' found at index [{}]", column, check);
         return check;
-    }
-
-    @Override
-    public void displayHelp()
-    {
-        System.out.print("Header Expand Operation:\n");
-        System.out.printf("\tAliases: %s\n\n", Operations.TRANSFORM_EXPAND.getAlias().toString());
-
-//        System.out.print("It accepts one input file (--input), and an output (--output).\n");
-//        System.out.print("This operation simply copies the input to the output file to test the inner-workings of this program.\n");
     }
 
     @Override

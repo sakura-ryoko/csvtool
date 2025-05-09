@@ -207,6 +207,15 @@ public class Main
             System.out.print(" Key2: [NOT_SET]\n");
         }
 
+        if (opt.hasKey3())
+        {
+            System.out.printf(" Key3: [%s] // applied [%s]\n", opt.getKey3(), ctx.getSettingValue(Settings.KEY3));
+        }
+        else
+        {
+            System.out.print(" Key3: [NOT_SET]\n");
+        }
+
         if (opt.hasSide())
         {
             System.out.printf(" Side: [%s] // applied [%s]\n", opt.getSide(), ctx.getSettingValue(Settings.SIDE));
@@ -274,9 +283,11 @@ public class Main
                     case OUTPUT -> opt.setOutput(ctx.getSettingValue(entry));
                     case KEY -> opt.setKey(ctx.getSettingValue(entry));
                     case KEY2 -> opt.setKey2(ctx.getSettingValue(entry));
+                    case KEY3 -> opt.setKey3(ctx.getSettingValue(entry));
                     case SIDE -> opt.setSide(ctx.getSettingValue(entry));
                     case HEADERS -> opt.setHeadersConfig(ctx.getSettingValue(entry));
                     case DE_DUPE -> opt.setDeDupe(true);
+                    case SQUASH_DUPE -> opt.setSquashDupe(true);
                     case QUOTES -> opt.setApplyQuotes(true);
                     case APPEND -> opt.setAppendOutput(true);
                     case QUIET ->

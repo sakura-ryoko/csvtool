@@ -23,6 +23,12 @@ public class HeaderConfig
 
     @SerializedName("__remap_example_list")
     public List<String> remap_example_list = List.of(
+            "This file defines the --reformat functionality's behavior.",
+        "It is organized by column index, and a list of 'CSVRemap' functions; which are listed below.",
+        "There is also a 'remap_examples' to show how this configuration file can be used.",
+        "The resulting output gets then remapped using the 'Input' Headers, being transformed to the 'Output' Headers.",
+        "This process requires the correct number of DROP remaps to be performed so that the column count is equal to the output column size.",
+        "--------------------------------------------------------------------------------------------------------------------------------------",
         "NONE (Performs no remap)",
         "DROP (Performs a Column Removal, and advances to the next)",
         "EMPTY (Performs a field empty which deletes any existing data)",
@@ -37,9 +43,10 @@ public class HeaderConfig
         "TRUNCATE { (length) } (Truncates the value to a length of (length))",
         "IF_STATIC { (field-id), (condition), (value) } (Performs a value static if the value in (field-id) matches (condition), then this field becomes (value))",
         "IF_EMPTY { (value), [subRemap] } (Performs a value static if the value is empty, then this field becomes (value), or applies the optional [subRemap])",
+        "IF_RANGE { (min-value), (max-value), (result), [else], {...} } (Performs an integer comparison of existing data using >= (min-value) and <= (max-value), then return (result), or return [else]; can be chained for multiple range tests)",
         "NOT_EMPTY { (value), [subRemap] } (Performs a value static if the value is not empty, then this field becomes (value), or applies the optional [subRemap])",
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
-        "MERGE { (field-id) } (Performs a value merge from the value in (field-id), with a space in between)",
+        "MERGE { (field-id) } (Performs a value merge from the value in (field-id), with a single ' ' space in between)",
         "APPEND { (value) } (Performs a value append of the value in (value), with a space in between)",
         "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
         "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"

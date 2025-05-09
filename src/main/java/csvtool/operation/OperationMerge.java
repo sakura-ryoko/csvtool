@@ -17,7 +17,7 @@ public class OperationMerge extends Operation implements AutoCloseable
     private FileCache FILE_1;
     private FileCache FILE_2;
     private final FileCache FILE_DUPES;
-    private int keyId;
+    private int keyId1;
 
     public OperationMerge(Operations op)
     {
@@ -25,7 +25,7 @@ public class OperationMerge extends Operation implements AutoCloseable
         this.FILE_1 = new FileCache();
         this.FILE_2 = new FileCache();
         this.FILE_DUPES = new FileCache();
-        this.keyId = -1;
+        this.keyId1 = -1;
     }
 
     @Override
@@ -70,16 +70,16 @@ public class OperationMerge extends Operation implements AutoCloseable
                     return false;
                 }
 
-                this.keyId = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY));
+                this.keyId1 = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY));
 
-                if (this.keyId < 0)
+                if (this.keyId1 < 0)
                 {
                     LOGGER.error("runOperation(): Merge FAILED, key was NOT found in the Headers.");
                     this.clear();
                     return false;
                 }
 
-                if (!deDupeFiles(true))
+                if (!this.deDupeFiles(true, ctx.getOpt().isSquashDupe()))
                 {
                     LOGGER.error("runOperation(): Merge FAILED, DeDuplication attempt has failed.");
                     this.clear();
@@ -128,6 +128,7 @@ public class OperationMerge extends Operation implements AutoCloseable
         System.out.print("This operation merges two files into a single output file.\n");
         System.out.print("It accepts two input files (--input), and an output (--output).\n");
         System.out.print("You can also pass the (--de-dupe) operation with requires a key field (--key) to be set.\n");
+        System.out.print("Optionally, you can enable (--squash-dupe) which combines de-duplicated data values.\n");
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
     }
 
@@ -157,9 +158,9 @@ public class OperationMerge extends Operation implements AutoCloseable
         return false;
     }
 
-    private boolean deDupeFiles(boolean skipHeader)
+    private boolean deDupeFiles(boolean skipHeader, boolean squash)
     {
-        if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty() || this.keyId < 0)
+        if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty() || this.keyId1 < 0)
         {
             LOGGER.error("deDupeFiles(): Files are empty, or Key not set!");
             return false;
@@ -179,7 +180,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
             if (!entry.isEmpty())
             {
-                String key = entry.get(this.keyId);
+                String key = entry.get(this.keyId1);
 
                 LOGGER.debug("FILE1[{}]: key [{}] checking FILE2 ...", i, key);
 
@@ -189,12 +190,25 @@ public class OperationMerge extends Operation implements AutoCloseable
 
                     if (!entry2.isEmpty())
                     {
-                        String key2 = entry2.get(this.keyId);
+                        String key2 = entry2.get(this.keyId1);
 
                         LOGGER.debug("FILE [{}/{}]: key [{}] / key2 [{}]", i, j, key, key2);
 
                         if (key2.equals(key) && (!skipHeader || j > 0))
                         {
+                            // Attempt to squash values
+                            if (squash)
+                            {
+                                // Squash
+                                List<String> newLine = this.squashLines(entry, entry2);
+
+                                if (!newLine.equals(entry))
+                                {
+                                    LOGGER.debug("FILE1 [{}]: SQUASHED LINE: [{}//{}] --> [{}]", i, entry, newLine);
+                                    this.FILE_1.getFile().put(i, newLine);
+                                }
+                            }
+
                             LOGGER.info("FILE2[{}]: skipping duplicate ...", j);
                             this.FILE_DUPES.addLine(entry2);
                             dupes.add(j);

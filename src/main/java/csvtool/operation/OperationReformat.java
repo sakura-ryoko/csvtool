@@ -516,6 +516,13 @@ public class OperationReformat extends Operation implements AutoCloseable
     {
         System.out.print("Reformat Operation:\n");
         System.out.printf("\tAliases: %s\n\n", Operations.REFORMAT.getAlias().toString());
+
+        System.out.print("This operation reformats a file into a new output file;\n");
+        System.out.print("Which utilizes the 'headers.json' as a configuration file.\n");
+        System.out.print("That defines the behavior of this function.\n");
+        System.out.print("Please see the '--header-save' operation;\n");
+        System.out.print("and the documentation under the generated JSON file for additional usage information.\n");
+        System.out.print("The generated file lists example CSVRemap functionality.\n");
     }
 
     @Override

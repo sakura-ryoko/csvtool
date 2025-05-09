@@ -15,6 +15,7 @@ public enum RemapType
     MERGE           ("merge",         true),
     IF_STATIC       ("if-static",     true),
     IF_EMPTY        ("if-empty",      true),
+    IF_RANGE        ("if-range",      true),
     NOT_EMPTY       ("not-empty",     true),
     INCLUDE         ("include",       true),
     EXCLUDE         ("exclude",       true),

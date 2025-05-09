@@ -12,6 +12,7 @@ public enum Operations
     HELP                ("help",             "--help",              false, false,false,false, OperationType.HELP,               List.of("-h", "-help")),
     TEST                ("test",             "--test",              false, true ,false,false, OperationType.TEST,               List.of("-test", "-t", "--t")),
     MERGE               ("merge",            "--merge",             true,  true, false,false, OperationType.MERGE,              List.of("-merge", "-m", "--m")),
+    DEDUPE              ("dedupe",           "--dedupe",            false, true, true, false, OperationType.DEDUPE,             List.of("-dedupe", "-ded", "--ded")),
 //    SPLIT               ("split",            "--split",             false, true, false,false, OperationType.SPLIT,              List.of("-split", "-sp", "--sp", "-s", "--s")),
     DIFF                ("diff",             "--diff",              true,  true, true, false, OperationType.DIFF,               List.of("-diff", "-d", "--d")),
     HEADER_SAVE         ("header-save",      "--header-save",       false, false,false,true,  OperationType.HEADER_SAVE,        List.of("-header-save", "--save", "-save", "--sv", "-sv")),

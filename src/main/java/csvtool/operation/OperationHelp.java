@@ -97,18 +97,23 @@ public class OperationHelp extends Operation
         System.out.print("\t--help:\n\t\tThis Screen, optionally provide an Operation or Setting for more information.\n");
         System.out.print("\t--test:\n\t\tTest Routines [params: (input file)]\n");
         System.out.print("\t--merge:\n\t\tMerge Two CSV Files [requires: (input) (output) (key_field)]\n");
+        System.out.print("\t--dedupe:\n\t\tDeDupe Two CSV Files  [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--diff:\n\t\tDiff Two CSV Files  [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--header-save:\n\t\tGenerate a headers.json from an input [requires: (input) (headers.json)]\n");
         System.out.print("\t--reformat:\n\t\tReformat A CSV File [requires: (input) (output) (headers.json)]\n");
+        System.out.print("\t--transform-save:\n\t\tGenerate a transform.json from an input [requires: (input) (output) (transform.json)]\n");
+        System.out.print("\t--transform-expand:\n\t\tExpand A CSV File's Columns using a transform.json using a key [requires: (input) (output) (transform.json) (key_field)]\n");
         System.out.print("\n");
         System.out.print("Settings (Cannot be listed before the operation, but it is accepted anywhere afterwards):\n");
         System.out.print("\t--input (file):\n\t\tSets the CSV Input File #2\n");
         System.out.print("\t--output (file):\n\t\tSets the Output File\n");
         System.out.print("\t--headers (file):\n\t\tSets the CSV Headers.json file.  This is used for \"Reformatting\" the CSV Fields like a config file.\n");
-        System.out.print("\t--key (key):\n\t\tSets the CSV Key field.  This is used in MERGE and DIFF Operations so that they can compare the data.\n");
-        System.out.print("\t--key2 (key):\n\t\tSets the CSV Key2 field for the DIFF Operation.  This is used in DIFF matching operations as a secondary data comparison.\n");
+        System.out.print("\t--key (key):\n\t\tSets the CSV Key field.  This is used in MERGE, DIFF, and DEDUPE Operations so that they can compare the data.\n");
+        System.out.print("\t--key2 (key):\n\t\tSets the CSV Key2 field for the DIFF/DEDUPE Operation.  This is used in DIFF and DEDUPE matching operations as a secondary data comparison.\n");
+        System.out.print("\t--key3 (key):\n\t\tSets the CSV Key3 field for the DEDUPE Operation.  This is used in DEDUPE matching operations as a tertiary data comparison.\n");
         System.out.print("\t--side (key):\n\t\tSets the CSV Side field for the DIFF Operation.  This informs of which \"Side\" the DIFF output came from.\n");
         System.out.print("\t--de-dupe:\n\t\tSets the MERGE Operation in \"De-Duplication\" mode, which removes rows that already exists, and outputs this data to a separate file.\n");
+        System.out.print("\t--squash-dupe:\n\t\tSets the MERGE/DEDUPE Operation in \"Squash\" mode, which combines rows that already exist with it's duplicates, and outputs the combined data.\n");
         System.out.print("\t--quotes:\n\t\tSets the CSV Output in \"Apply Quotes\" mode, which adds Quotes to all data, and not only when it is required.\n");
         System.out.print("\t--append:\n\t\tSets the CSV Output in \"Append\" mode, which causes the Output to not be Overwritten, but appended to.\n");
         System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
@@ -125,8 +130,10 @@ public class OperationHelp extends Operation
             case HEADERS -> this.displayHelpForHeaders();
             case KEY -> this.displayHelpForKey();
             case KEY2 -> this.displayHelpForKey2();
+            case KEY3 -> this.displayHelpForKey3();
             case SIDE -> this.displayHelpForSide();
             case DE_DUPE -> this.displayHelpForDeDupe();
+            case SQUASH_DUPE -> this.displayHelpForSquashDupe();
             case QUOTES -> this.displayHelpForQuotes();
             case APPEND -> this.displayHelpForAppend();
             case QUIET -> this.displayHelpForQuiet();
@@ -170,6 +177,12 @@ public class OperationHelp extends Operation
             this.displayHelpForKey2();
             hasOpt = true;
         }
+        else if (opt.hasKey3())
+        {
+            this.displayVersion();
+            this.displayHelpForKey3();
+            hasOpt = true;
+        }
         else if (opt.hasSide())
         {
             this.displayVersion();
@@ -180,6 +193,12 @@ public class OperationHelp extends Operation
         {
             this.displayVersion();
             this.displayHelpForDeDupe();
+            hasOpt = true;
+        }
+        else if (opt.isSquashDupe())
+        {
+            this.displayVersion();
+            this.displayHelpForSquashDupe();
             hasOpt = true;
         }
         else if (opt.isApplyQuotes())
@@ -246,6 +265,12 @@ public class OperationHelp extends Operation
         System.out.printf("Aliases: %s\n", Settings.KEY2.getAlias().toString());
     }
 
+    private void displayHelpForKey3()
+    {
+        System.out.print("--key3 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.KEY3.getAlias().toString());
+    }
+
     private void displayHelpForSide()
     {
         System.out.print("--side (field):\n");
@@ -253,6 +278,12 @@ public class OperationHelp extends Operation
     }
 
     private void displayHelpForDeDupe()
+    {
+        System.out.print("--squash-dupe:\n");
+        System.out.printf("Aliases: %s\n", Settings.SQUASH_DUPE.getAlias().toString());
+    }
+
+    private void displayHelpForSquashDupe()
     {
         System.out.print("--de-dupe:\n");
         System.out.printf("Aliases: %s\n", Settings.DE_DUPE.getAlias().toString());

@@ -26,11 +26,12 @@ public class CSVRemapList
                 new CSVRemap(10, RemapType.TRUNCATE, List.of("1")),
                 new CSVRemap(11, RemapType.IF_STATIC, List.of("2", "apple", "orange")),
                 new CSVRemap(12, RemapType.IF_EMPTY, List.of("was_empty")),
-                new CSVRemap(13, RemapType.NOT_EMPTY, List.of("not_empty")),
-                new CSVRemap(14, RemapType.COPY, List.of("3")),
-                new CSVRemap(15, RemapType.MERGE, List.of("3")),
-                new CSVRemap(16, RemapType.APPEND, List.of("Extra")),
-                new CSVRemap(17, RemapType.SWAP, List.of("2"),
+                new CSVRemap(13, RemapType.IF_RANGE, List.of("0", "15", "Less than 16", "16", "32", "Between 16 and 32", "Above 32")),
+                new CSVRemap(14, RemapType.NOT_EMPTY, List.of("not_empty")),
+                new CSVRemap(15, RemapType.COPY, List.of("3")),
+                new CSVRemap(16, RemapType.MERGE, List.of("3")),
+                new CSVRemap(17, RemapType.APPEND, List.of("Extra")),
+                new CSVRemap(18, RemapType.SWAP, List.of("2"),
                         new CSVRemap(2, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )

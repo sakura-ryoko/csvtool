@@ -11,6 +11,7 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationHelp>  HELP;
     public static final OperationType<OperationTest> TEST;
     public static final OperationType<OperationMerge> MERGE;
+    public static final OperationType<OperationDedupe> DEDUPE;
 //    public static final OperationType<OperationSplit> SPLIT;
     public static final OperationType<OperationDiff> DIFF;
     public static final OperationType<OperationHeaderSave> HEADER_SAVE;
@@ -48,6 +49,7 @@ public class OperationType<T extends Operation>
         HELP = create(OperationHelp::new, Operations.HELP);
         TEST = create(OperationTest::new, Operations.TEST);
         MERGE = create(OperationMerge::new, Operations.MERGE);
+        DEDUPE = create(OperationDedupe::new, Operations.DEDUPE);
 //        SPLIT = create(OperationSplit::new, Operations.SPLIT);
         DIFF = create(OperationDiff::new, Operations.DIFF);
         HEADER_SAVE = create(OperationHeaderSave::new, Operations.HEADER_SAVE);

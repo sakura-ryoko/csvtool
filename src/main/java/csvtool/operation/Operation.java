@@ -13,6 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -243,6 +244,36 @@ public abstract class Operation
         return true;
     }
 
+    protected List<String> squashLines(List<String> line1, List<String> line2)
+    {
+        if (line1.size() != line2.size())
+        {
+            LOGGER.error("squashLines(): Error; line1.size != line2.size!");
+            return line1;
+        }
+
+        List<String> result = new ArrayList<>(line1);
+
+        for (int i = 0; i < line1.size(); i++)
+        {
+            String left = line1.get(i);
+            String right = line2.get(i);
+
+            // Squash values; meaning if it exists in one and not the other; use it.
+            // If data exists in both; use the first (left) entry.
+            if (left.isEmpty() && !right.isEmpty())
+            {
+                result.set(i, right);
+            }
+            else if (!left.isEmpty() && right.isEmpty())
+            {
+                result.set(i, left);
+            }
+        }
+
+        return result;
+    }
+
     protected Pair<Boolean, String> applyRemapEach(@Nonnull CSVRemap remap, String data, List<String> row)
     {
         List<String> params = remap.getParams();
@@ -414,6 +445,107 @@ public abstract class Operation
                 else
                 {
                     result = data;
+                }
+            }
+            case IF_RANGE ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 4)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_RANGE error; params are empty or less than 4.");
+                    return Pair.of(false, data);
+                }
+
+                int dataTest = -1;
+
+                try
+                {
+                    dataTest = Integer.parseInt(data);
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_RANGE error; tested data is not a number; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                int swPos = 0;
+                int minRange = Integer.MIN_VALUE;
+                int maxRange = Integer.MAX_VALUE;
+                String matchValue = "";
+                String elseValue = data;
+
+                for (int i = 0; i < params.size(); i++)
+                {
+                    LOGGER.debug("applyRemapEach(): IF_RANGE[{}]; min: [{}], max: [{}], match: [{}], else: [{}]", i, minRange, maxRange, matchValue, elseValue);
+
+                    if (swPos > 2)
+                    {
+                        // Next set of params.
+                        if ((params.size() - i) > 2)
+                        {
+                            swPos = 0;
+
+                            if (matchValue.isEmpty() || minRange == Integer.MIN_VALUE || maxRange == Integer.MAX_VALUE)
+                            {
+                                continue;
+                            }
+
+                            LOGGER.debug("applyRemapEach(): IF_RANGE; TEST --> min: [{}], max: [{}], data: [{}], match: [{}], else: [{}]", minRange, maxRange, dataTest, matchValue, elseValue);
+
+                            // Perform test
+                            if (dataTest >= minRange && dataTest <= maxRange)
+                            {
+                                return Pair.of(false, matchValue);
+                            }
+                            else if (!elseValue.matches(data))
+                            {
+                                return Pair.of(false, elseValue);
+                            }
+                        }
+                        else
+                        {
+                            // Defaults to "data"
+                            elseValue = params.get(i);
+                            break;
+                        }
+                    }
+
+                    try
+                    {
+                        switch (swPos)
+                        {
+                            case 0 -> minRange = Integer.parseInt(params.get(i));
+                            case 1 -> maxRange = Integer.parseInt(params.get(i));
+                            case 2 -> matchValue = params.get(i);
+                        }
+
+                        swPos++;
+                    }
+                    catch (Exception err)
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_RANGE error; exception processing params; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+                }
+
+                LOGGER.debug("applyRemapEach(): IF_RANGE; DEFAULT --> min: [{}], max: [{}], data: [{}], match: [{}], else: [{}]", minRange, maxRange, dataTest, matchValue, elseValue);
+
+                if (!matchValue.isEmpty() && minRange > Integer.MIN_VALUE && maxRange < Integer.MAX_VALUE)
+                {
+                    // Perform test
+                    if (dataTest >= minRange && dataTest <= maxRange)
+                    {
+                        return Pair.of(false, matchValue);
+                    }
+                }
+
+                // If we got here, return elseValue.
+                if (!elseValue.matches(data))
+                {
+                    return Pair.of(false, elseValue);
+                }
+                else
+                {
+                    return Pair.of(false, data);
                 }
             }
             case NOT_EMPTY ->
