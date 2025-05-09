@@ -25,6 +25,9 @@ public enum RemapType
     TRUNCATE        ("truncate",      true),
     DATE            ("date",          true),
     DATE_NOW        ("date-now",      true),
+    DATE_YEARS      ("date-years",    true),
+    DATE_MONTHS     ("date-months",   true),
+    DATE_DAYS       ("date-days",     true),
     ;
 
     public static final List<RemapType> VALUES = List.of(values());

@@ -13,6 +13,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -390,6 +393,32 @@ public abstract class Operation
 
                 result = data + " " + params.getFirst();
             }
+            case COPY ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): COPY error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    int param = Integer.parseInt(params.getFirst());
+
+                    if (param > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): COPY error; params are out of bounds");
+                        return Pair.of(false, data);
+                    }
+
+                    result = row.get(param);
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): COPY error; params are invalid; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+            }
             case MERGE ->
             {
                 if (params == null || params.isEmpty())
@@ -455,7 +484,7 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                int dataTest = -1;
+                int dataTest;
 
                 try
                 {
@@ -665,6 +694,12 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE error; data is empty");
+                    return Pair.of(false, data);
+                }
+
                 try
                 {
                     SimpleDateFormat inFmt = new SimpleDateFormat(params.getFirst());
@@ -685,6 +720,12 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_NOW error; data is empty");
+                    return Pair.of(false, data);
+                }
+
                 try
                 {
                     Date now = new Date(System.currentTimeMillis());
@@ -694,6 +735,99 @@ public abstract class Operation
                 catch (Exception err)
                 {
                     LOGGER.warn("applyRemapEach(): DATE_NOW error; {}", err.getMessage());
+                }
+            }
+            case DATE_YEARS ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_YEARS error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_YEARS error; data is empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    SimpleDateFormat fmt = new SimpleDateFormat(params.getFirst());
+                    Period duration = Period.between(fmt.parse(data)
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate(),
+                            LocalDate.now()
+                    );
+
+                    result = String.valueOf(duration.getYears());
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_YEARS error; {}", err.getMessage());
+                }
+            }
+            case DATE_MONTHS ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_MONTHS error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_MONTHS error; data is empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    SimpleDateFormat fmt = new SimpleDateFormat(params.getFirst());
+                    Period duration = Period.between(fmt.parse(data)
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate(),
+                            LocalDate.now()
+                    );
+
+                    result = String.valueOf(duration.getMonths());
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_MONTHS error; {}", err.getMessage());
+                }
+            }
+            case DATE_DAYS ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_DAYS error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_DAYS error; data is empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    SimpleDateFormat fmt = new SimpleDateFormat(params.getFirst());
+                    Period duration = Period.between(fmt.parse(data)
+                                    .toInstant()
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate(),
+                            LocalDate.now()
+                    );
+
+                    result = String.valueOf(duration.getDays());
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_DAYS error; {}", err.getMessage());
                 }
             }
         }

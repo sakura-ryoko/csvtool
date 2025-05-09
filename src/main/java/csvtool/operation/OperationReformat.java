@@ -289,32 +289,34 @@ public class OperationReformat extends Operation implements AutoCloseable
                     return null;
                 }
             }
-            else if (remap.getType() == RemapType.COPY)
-            {
-                // Copy (Pass 1)
-                List<String> params = remap.getParams();
-
-                if (params == null || params.isEmpty())
-                {
-                    LOGGER.warn("applyRemap():1: COPY error; No parameters given");
-                    return null;
-                }
-
-                try
-                {
-                    int copyId = Integer.parseInt(params.getFirst());
-                    String otherEntry = data.get(copyId);
-
-                    LOGGER.debug("applyRemap():1: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
-                    data.set(i, otherEntry);
-                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
-                }
-                catch (Exception err)
-                {
-                    LOGGER.warn("applyRemap():1: COPY Exception; {}", err.getMessage());
-                    return null;
-                }
-            }
+//            else if (remap.getType() == RemapType.COPY)
+//            {
+//                // Copy (Pass 1)
+//                List<String> params = remap.getParams();
+//
+//                if (params == null || params.isEmpty())
+//                {
+//                    LOGGER.warn("applyRemap():1: COPY error; No parameters given");
+//                    return null;
+//                }
+//
+//                try
+//                {
+//                    int copyId = Integer.parseInt(params.getFirst());
+//                    String otherEntry = data.get(copyId);
+//                    CSVRemap otherRemap = remapList.getRemap(copyId);
+//
+//                    LOGGER.debug("applyRemap():1: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
+//                    data.set(i, otherEntry);
+//
+//                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+//                }
+//                catch (Exception err)
+//                {
+//                    LOGGER.warn("applyRemap():1: COPY Exception; {}", err.getMessage());
+//                    return null;
+//                }
+//            }
         }
 
         LOGGER.debug("applyRemap(): begin (Pass 2) with list size [{}]", data.size());
@@ -428,32 +430,32 @@ public class OperationReformat extends Operation implements AutoCloseable
             {
                 result.set(i, entry);
             }
-            else if (remap.getType() == RemapType.COPY)
-            {
-                // Copy (Pass 3 -- from post-swap)
-                List<String> params = remap.getParams();
-
-                if (params == null || params.isEmpty())
-                {
-                    LOGGER.warn("applyRemap():3: COPY error; No parameters given");
-                    return null;
-                }
-
-                try
-                {
-                    int copyId = Integer.parseInt(params.getFirst());
-                    String otherEntry = data.get(copyId);
-
-                    LOGGER.debug("applyRemap():3: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
-                    data.set(i, otherEntry);
-                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
-                }
-                catch (Exception err)
-                {
-                    LOGGER.warn("applyRemap():3: COPY Exception; {}", err.getMessage());
-                    return null;
-                }
-            }
+//            else if (remap.getType() == RemapType.COPY)
+//            {
+//                // Copy (Pass 3 -- from post-swap)
+//                List<String> params = remap.getParams();
+//
+//                if (params == null || params.isEmpty())
+//                {
+//                    LOGGER.warn("applyRemap():3: COPY error; No parameters given");
+//                    return null;
+//                }
+//
+//                try
+//                {
+//                    int copyId = Integer.parseInt(params.getFirst());
+//                    String otherEntry = data.get(copyId);
+//
+//                    LOGGER.debug("applyRemap():3: COPY [{}/{}] apply --> [{}/{}]", copyId, otherEntry, i, entry);
+//                    data.set(i, otherEntry);
+//                    remapList.setRemap(i, new CSVRemap(i, RemapType.NONE));
+//                }
+//                catch (Exception err)
+//                {
+//                    LOGGER.warn("applyRemap():3: COPY Exception; {}", err.getMessage());
+//                    return null;
+//                }
+//            }
             else
             {
                 Pair<Boolean, String> resultEach = this.applyRemapEach(remap, entry, data);
