@@ -486,33 +486,6 @@ public class OperationReformat extends Operation implements AutoCloseable
         return Pair.of(exclude, result);
     }
 
-    private String applyIfStaticEach(String orig, String target, List<String> conditionalPairs)
-    {
-//        LOGGER.debug("applyIfStaticEach(): orig: [{}], target: [{}], conditional size [{}]", orig, target, conditionalPairs.size());
-
-        // Skip first Entry
-        for (int i = 1; i < conditionalPairs.size(); i++)
-        {
-            if (i % 2 != 0 && // if Odd & only process if i+1 < size()
-                (i+1) < conditionalPairs.size())
-            {
-                String condition = conditionalPairs.get(i);
-                String value = conditionalPairs.get(i+1);
-
-//                LOGGER.warn("applyIfStaticEach(): TEST [{}] vs [{}]", target, condition);
-
-                if (target.equalsIgnoreCase(condition))
-                {
-                    LOGGER.debug("applyIfStaticEach(): RETURN-MATCH [{}]", value);
-                    return value;
-                }
-            }
-        }
-
-        LOGGER.debug("applyIfStaticEach(): RETURN-ORIG [{}]", orig);
-        return orig;
-    }
-
     @Override
     public void displayHelp()
     {

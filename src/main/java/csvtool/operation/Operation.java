@@ -291,10 +291,7 @@ public abstract class Operation
 
         switch (remap.getType())
         {
-            case EMPTY ->
-            {
-                return Pair.of(false, "");
-            }
+            case EMPTY -> result = "";
             case PAD ->
             {
                 if (params == null || params.isEmpty())
@@ -382,6 +379,44 @@ public abstract class Operation
                 else
                 {
                     result = params.getFirst();
+                }
+            }
+            case IF_STATIC ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 3)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_STATIC error; Invalid parameters given");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    int fieldId = Integer.parseInt(params.getFirst());
+
+                    if (fieldId < 0 || fieldId > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_STATIC error; fieldId is out of bounds.");
+                        return Pair.of(false, data);
+                    }
+
+                    String otherEntry = row.get(fieldId);
+//                    LOGGER.debug("applyRemapEach(): IF_STATIC test [{}] // otherField [{}/{}]", data, fieldId, otherEntry);
+                    String ifResult = this.applyIfStaticEach(data, otherEntry, params);
+
+                    if (!ifResult.equalsIgnoreCase(data))
+                    {
+//                        LOGGER.debug("applyRemapEach(): IF_STATIC applied to [{}]", data);
+                        result = ifResult;
+                    }
+                    else
+                    {
+                        LOGGER.debug("applyRemapEach(): IF_STATIC no match found!");
+                    }
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_STATIC Exception; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
                 }
             }
             case APPEND ->
@@ -1120,6 +1155,33 @@ public abstract class Operation
         }
 
         return Pair.of(false, data);
+    }
+
+    protected String applyIfStaticEach(String orig, String target, List<String> conditionalPairs)
+    {
+//        LOGGER.debug("applyIfStaticEach(): orig: [{}], target: [{}], conditional size [{}]", orig, target, conditionalPairs.size());
+
+        // Skip first Entry
+        for (int i = 1; i < conditionalPairs.size(); i++)
+        {
+            if (i % 2 != 0 && // if Odd & only process if i+1 < size()
+                (i+1) < conditionalPairs.size())
+            {
+                String condition = conditionalPairs.get(i);
+                String value = conditionalPairs.get(i+1);
+
+//                LOGGER.warn("applyIfStaticEach(): TEST [{}] vs [{}]", target, condition);
+
+                if (target.equalsIgnoreCase(condition))
+                {
+                    LOGGER.debug("applyIfStaticEach(): RETURN-MATCH [{}]", value);
+                    return value;
+                }
+            }
+        }
+
+        LOGGER.debug("applyIfStaticEach(): RETURN-ORIG [{}]", orig);
+        return orig;
     }
 
     public void clear() { }
