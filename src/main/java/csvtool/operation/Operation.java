@@ -517,6 +517,46 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case IF_EMPTY_COPY ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EMPTY_COPY error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    int fieldNum;
+
+                    try
+                    {
+                        fieldNum = Integer.parseInt(params.getFirst());
+
+                        if (fieldNum < 0 || fieldNum > row.size())
+                        {
+                            LOGGER.warn("applyRemapEach(): IF_EMPTY_COPY error; fieldNum is out of range.");
+                            return Pair.of(false, data);
+                        }
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EMPTY_COPY error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+
+                    result = row.get(fieldNum);
+                }
+                else if (remap.getSubRemap() != null)
+                {
+                    remap = remap.setSubRemap(null);
+                    result = data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case IF_RANGE ->
             {
                 if (params == null || params.isEmpty() || params.size() < 4)
