@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -619,9 +620,9 @@ public abstract class Operation
             }
             case IF_DATE_RANGE ->
             {
-                if (params == null || params.isEmpty() || params.size() < 7)
+                if (params == null || params.isEmpty() || params.size() < 8)
                 {
-                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; params are empty or less than 7.");
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; params are empty or less than 8.");
                     return Pair.of(false, data);
                 }
 
@@ -663,20 +664,29 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                LocalDate dateData;
-                LocalDate dateMin;
-                LocalDate dateMax;
+                LocalDateTime dateData;
+                LocalDateTime dateMin;
+                LocalDateTime dateMax;
 
                 try
                 {
-                    dateData = fmtData.parse(data).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    dateMin = fmtMin.parse(row.get(minField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                    dateMax = fmtMax.parse(row.get(maxField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    dateData = fmtData.parse(data).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 }
                 catch (Exception err)
                 {
-                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; exception parsing dates; {}", err.getLocalizedMessage());
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; exception parsing data date; {}", err.getLocalizedMessage());
                     return Pair.of(false, data);
+                }
+
+                try
+                {
+                    dateMin = fmtMin.parse(row.get(minField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    dateMax = fmtMax.parse(row.get(maxField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; exception parsing min/max dates; {}", err.getLocalizedMessage());
+                    return Pair.of(false, params.get(8));
                 }
 
                 if (dateData.isBefore(dateMin))
