@@ -34,10 +34,12 @@ public class CSVRemapList
                 new CSVRemap(19, RemapType.IF_RANGE, List.of("0", "15", "Less than 16", "16", "32", "Between 16 and 32", "Above 32")),
                 new CSVRemap(20, RemapType.IF_DATE_RANGE, List.of("MM/dd/yyyy", "4", "MM/dd/yyyy", "5", "MM/dd/yyyy", "Before TimeDate", "During TimeDate", "After TimeDate", "Out of Range")),
                 new CSVRemap(21, RemapType.NOT_EMPTY, List.of("not_empty")),
-                new CSVRemap(22, RemapType.COPY, List.of("3")),
-                new CSVRemap(23, RemapType.MERGE, List.of("3")),
-                new CSVRemap(24, RemapType.APPEND, List.of("Extra")),
-                new CSVRemap(25, RemapType.SWAP, List.of("2"),
+                new CSVRemap(22, RemapType.NOT_EMPTY_FIELD, List.of("2", "not_empty")),
+                new CSVRemap(23, RemapType.NOT_EMPTY_COPY, List.of("3")),
+                new CSVRemap(24, RemapType.COPY, List.of("3")),
+                new CSVRemap(25, RemapType.MERGE, List.of("3")),
+                new CSVRemap(26, RemapType.APPEND, List.of("Extra")),
+                new CSVRemap(27, RemapType.SWAP, List.of("2"),
                         new CSVRemap(3, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )

@@ -53,6 +53,8 @@ public class HeaderConfig
         "IF_DATE_RANGE { (data-fmt), (min-field), (min-fmt), (max-field), (max-fmt), (before), (between), (after), (out-of-range) } ",
             "* (Performs a date (data-fmt) comparison of existing data using (min-field) with (min-fmt) and <= (max-field) with (max-fmt), then return (before), (between), (after), or (out-of-range); using SimpleDateFormat patterns)",
         "NOT_EMPTY { (value), [subRemap] } (Performs a value static if the value is not empty, then this field becomes (value), or applies the optional [subRemap])",
+        "NOT_EMPTY_FIELD { (other-field), (value), [subRemap] } (Performs a value static if the value in (other-field) is not empty, then this field becomes (value), or applies the optional [subRemap])",
+        "NOT_EMPTY_COPY { (other-field), [subRemap] } (Performs a value copy if the value is not empty, or preserve the data and apply the optional [subRemap])",
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
         "MERGE { (field-id) } (Performs a value merge from the value in (field-id), with a single ' ' space in between)",
         "APPEND { (value) } (Performs a value append of the value in (value), with a space in between)",

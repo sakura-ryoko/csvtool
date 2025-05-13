@@ -765,6 +765,86 @@ public abstract class Operation
                     }
                 }
             }
+            case NOT_EMPTY_FIELD ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_FIELD error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                int fieldNum;
+
+                try
+                {
+                    fieldNum = Integer.parseInt(params.getFirst());
+
+                    if (fieldNum < 0 || fieldNum > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): NOT_EMPTY_FIELD error; fieldNum is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_FIELD error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (row.get(fieldNum).isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    result = params.get(1);
+                }
+            }
+            case NOT_EMPTY_COPY ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_COPY error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    int fieldNum;
+
+                    try
+                    {
+                        fieldNum = Integer.parseInt(params.getFirst());
+
+                        if (fieldNum < 0 || fieldNum > row.size())
+                        {
+                            LOGGER.warn("applyRemapEach(): NOT_EMPTY_COPY error; fieldNum is out of range.");
+                            return Pair.of(false, data);
+                        }
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        LOGGER.warn("applyRemapEach(): NOT_EMPTY_COPY error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+
+                    result = row.get(fieldNum);
+                }
+            }
             case INCLUDE ->
             {
                 if (params == null || params.isEmpty())
