@@ -46,13 +46,17 @@ public class HeaderConfig
         "TRUNCATE { (length) } (Truncates the value to a length of (length))",
         "IF_STATIC { (field-id), (condition), (value) } (Performs a value static if the value in (field-id) matches (condition), then this field becomes (value))",
         "IF_EMPTY { (value), [subRemap] } (Performs a value static if the value is empty, then this field becomes (value), or applies the optional [subRemap])",
-        "IF_RANGE { (min-value), (max-value), (result), [else], {...} } (Performs an integer comparison of existing data using >= (min-value) and <= (max-value), then return (result), or return [else]; can be chained for multiple range tests)",
+        "IF_EMPTY_FIELD { (other-field), (value), [subRemap] } (Performs a value static if the value in (other-field) is empty, then this field becomes (value), or applies the optional [subRemap])",
+        "IF_RANGE { (min-value), (max-value), (result), [else], {...} }",
+            "* (Performs an integer comparison of existing data using >= (min-value) and <= (max-value), then return (result), or return [else]; can be chained for multiple range tests)",
+        "IF_DATE_RANGE { (data-fmt), (min-field), (min-fmt), (max-field), (max-fmt), (before), (between), (after) } ",
+            "* (Performs a date (data-fmt) comparison of existing data using (min-field) with (min-fmt) and <= (max-field) with (max-fmt), then return (before), (between), or (after); using SimpleDateFormat patterns)",
         "NOT_EMPTY { (value), [subRemap] } (Performs a value static if the value is not empty, then this field becomes (value), or applies the optional [subRemap])",
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
         "MERGE { (field-id) } (Performs a value merge from the value in (field-id), with a single ' ' space in between)",
         "APPEND { (value) } (Performs a value append of the value in (value), with a space in between)",
         "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
-        "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
+            "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
     );
 
     @SerializedName("remap_examples")

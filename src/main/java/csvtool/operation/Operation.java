@@ -476,6 +476,46 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case IF_EMPTY_FIELD ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EMPTY_FIELD error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                int fieldNum;
+
+                try
+                {
+                    fieldNum = Integer.parseInt(params.getFirst());
+
+                    if (fieldNum < 0 || fieldNum > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EMPTY_FIELD error; fieldNum is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EMPTY_FIELD error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (row.get(fieldNum).isEmpty())
+                {
+                    result = params.get(1);
+                }
+                else if (remap.getSubRemap() != null)
+                {
+                    remap = remap.setSubRemap(null);
+                    result = data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case IF_RANGE ->
             {
                 if (params == null || params.isEmpty() || params.size() < 4)
@@ -575,6 +615,81 @@ public abstract class Operation
                 else
                 {
                     return Pair.of(false, data);
+                }
+            }
+            case IF_DATE_RANGE ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 7)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; params are empty or less than 7.");
+                    return Pair.of(false, data);
+                }
+
+                SimpleDateFormat fmtData = new SimpleDateFormat(params.getFirst());
+                SimpleDateFormat fmtMin = new SimpleDateFormat(params.get(2));
+                SimpleDateFormat fmtMax = new SimpleDateFormat(params.get(4));
+                int minField;
+                int maxField;
+
+                try
+                {
+                    minField = Integer.parseInt(params.get(1));
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; Failed to parse minField; {}.", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    maxField = Integer.parseInt(params.get(3));
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; Failed to parse maxField; {}.", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (minField < 0 || minField > row.size())
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; minField '{}' is out of range!.", minField);
+                    return Pair.of(false, data);
+                }
+
+                if (maxField < 0 || maxField > row.size())
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; maxField '{}' is out of range!.", maxField);
+                    return Pair.of(false, data);
+                }
+
+                LocalDate dateData;
+                LocalDate dateMin;
+                LocalDate dateMax;
+
+                try
+                {
+                    dateData = fmtData.parse(data).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    dateMin = fmtMin.parse(row.get(minField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    dateMax = fmtMax.parse(row.get(maxField)).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_DATE_RANGE error; exception parsing dates; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (dateData.isBefore(dateMin))
+                {
+                    result = params.get(5);
+                }
+                else if (dateData.isAfter(dateMax))
+                {
+                    result = params.get(7);
+                }
+                else
+                {
+                    result = params.get(6);
                 }
             }
             case NOT_EMPTY ->
