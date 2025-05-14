@@ -1236,5 +1236,22 @@ public abstract class Operation
         return orig;
     }
 
+    protected CSVHeader expandHeaders(CSVHeader header, int size)
+    {
+        CSVHeader result = CSVHeader.copy(header);
+
+        if (size <= result.size())
+        {
+            return result;
+        }
+
+        for (int i = result.size(); i < size; i++)
+        {
+            result = result.add("FIELD_"+i);
+        }
+
+        return result;
+    }
+
     public void clear() { }
 }

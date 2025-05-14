@@ -85,10 +85,7 @@ public class FileCache implements AutoCloseable
         this.header = header;
 
         // Add header to FILE
-        if (this.file.isEmpty())
-        {
-            this.file.put(0, header.stream().toList());
-        }
+        this.file.put(0, header.stream().toList());
     }
 
     public void appendHeader(String header)

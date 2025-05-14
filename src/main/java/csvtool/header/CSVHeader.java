@@ -19,13 +19,19 @@ public class CSVHeader implements AutoCloseable
 
     public CSVHeader(@Nullable List<String> headers)
     {
-        if (headers != null) {
+        if (headers != null)
+        {
             this.headers = new ArrayList<>(headers);
         }
         else
         {
             this.headers = new ArrayList<>();
         }
+    }
+
+    public static CSVHeader copy(CSVHeader other)
+    {
+        return new CSVHeader(other.headers);
     }
 
     public void setHeaders(@Nonnull List<String> headers)

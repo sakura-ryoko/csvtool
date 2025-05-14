@@ -4,6 +4,7 @@ import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
+import csvtool.header.CSVHeader;
 import csvtool.header.HeaderParser;
 import csvtool.utils.LogWrapper;
 
@@ -60,15 +61,16 @@ public class OperationHeaderSave extends Operation implements AutoCloseable
             if (this.PARSER.init(ctx, true))
             {
                 LOGGER.debug("runOperation(): --> Config Parser initialized.");
-
                 this.PARSER.setInputHeader(this.FILE.getHeader(), ctx.getInputFile());
 
                 if (ctx.getOpt().hasOutput())
                 {
                     if (this.OUT.getHeader().size() > this.FILE.getHeader().size())
                     {
-                        LOGGER.error("runOperation(): Output file headers are too large! [{} > {}], the output can't be larger than the input CSV.", this.OUT.getHeader().size(), this.FILE.getHeader().size());
-                        return false;
+                        CSVHeader newHeader = this.expandHeaders(this.FILE.getHeader(), this.OUT.getHeader().size());
+                        LOGGER.error("runOperation(): Output file headers are larger [{} > {}], Expanding Input headers to [{}].", this.OUT.getHeader().size(), this.FILE.getHeader().size(), newHeader.size());
+                        this.FILE.setHeader(newHeader);
+                        this.PARSER.setInputHeader(this.FILE.getHeader(), ctx.getInputFile());
                     }
 
                     this.PARSER.setOutputHeader(this.OUT.getHeader(), ctx.getSettingValue(Settings.OUTPUT));
