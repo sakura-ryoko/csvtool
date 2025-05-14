@@ -218,8 +218,12 @@ public class OperationReformat extends Operation implements AutoCloseable
 
         if (remapList.size() != data.size())
         {
-            LOGGER.error("applyRemap(): Error; Remap List Config size [{}] does not match Input Data size [{}]!", remapList.size(), data.size());
-            return null;
+            LOGGER.debug("applyRemap(): Remap List Config size [{}] > Input Data size [{}] (Expanding)", remapList.size(), data.size());
+
+            for (int i = data.size(); i < remapList.size(); i++)
+            {
+                data.add("");
+            }
         }
 
         LOGGER.debug("applyRemap(): begin (pass 1) with list size [{}]", data.size());
