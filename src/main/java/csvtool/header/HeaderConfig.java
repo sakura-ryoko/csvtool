@@ -49,6 +49,7 @@ public class HeaderConfig
         "IF_EMPTY_FIELD { (other-field), (value), [subRemap] } (Performs a value static if the value in (other-field) is empty, then this field becomes (value), or applies the optional [subRemap])",
         "IF_EMPTY_COPY { (other-field), [subRemap] } (Performs a value copy if the value is empty, or preserve the data and apply the optional [subRemap])",
         "IF_EQUAL { (field), (value-true), (value-false) } (Performs a field compare of (field), and if they match, return (value-true), or (value-false))",
+        "IF_EQUAL_COPY { (field1), (field2) } (Performs a field compare of (field1) with this data, and if they match, return value of (field2))",
         "IF_FIELDS_EQUAL { (field1), (field2), (value-true), (value-false) } (Performs a field compare of (field1) with (field2), and if they match, return (value-true), or (value-false))",
         "IF_RANGE { (min-value), (max-value), (result), [else], {...} }",
             "* (Performs an integer comparison of existing data using >= (min-value) and <= (max-value), then return (result), or return [else]; can be chained for multiple range tests)",

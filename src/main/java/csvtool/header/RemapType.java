@@ -18,6 +18,7 @@ public enum RemapType
     IF_EMPTY_FIELD  ("if-empty-field", true),
     IF_EMPTY_COPY   ("if-empty-copy",  true),
     IF_EQUAL        ("if-equal",       true),
+    IF_EQUAL_COPY   ("if-equal-copy",  true),
     IF_FIELDS_EQUAL ("if-fields-equal",true),
     IF_RANGE        ("if-range",       true),
     IF_DATE_RANGE   ("if-date-range",  true),

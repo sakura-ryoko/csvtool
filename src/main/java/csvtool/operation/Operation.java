@@ -631,6 +631,63 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case IF_EQUAL_COPY ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_COPY error; params are empty or less than 2.");
+                    return Pair.of(false, data);
+                }
+
+                int fieldNum1;
+                int fieldNum2;
+
+                try
+                {
+                    fieldNum1 = Integer.parseInt(params.getFirst());
+
+                    if (fieldNum1 < 0 || fieldNum1 > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EQUAL_COPY error; fieldNum1 is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_COPY error; exception parsing fieldNum1; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    fieldNum2 = Integer.parseInt(params.get(1));
+
+                    if (fieldNum2 < 0 || fieldNum2 > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EQUAL_COPY error; fieldNum2 is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_COPY error; exception parsing fieldNum2; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (data.equals(row.get(fieldNum1)))
+                {
+                    result = row.get(fieldNum2);
+                }
+                else if (remap.getSubRemap() != null)
+                {
+                    remap = remap.setSubRemap(null);
+                    result = data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case IF_FIELDS_EQUAL ->
             {
                 if (params == null || params.isEmpty() || params.size() < 4)
