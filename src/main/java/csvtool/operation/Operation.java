@@ -592,6 +592,58 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case IF_FIELDS_EQUAL ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 4)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_FIELDS_EQUAL error; params are empty or less than 4.");
+                    return Pair.of(false, data);
+                }
+
+                int field1;
+                int field2;
+
+                try
+                {
+                    field1 = Integer.parseInt(params.getFirst());
+
+                    if (field1 < 0 || field1 > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_FIELDS_EQUAL error; fieldNum is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_FIELDS_EQUAL error; exception parsing field1; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    field2 = Integer.parseInt(params.get(1));
+
+                    if (field2 < 0 || field2 > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_FIELDS_EQUAL error; field2 is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_FIELDS_EQUAL error; exception parsing field2; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (row.get(field1).equals(row.get(field2)))
+                {
+                    result = params.get(3);
+                }
+                else
+                {
+                    result = params.get(4);
+                }
+            }
             case IF_RANGE ->
             {
                 if (params == null || params.isEmpty() || params.size() < 4)

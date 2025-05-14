@@ -249,14 +249,14 @@ public class HeaderParser implements AutoCloseable
                 }
             }
 
-            if (this.CONFIG.input.size() - dropCount > this.CONFIG.output.size())
+            if ((this.CONFIG.input.size() - dropCount) > this.CONFIG.output.size())
             {
-                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too low!");
+                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too low! (I-D: {} > O: {})", (this.CONFIG.input.size() - dropCount), this.CONFIG.output.size());
                 return false;
             }
-            else if (this.CONFIG.output.size() + dropCount > this.CONFIG.input.size())
+            else if ((this.CONFIG.output.size() + dropCount) > this.CONFIG.input.size())
             {
-                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too high!");
+                LOGGER.error("checkRemapList(): Error checking Remap List; DROP count is too high! (O+D: {} > I: {})", (this.CONFIG.output.size() + dropCount), this.CONFIG.input.size());
                 return false;
             }
         }
