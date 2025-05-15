@@ -366,8 +366,17 @@ public abstract class Operation
                         if (data.equals(params.get(i)))
                         {
                             i++;
-                            result = params.get(i);
-                            found = true;
+
+                            if (i < params.size())
+                            {
+                                result = params.get(i);
+                                found = true;
+                            }
+                            else
+                            {
+                                LOGGER.warn("applyRemapEach(): STATIC error; next param is out of bounds.");
+                                break;
+                            }
                         }
                     }
 
@@ -682,6 +691,41 @@ public abstract class Operation
                 {
                     remap = remap.setSubRemap(null);
                     result = data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
+            case IF_EQUAL_APPEND ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_APPEND error; params are empty or less than 2.");
+                    return Pair.of(false, data);
+                }
+
+                int fieldNum;
+
+                try
+                {
+                    fieldNum = Integer.parseInt(params.getFirst());
+
+                    if (fieldNum < 0 || fieldNum > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EQUAL_APPEND error; fieldNum is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_APPEND error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (data.equals(row.get(fieldNum)))
+                {
+                    result = data + " " + params.get(1);
                 }
                 else
                 {
