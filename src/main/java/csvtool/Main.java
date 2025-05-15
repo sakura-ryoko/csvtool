@@ -216,6 +216,51 @@ public class Main
             System.out.print(" Key3: [NOT_SET]\n");
         }
 
+        if (opt.hasKey4())
+        {
+            System.out.printf(" Key4: [%s] // applied [%s]\n", opt.getKey4(), ctx.getSettingValue(Settings.KEY4));
+        }
+        else
+        {
+            System.out.print(" Key4: [NOT_SET]\n");
+        }
+
+        if (opt.hasKey5())
+        {
+            System.out.printf(" Key5: [%s] // applied [%s]\n", opt.getKey5(), ctx.getSettingValue(Settings.KEY5));
+        }
+        else
+        {
+            System.out.print(" Key5: [NOT_SET]\n");
+        }
+
+        if (opt.hasSerialKey())
+        {
+            System.out.printf(" SerialKey: [%s] // applied [%s]\n", opt.getSerialKey(), ctx.getSettingValue(Settings.SERIAL_KEY));
+        }
+        else
+        {
+            System.out.print(" SerialKey: [NOT_SET]\n");
+        }
+
+        if (opt.hasSerialStart())
+        {
+            System.out.printf(" SerialStart: [%s] // applied [%s]\n", opt.getSerialStart(), ctx.getSettingValue(Settings.SERIAL_START));
+        }
+        else
+        {
+            System.out.print(" SerialStart: [NOT_SET]\n");
+        }
+
+        if (opt.hasSerialEnd())
+        {
+            System.out.printf(" SerialEnd: [%s] // applied [%s]\n", opt.getSerialEnd(), ctx.getSettingValue(Settings.SERIAL_END));
+        }
+        else
+        {
+            System.out.print(" SerialEnd: [NOT_SET]\n");
+        }
+
         if (opt.hasSide())
         {
             System.out.printf(" Side: [%s] // applied [%s]\n", opt.getSide(), ctx.getSettingValue(Settings.SIDE));
@@ -284,6 +329,11 @@ public class Main
                     case KEY -> opt.setKey(ctx.getSettingValue(entry));
                     case KEY2 -> opt.setKey2(ctx.getSettingValue(entry));
                     case KEY3 -> opt.setKey3(ctx.getSettingValue(entry));
+                    case KEY4 -> opt.setKey4(ctx.getSettingValue(entry));
+                    case KEY5 -> opt.setKey5(ctx.getSettingValue(entry));
+                    case SERIAL_KEY -> opt.setSerialKey(ctx.getSettingValue(entry));
+                    case SERIAL_START -> opt.setSerialStart(ctx.getSettingValue(entry));
+                    case SERIAL_END -> opt.setSerialEnd(ctx.getSettingValue(entry));
                     case SIDE -> opt.setSide(ctx.getSettingValue(entry));
                     case HEADERS -> opt.setHeadersConfig(ctx.getSettingValue(entry));
                     case DE_DUPE -> opt.setDeDupe(true);

@@ -14,6 +14,11 @@ public class OptSettings
     private String key;
     private String key2;
     private String key3;
+    private String key4;
+    private String key5;
+    private String serialKey;
+    private String serialStart;
+    private String serialEnd;
     private String side;
     private boolean deDupe;
     private boolean squashDupe;
@@ -31,6 +36,11 @@ public class OptSettings
         this.key = "";
         this.key2 = "";
         this.key3 = "";
+        this.key4 = "";
+        this.key5 = "";
+        this.serialKey = "";
+        this.serialStart = "";
+        this.serialEnd = "";
         this.side = "";
         this.deDupe = false;
         this.squashDupe = false;
@@ -71,6 +81,31 @@ public class OptSettings
         return this.key3 != null && !this.key3.isEmpty();
     }
 
+    public boolean hasKey4()
+    {
+        return this.key4 != null && !this.key4.isEmpty();
+    }
+
+    public boolean hasKey5()
+    {
+        return this.key5 != null && !this.key5.isEmpty();
+    }
+
+    public boolean hasSerialKey()
+    {
+        return this.serialKey != null && !this.serialKey.isEmpty();
+    }
+
+    public boolean hasSerialStart()
+    {
+        return this.serialStart != null && !this.serialStart.isEmpty();
+    }
+
+    public boolean hasSerialEnd()
+    {
+        return this.serialEnd != null && !this.serialEnd.isEmpty();
+    }
+
     public boolean hasSide()
     {
         return this.side != null && !this.side.isEmpty();
@@ -104,6 +139,31 @@ public class OptSettings
     public @Nullable String getKey3()
     {
         return this.key3;
+    }
+
+    public @Nullable String getKey4()
+    {
+        return this.key4;
+    }
+
+    public @Nullable String getKey5()
+    {
+        return this.key5;
+    }
+
+    public @Nullable String getSerialKey()
+    {
+        return this.serialKey;
+    }
+
+    public @Nullable String getSerialStart()
+    {
+        return this.serialStart;
+    }
+
+    public @Nullable String getSerialEnd()
+    {
+        return this.serialEnd;
     }
 
     public @Nullable String getSide()
@@ -201,6 +261,31 @@ public class OptSettings
     public void setKey3(String key3)
     {
         this.key3 = key3;
+    }
+
+    public void setKey4(String key4)
+    {
+        this.key4 = key4;
+    }
+
+    public void setKey5(String key5)
+    {
+        this.key5 = key5;
+    }
+
+    public void setSerialKey(String key)
+    {
+        this.serialKey = key;
+    }
+
+    public void setSerialStart(String start)
+    {
+        this.serialStart = start;
+    }
+
+    public void setSerialEnd(String end)
+    {
+        this.serialEnd = end;
     }
 
     public void setSide(String side)

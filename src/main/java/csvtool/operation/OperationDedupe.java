@@ -20,10 +20,14 @@ public class OperationDedupe extends Operation implements AutoCloseable
     private int keyId1;
     private int keyId2;
     private int keyId3;
+    private int keyId4;
+    private int keyId5;
 
     private final HashMap<String, Integer> key1Map;
     private final HashMap<String, Integer> key2Map;
     private final HashMap<String, Integer> key3Map;
+    private final HashMap<String, Integer> key4Map;
+    private final HashMap<String, Integer> key5Map;
 
     public OperationDedupe(Operations op)
     {
@@ -34,9 +38,13 @@ public class OperationDedupe extends Operation implements AutoCloseable
         this.keyId1 = -1;
         this.keyId2 = -1;
         this.keyId3 = -1;
+        this.keyId4 = -1;
+        this.keyId5 = -1;
         this.key1Map = new HashMap<>();
         this.key2Map = new HashMap<>();
         this.key3Map = new HashMap<>();
+        this.key4Map = new HashMap<>();
+        this.key5Map = new HashMap<>();
     }
 
     @Override
@@ -128,6 +136,30 @@ public class OperationDedupe extends Operation implements AutoCloseable
                 }
             }
 
+            if (ctx.getOpt().hasKey4())
+            {
+                this.keyId4 = this.FILE.getHeader().getId(ctx.getSettingValue(Settings.KEY4));
+
+                if (this.keyId4 < 0)
+                {
+                    LOGGER.error("runOperation(): Dedupe FAILED, key4 was NOT found in the Headers.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasKey5())
+            {
+                this.keyId5 = this.FILE.getHeader().getId(ctx.getSettingValue(Settings.KEY5));
+
+                if (this.keyId5 < 0)
+                {
+                    LOGGER.error("runOperation(): Dedupe FAILED, key5 was NOT found in the Headers.");
+                    this.clear();
+                    return false;
+                }
+            }
+
             if (!this.deDupeFiles(true, ctx.getOpt().isSquashDupe()))
             {
                 LOGGER.error("runOperation(): Dedupe FAILED, DeDuplication attempt has failed.");
@@ -175,7 +207,7 @@ public class OperationDedupe extends Operation implements AutoCloseable
 
         System.out.print("This operation de-dupes two files into a single output file.\n");
         System.out.print("It accepts one input file, and an output (--output).\n");
-        System.out.print("You can use multiple key fields (--key, --key2, --key3) which can be set.\n");
+        System.out.print("You can use multiple key fields (--key, --key2, --key3, --key4, or --key5) which can be set.\n");
         System.out.print("Optionally, you can enable (--squash-dupe) which combines de-duplicated data values.\n");
         System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field(s) given.\n");
         System.out.print("\n");
@@ -296,6 +328,20 @@ public class OperationDedupe extends Operation implements AutoCloseable
     // Returns true if it's a duplicate match
     private boolean checkKeyMaps(List<String> data, int line)
     {
+        if (this.keyId5 > -1)
+        {
+            final int key5match = this.calcKey5Map(data.get(this.keyId1), data.get(this.keyId2), data.get(this.keyId3), data.get(this.keyId4), data.get(this.keyId5), line);
+            LOGGER.debug("checkKeyMaps(): LINE[{}]: key5match: [{}]", line, key5match);
+            return key5match > -1;
+        }
+
+        if (this.keyId4 > -1)
+        {
+            final int key4match = this.calcKey4Map(data.get(this.keyId1), data.get(this.keyId2), data.get(this.keyId3), data.get(this.keyId4), line);
+            LOGGER.debug("checkKeyMaps(): LINE[{}]: key4match: [{}]", line, key4match);
+            return key4match > -1;
+        }
+
         if (this.keyId3 > -1)
         {
             final int key3match = this.calcKey3Map(data.get(this.keyId1), data.get(this.keyId2), data.get(this.keyId3), line);
@@ -365,6 +411,44 @@ public class OperationDedupe extends Operation implements AutoCloseable
         return -1;
     }
 
+    // -1 means it was just added
+    private int calcKey4Map(String key1, String key2, String key3, String key4, int line)
+    {
+        int key3line = this.calcKey3Map(key1, key2, key3, line);
+
+        if (key3line < 0)
+        {
+            this.key4Map.remove(key4);
+        }
+
+        if (this.key4Map.containsKey(key4))
+        {
+            return this.key4Map.get(key4);
+        }
+
+        this.key4Map.put(key4, line);
+        return -1;
+    }
+
+    // -1 means it was just added
+    private int calcKey5Map(String key1, String key2, String key3, String key4, String key5, int line)
+    {
+        int key4line = this.calcKey4Map(key1, key2, key3, key4, line);
+
+        if (key4line < 0)
+        {
+            this.key5Map.remove(key5);
+        }
+
+        if (this.key5Map.containsKey(key5))
+        {
+            return this.key5Map.get(key5);
+        }
+
+        this.key5Map.put(key5, line);
+        return -1;
+    }
+
     @Override
     public void clear()
     {
@@ -386,6 +470,8 @@ public class OperationDedupe extends Operation implements AutoCloseable
         this.key1Map.clear();
         this.key2Map.clear();
         this.key3Map.clear();
+        this.key4Map.clear();
+        this.key5Map.clear();
     }
 
     @Override
