@@ -1,5 +1,8 @@
 package csvtool.operation;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
@@ -498,6 +501,28 @@ public abstract class Operation
                 }
 
                 result = builder.toString();
+            }
+            case PHONE_NUMBER ->
+            {
+                if (!data.isEmpty())
+                {
+                    PhoneNumberUtil parser = PhoneNumberUtil.getInstance();
+
+                    try
+                    {
+                        Phonenumber.PhoneNumber number = parser.parse(data, "US");
+                        result = parser.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
+                    }
+                    catch (NumberParseException err)
+                    {
+                        LOGGER.warn("applyRemapEach(): PHONE_NUMBER error; invalid format; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+                }
+                else
+                {
+                    result = data;
+                }
             }
             case IF_EMPTY ->
             {
