@@ -485,7 +485,14 @@ public abstract class Operation
 
                         if (obj >= 0 && obj < row.size())
                         {
-                            builder.append(" ").append(row.get(obj));
+                            String token = " ";
+
+                            if (params.size() > 1)
+                            {
+                                token = params.get(1);
+                            }
+
+                            builder.append(token).append(row.get(obj));
                         }
                         else
                         {
@@ -750,7 +757,14 @@ public abstract class Operation
 
                 if (data.equals(row.get(fieldNum)))
                 {
-                    result = data + " " + params.get(1);
+                    String token = " ";
+
+                    if (params.size() > 2)
+                    {
+                        token = params.get(2);
+                    }
+
+                    result = data + token + params.get(1);
                 }
                 else
                 {
@@ -1057,6 +1071,54 @@ public abstract class Operation
                     result = params.get(1);
                 }
             }
+            case NOT_EMPTY_APPEND ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_APPEND error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    int fieldNum;
+
+                    try
+                    {
+                        fieldNum = Integer.parseInt(params.getFirst());
+
+                        if (fieldNum < 0 || fieldNum > row.size())
+                        {
+                            LOGGER.warn("applyRemapEach(): NOT_EMPTY_APPEND error; fieldNum is out of range.");
+                            return Pair.of(false, data);
+                        }
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        LOGGER.warn("applyRemapEach(): NOT_EMPTY_APPEND error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+
+                    String value = params.get(1);
+                    String token = " ";
+
+                    if (params.size() > 2)
+                    {
+                        token = params.get(2);
+                    }
+
+                    result = data + token + value;
+                }
+            }
             case NOT_EMPTY_COPY ->
             {
                 if (params == null || params.isEmpty())
@@ -1095,6 +1157,53 @@ public abstract class Operation
                     }
 
                     result = row.get(fieldNum);
+                }
+            }
+            case NOT_EMPTY_MERGE ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_MERGE error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    int fieldNum;
+
+                    try
+                    {
+                        fieldNum = Integer.parseInt(params.getFirst());
+
+                        if (fieldNum < 0 || fieldNum > row.size())
+                        {
+                            LOGGER.warn("applyRemapEach(): NOT_EMPTY_MERGE error; fieldNum is out of range.");
+                            return Pair.of(false, data);
+                        }
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        LOGGER.warn("applyRemapEach(): NOT_EMPTY_MERGE error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                        return Pair.of(false, data);
+                    }
+
+                    String token = " ";
+
+                    if (params.size() > 1)
+                    {
+                        token = params.get(1);
+                    }
+
+                    result = data + token + row.get(fieldNum);
                 }
             }
             case INCLUDE ->

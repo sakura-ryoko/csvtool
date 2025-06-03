@@ -39,12 +39,14 @@ public class CSVRemapList
                 new CSVRemap(24, RemapType.IF_DATE_RANGE, List.of("MM/dd/yyyy", "4", "MM/dd/yyyy", "5", "MM/dd/yyyy", "Before TimeDate", "During TimeDate", "After TimeDate", "Out of Range")),
                 new CSVRemap(25, RemapType.NOT_EMPTY, List.of("not_empty")),
                 new CSVRemap(26, RemapType.NOT_EMPTY_FIELD, List.of("2", "not_empty")),
-                new CSVRemap(27, RemapType.NOT_EMPTY_COPY, List.of("3")),
-                new CSVRemap(28, RemapType.COPY, List.of("3")),
-                new CSVRemap(29, RemapType.MERGE, List.of("3")),
-                new CSVRemap(30, RemapType.APPEND, List.of("Extra")),
-                new CSVRemap(31, RemapType.PHONE_NUMBER),
-                new CSVRemap(32, RemapType.SWAP, List.of("2"),
+                new CSVRemap(27, RemapType.NOT_EMPTY_APPEND, List.of("3", "\n")),
+                new CSVRemap(28, RemapType.NOT_EMPTY_COPY, List.of("3")),
+                new CSVRemap(29, RemapType.NOT_EMPTY_MERGE, List.of("4")),
+                new CSVRemap(30, RemapType.COPY, List.of("3")),
+                new CSVRemap(31, RemapType.MERGE, List.of("3")),
+                new CSVRemap(32, RemapType.APPEND, List.of("Extra")),
+                new CSVRemap(33, RemapType.PHONE_NUMBER),
+                new CSVRemap(34, RemapType.SWAP, List.of("2"),
                         new CSVRemap(3, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )
