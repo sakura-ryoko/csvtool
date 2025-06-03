@@ -1108,7 +1108,8 @@ public abstract class Operation
                         return Pair.of(false, data);
                     }
 
-                    if (row.get(fieldNum).isEmpty())
+                    String otherField = row.get(fieldNum);
+                    if (otherField.isEmpty() || data.equalsIgnoreCase(otherField))
                     {
                         return Pair.of(false, data);
                     }
@@ -1203,7 +1204,7 @@ public abstract class Operation
 
                     String otherField = row.get(fieldNum);
 
-                    if (otherField.isEmpty())
+                    if (otherField.isEmpty() || data.equalsIgnoreCase(otherField))
                     {
 //                        LOGGER.warn("NOT_EMPTY_MERGE - otherField is empty");
                         return Pair.of(false, data);
