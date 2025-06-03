@@ -659,7 +659,14 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                if (data.equals(row.get(fieldNum)))
+                String otherField = row.get(fieldNum);
+
+                if (data.isEmpty() || otherField.isEmpty())
+                {
+                    return Pair.of(false, data);
+                }
+
+                if (data.equals(otherField))
                 {
                     result = params.get(1);
                 }
