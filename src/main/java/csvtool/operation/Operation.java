@@ -1109,7 +1109,7 @@ public abstract class Operation
                     }
 
                     String otherField = row.get(fieldNum);
-                    if (otherField.isEmpty() || data.equalsIgnoreCase(otherField))
+                    if (data.equalsIgnoreCase(otherField) || otherField.isEmpty())
                     {
                         return Pair.of(false, data);
                     }
@@ -1204,9 +1204,8 @@ public abstract class Operation
 
                     String otherField = row.get(fieldNum);
 
-                    if (otherField.isEmpty() || data.equalsIgnoreCase(otherField))
+                    if (data.equalsIgnoreCase(otherField) || otherField.isEmpty())
                     {
-//                        LOGGER.warn("NOT_EMPTY_MERGE - otherField is empty");
                         return Pair.of(false, data);
                     }
 
@@ -1217,7 +1216,6 @@ public abstract class Operation
                         token = params.get(1);
                     }
 
-//                    LOGGER.warn("NOT_EMPTY_MERGE - data [{}], token [{}], otherField [{}]", data, token, otherField);
                     result = data + token + otherField;
                 }
             }
