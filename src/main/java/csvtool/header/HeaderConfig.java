@@ -60,7 +60,7 @@ public class HeaderConfig
         "NOT_EMPTY_FIELD { (other-field), (value), [subRemap] } (Performs a value static if the value in (other-field) is not empty, then this field becomes (value), or applies the optional [subRemap])",
         "NOT_EMPTY_APPEND { (other-field), (value), [token], [subRemap] } (Performs a (value) append if the value in (other-field) and this field is not empty, with a space or [token] in between; or preserve the data and apply the optional [subRemap])",
         "NOT_EMPTY_COPY { (other-field), [subRemap] } (Performs a value copy from (other-field) if the value is not empty, or preserve the data and apply the optional [subRemap])",
-        "NOT_EMPTY_MERGE { (other-field), [token], [subRemap] } (Performs a value merge if the value is not empty, with a space or [token] in between; or preserve the data and apply the optional [subRemap])",
+        "NOT_EMPTY_MERGE { (other-field), [token], [subRemap] } (Performs a value merge if the value in (other-field) is not empty, with a space or [token] in between; or preserve the data and apply the optional [subRemap])",
         "PHONE_NUMBER { } (Performs a phone Number Reformat using PhoneNumberUtil into E.164 format)",
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
         "MERGE { (field-id), [token] } (Performs a value merge from the value in (field-id), with a space or [token] in between)",

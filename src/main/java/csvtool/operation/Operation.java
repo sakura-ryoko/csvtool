@@ -1108,6 +1108,11 @@ public abstract class Operation
                         return Pair.of(false, data);
                     }
 
+                    if (row.get(fieldNum).isEmpty())
+                    {
+                        return Pair.of(false, data);
+                    }
+
                     String value = params.get(1);
                     String token = " ";
 
@@ -1196,6 +1201,14 @@ public abstract class Operation
                         return Pair.of(false, data);
                     }
 
+                    String otherField = row.get(fieldNum);
+
+                    if (otherField.isEmpty())
+                    {
+//                        LOGGER.warn("NOT_EMPTY_MERGE - otherField is empty");
+                        return Pair.of(false, data);
+                    }
+
                     String token = " ";
 
                     if (params.size() > 1)
@@ -1203,7 +1216,8 @@ public abstract class Operation
                         token = params.get(1);
                     }
 
-                    result = data + token + row.get(fieldNum);
+//                    LOGGER.warn("NOT_EMPTY_MERGE - data [{}], token [{}], otherField [{}]", data, token, otherField);
+                    result = data + token + otherField;
                 }
             }
             case INCLUDE ->
