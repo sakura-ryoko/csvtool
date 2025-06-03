@@ -663,10 +663,9 @@ public abstract class Operation
 
                 if (data.isEmpty() || otherField.isEmpty())
                 {
-                    return Pair.of(false, data);
+                    result = data;
                 }
-
-                if (data.equals(otherField))
+                else if (data.equals(otherField))
                 {
                     result = params.get(1);
                 }
