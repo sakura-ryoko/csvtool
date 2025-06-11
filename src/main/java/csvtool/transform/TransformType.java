@@ -11,7 +11,7 @@ public enum TransformType
     HYPHEN          ("hyphen",      "{h}",   List.of("{hyphen}", "{hy}")),
     INDEX           ("index",       "{i}",   List.of("{index}", "{idx}")),
     FIELD           ("field",       "{f}",   List.of("{field}")),
-    DATA            ("data",        "{d}",   List.of("{data}", "{str}", "{string}")),
+    DATA            ("data",        "{d}",   List.of("{data}", "{str}", "{string}"))
     ;
 
     public static final List<TransformType> VALUES = List.of(values());

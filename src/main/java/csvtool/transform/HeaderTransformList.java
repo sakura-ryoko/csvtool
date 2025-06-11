@@ -147,7 +147,7 @@ public class HeaderTransformList
                                     {
                                         if (this.args.size() > dataIndex && data.size() > dataIndex)
                                         {
-                                            int f = Integer.getInteger(this.args.get(dataIndex));
+                                            int f = Integer.parseInt(this.args.get(dataIndex));
                                             fmt = data.get(f);
                                         }
                                         else

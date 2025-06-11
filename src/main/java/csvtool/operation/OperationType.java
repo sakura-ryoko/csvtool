@@ -20,6 +20,8 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationSerialize> SERIALIZE;
     public static final OperationType<OperationTransformExpand> TRANSFORM_EXPAND;
 //    public static final OperationType<OperationTransformSquash> TRANSFORM_SQUASH;
+    public static final OperationType<OperationFilePivot> FILE_PIVOT;
+    public static final OperationType<OperationFilePivotSave> FILE_PIVOT_SAVE;
     private final OperationFactory<? extends T> factory;
     private final Operations ops;
 
@@ -59,6 +61,8 @@ public class OperationType<T extends Operation>
         SERIALIZE = create(OperationSerialize::new, Operations.SERIALIZE);
         TRANSFORM_EXPAND = create(OperationTransformExpand::new, Operations.TRANSFORM_EXPAND);
 //        TRANSFORM_SQUASH = create(OperationTransformSquash::new, Operations.TRANSFORM_SQUASH);
+        FILE_PIVOT = create(OperationFilePivot::new, Operations.FILE_PIVOT);
+        FILE_PIVOT_SAVE = create(OperationFilePivotSave::new, Operations.FILE_PIVOT_SAVE);
     }
 
     @FunctionalInterface

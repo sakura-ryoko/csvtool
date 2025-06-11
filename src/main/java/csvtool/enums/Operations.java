@@ -9,19 +9,19 @@ import java.util.List;
 
 public enum Operations
 {
-    HELP                ("help",             "--help",              false, false,false,false, OperationType.HELP,               List.of("-h", "-help")),
-    TEST                ("test",             "--test",              false, true ,false,false, OperationType.TEST,               List.of("-test", "-t", "--t")),
-    MERGE               ("merge",            "--merge",             true,  true, false,false, OperationType.MERGE,              List.of("-merge", "-m", "--m")),
-    DEDUPE              ("dedupe",           "--dedupe",            false, true, true, false, OperationType.DEDUPE,             List.of("-dedupe", "-ded", "--ded")),
+    HELP                ("help",             "--help",              false, false, false, false, OperationType.HELP,               List.of("-h", "-help")),
+    TEST                ("test",             "--test",              false, true , false, false, OperationType.TEST,               List.of("-test", "-t", "--t")),
+    MERGE               ("merge",            "--merge",             true,  true,  false, false, OperationType.MERGE,              List.of("-merge", "-m", "--m")),
+    DEDUPE              ("dedupe",           "--dedupe",            false, true,  true,  false, OperationType.DEDUPE,             List.of("-dedupe", "-ded", "--ded")),
 //    SPLIT               ("split",            "--split",             false, true, false,false, OperationType.SPLIT,              List.of("-split", "-sp", "--sp", "-s", "--s")),
-    DIFF                ("diff",             "--diff",              true,  true, true, false, OperationType.DIFF,               List.of("-diff", "-d", "--d")),
-    HEADER_SAVE         ("header-save",      "--header-save",       false, false,false,true,  OperationType.HEADER_SAVE,        List.of("-header-save", "--save", "-save", "--sv", "-sv")),
-    REFORMAT            ("reformat",         "--reformat",          false, true, false,true,  OperationType.REFORMAT,           List.of("-reformat", "--ref", "-ref", "--rf", "-rf")),
-    SERIALIZE           ("serialize",        "--serialize",         false, true, true, false, OperationType.SERIALIZE,          List.of("-serialize", "--ser", "-ser")),
-    TRANSFORM_SAVE      ("transform-save",   "--transform-save",    false, false,false,true,  OperationType.TRANSFORM_SAVE,     List.of("-transform-save", "--tfs", "-tfs")),
-    TRANSFORM_EXPAND    ("transform-expand", "--transform-expand",  false, true, true, true,  OperationType.TRANSFORM_EXPAND,   List.of("-transform-expand", "--expand", "--exp", "-exp")),
-//    TRANSFORM_SQUASH    ("transform-squash", "--transform-squash",  false, true, true, true,  OperationType.TRANSFORM_SQUASH,   List.of("-transform-squash", "--squash", "-squash", "--sq", "-sq")),
-    ;
+    DIFF                ("diff",             "--diff",              true,  true,  true,  false, OperationType.DIFF,               List.of("-diff", "-d", "--d")),
+    HEADER_SAVE         ("header-save",      "--header-save",       false, false, false, true,  OperationType.HEADER_SAVE,        List.of("-header-save", "--save", "-save", "--sv", "-sv")),
+    REFORMAT            ("reformat",         "--reformat",          false, true,  false, true,  OperationType.REFORMAT,           List.of("-reformat", "--ref", "-ref", "--rf", "-rf")),
+    SERIALIZE           ("serialize",        "--serialize",         false, true,  true,  false, OperationType.SERIALIZE,          List.of("-serialize", "--ser", "-ser")),
+    TRANSFORM_SAVE      ("transform-save",   "--transform-save",    false, false, false, true,  OperationType.TRANSFORM_SAVE,     List.of("-transform-save", "--tfs", "-tfs")),
+    TRANSFORM_EXPAND    ("transform-expand", "--transform-expand",  false, true,  true,  true,  OperationType.TRANSFORM_EXPAND,   List.of("-transform-expand", "--expand", "--exp", "-exp")),
+    FILE_PIVOT          ("file-pivot",       "--file-pivot",        true,  true,  false, true,  OperationType.FILE_PIVOT,         List.of("-file-pivot", "--fp", "-fp")),
+    FILE_PIVOT_SAVE     ("file-pivot-save",  "--file-pivot-save",   false, false, false, true,  OperationType.FILE_PIVOT_SAVE,    List.of("-file-pivot-save", "--fps", "-fps"));
 
     public static final List<Operations> VALUES = List.of(values());
 

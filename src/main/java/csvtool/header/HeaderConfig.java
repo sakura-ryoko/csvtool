@@ -7,7 +7,7 @@ import java.util.List;
 public class HeaderConfig
 {
     @SerializedName("__header_config_description")
-    public String comment = "CSV Headers config";
+    public String config_comment = "CSV Remap Headers config";
 
     @SerializedName("__input_file")
     public String inputFile;
@@ -73,5 +73,5 @@ public class HeaderConfig
     public CSVRemapList remap_examples = CSVRemapList.EXAMPLES;
 
     @SerializedName("remap_list")
-    public CSVRemapList remapList;
+    public CSVRemapList remapList = new CSVRemapList();
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public class HeaderTransformConfig
 {
     @SerializedName("__header_transform_config_description")
-    public String comment = "CSV Header Transform config";
+    public String config_comment = "CSV Header Transform config";
 
     @SerializedName("__input_file")
     public String inputFile;
