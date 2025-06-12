@@ -13,7 +13,9 @@ import csvtool.utils.LogWrapper;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class OperationFilePivot extends Operation implements AutoCloseable
 {
@@ -23,13 +25,16 @@ public class OperationFilePivot extends Operation implements AutoCloseable
     private FilePivotDirectoryBuilder builder;
     private Path input;
     private Path output;
-    private Path currentDir;
+    private final Set<Path> inputDirSet;
+    private int totalCount;
 
     public OperationFilePivot(Operations op)
     {
         super(op);
         this.FILE = new FileCache();
         this.PARSER = new FilePivotParser();
+        this.inputDirSet = new HashSet<>();
+        this.totalCount = 0;
     }
 
     public boolean runOperation(Context ctx)
@@ -64,7 +69,8 @@ public class OperationFilePivot extends Operation implements AutoCloseable
             return false;
         }
 
-        LOGGER.debug("runOperation(): --> FILE_PIVOT [{}], to output [{}], using header file [{}]", ctx.getInputFile(), ctx.getSettingValue(Settings.OUTPUT), ctx.getSettingValue(Settings.HEADERS));
+        LOGGER.debug("runOperation(): --> FILE_PIVOT [{}], to output [{}], using header file [{}]", ctx.getInputFile(),
+                     ctx.getSettingValue(Settings.OUTPUT), ctx.getSettingValue(Settings.HEADERS));
         if (this.readFiles(ctx.getInputFile(), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> File [{}] read successfully.", ctx.getInputFile());
@@ -75,7 +81,8 @@ public class OperationFilePivot extends Operation implements AutoCloseable
 
                 if (this.PARSER.loadConfig())
                 {
-                    LOGGER.debug("runOperation(): --> File Pivot loaded config from [{}].", this.PARSER.getHeaderConfigFile());
+                    LOGGER.debug("runOperation(): --> File Pivot loaded config from [{}].",
+                                 this.PARSER.getHeaderConfigFile());
 
                     try
                     {
@@ -84,13 +91,15 @@ public class OperationFilePivot extends Operation implements AutoCloseable
 
                         if (!FileUtils.checkIfDirectoryExists(this.input))
                         {
-                            LOGGER.error("runOperation(): --> Failed to read Input 2 directory [{}]!", this.input.toAbsolutePath().toString());
+                            LOGGER.error("runOperation(): --> Failed to read Input 2 directory [{}]!",
+                                         this.input.toAbsolutePath().toString());
                             return false;
                         }
 
                         if (!FileUtils.checkIfDirectoryExists(this.output))
                         {
-                            LOGGER.error("runOperation(): --> Failed to read Output directory [{}]!", this.output.toAbsolutePath().toString());
+                            LOGGER.error("runOperation(): --> Failed to read Output directory [{}]!",
+                                         this.output.toAbsolutePath().toString());
                             return false;
                         }
 
@@ -98,13 +107,16 @@ public class OperationFilePivot extends Operation implements AutoCloseable
                     }
                     catch (RuntimeException err)
                     {
-                        LOGGER.error("runOperation(): --> Failed to initialize File Pivot Dir Builder from output [{}]!", this.output.toAbsolutePath().toString());
+                        LOGGER.error(
+                                "runOperation(): --> Failed to initialize File Pivot Dir Builder from output [{}]!",
+                                this.output.toAbsolutePath().toString());
                         return false;
                     }
 
                     if (this.runFilePivotOperation())
                     {
-                        LOGGER.info("runOperation(): --> File Pivot complete.");
+                        LOGGER.info("runOperation(): --> File Pivot complete, total files moved: [{}]",
+                                    this.totalCount);
                         return true;
                     }
                     else
@@ -115,7 +127,8 @@ public class OperationFilePivot extends Operation implements AutoCloseable
                 }
                 else
                 {
-                    LOGGER.error("runOperation(): --> Failed to load File Pivot config [{}]!", this.PARSER.getHeaderConfigFile());
+                    LOGGER.error("runOperation(): --> Failed to load File Pivot config [{}]!",
+                                 this.PARSER.getHeaderConfigFile());
                     return false;
                 }
             }
@@ -151,6 +164,12 @@ public class OperationFilePivot extends Operation implements AutoCloseable
     {
         if (Files.exists(this.input) && Files.isDirectory(this.input) && Files.isReadable(this.input))
         {
+            if (!this.cacheInputDirectory())
+            {
+                LOGGER.error("runFilePivotOperation(): Exception caching input directory.");
+                return false;
+            }
+
             FilePivotTransform fromTransform = this.PARSER.getFileTransformFrom();
             FilePivotTransform toTransform = this.PARSER.getFileTransformTo();
             List<FilePivotDirectoryBuilder.Entry> entries = this.PARSER.getDirectoryEntries();
@@ -194,15 +213,9 @@ public class OperationFilePivot extends Operation implements AutoCloseable
         return false;
     }
 
-    private boolean runTransformEachLine(int index, FilePivotTransform fromTransform, FilePivotTransform toTransform, List<FilePivotDirectoryBuilder.Entry> entries, List<String> row)
+    private boolean cacheInputDirectory()
     {
-        String nameIn = fromTransform.transformFileName("", index, row);
-
-        if (nameIn == null || nameIn.isEmpty())
-        {
-            LOGGER.error("runTransformEachLine(): Failed to transform fromFile!");
-            return false;
-        }
+        this.inputDirSet.clear();
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.input))
         {
@@ -210,19 +223,7 @@ public class OperationFilePivot extends Operation implements AutoCloseable
             {
                 if (Files.isRegularFile(file) && Files.isReadable(file))
                 {
-                    if (file.getFileName().toString().equalsIgnoreCase(nameIn))
-                    {
-                        if (this.transformAndPivotFile(file, toTransform, index, entries, row))
-                        {
-                            LOGGER.debug("runTransformEachLine(): File pivot successful for file '{}'", file.getFileName().toString());
-                            break;
-                        }
-                        else
-                        {
-                            LOGGER.error("runTransformEachLine(): Exception pivoting file '{}'", file.getFileName().toString());
-                            return false;
-                        }
-                    }
+                    this.inputDirSet.add(file);
                 }
             }
         }
@@ -235,19 +236,53 @@ public class OperationFilePivot extends Operation implements AutoCloseable
         return true;
     }
 
-    private boolean transformAndPivotFile(Path file, FilePivotTransform toTransform, int index, List<FilePivotDirectoryBuilder.Entry> entries, List<String> row)
+    private boolean runTransformEachLine(int index, FilePivotTransform fromTransform, FilePivotTransform toTransform,
+                                         List<FilePivotDirectoryBuilder.Entry> entries, List<String> row)
+    {
+        String nameIn = fromTransform.transformFileName("", index, row);
+
+        if (nameIn.isEmpty())
+        {
+            LOGGER.error("runTransformEachLine(): Failed to transform fromFile!");
+            return false;
+        }
+
+        for (Path file : this.inputDirSet)
+        {
+            if (file.getFileName().toString().equalsIgnoreCase(nameIn))
+            {
+                if (this.transformAndPivotFile(file, toTransform, index, entries, row))
+                {
+                    this.inputDirSet.remove(file);
+                    LOGGER.debug("runTransformEachLine(): File pivot successful for file '{}'",
+                                 file.getFileName().toString());
+                    break;
+                }
+                else
+                {
+                    LOGGER.error("runTransformEachLine(): Exception pivoting file '{}'", file.getFileName().toString());
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean transformAndPivotFile(Path file, FilePivotTransform toTransform, int index,
+                                          List<FilePivotDirectoryBuilder.Entry> entries, List<String> row)
     {
         String toFile = toTransform.transformFileName("", index, row);
 
-        if (toFile == null || toFile.isEmpty())
+        if (toFile.isEmpty())
         {
             LOGGER.error("transformAndPivotFile(): Failed to transform toFile!");
             return false;
         }
 
-        this.currentDir = this.builder.build(entries, row);
+        Path currentDir = this.builder.build(entries, row);
 
-        if (this.currentDir == null)
+        if (currentDir == null)
         {
             LOGGER.error("runTransformEachLine(): Directory Builder has failed to construct a new sub dir!");
             return false;
@@ -255,20 +290,24 @@ public class OperationFilePivot extends Operation implements AutoCloseable
 
         try
         {
-            Path destFile = this.currentDir.resolve(FileUtils.sanitizeFileName(toFile));
+            Path destFile = currentDir.resolve(FileUtils.sanitizeFileName(toFile));
 
             if (Files.exists(destFile))
             {
                 Files.delete(destFile);
-                LOGGER.warn("transformAndPivotFile(): Deleted existing file '{}'", destFile.toAbsolutePath().toString());
+                LOGGER.warn("transformAndPivotFile(): Deleted existing file '{}'",
+                            destFile.toAbsolutePath().toString());
             }
 
             Files.move(file, destFile);
-            LOGGER.debug("transformAndPivotFile(): File pivot: '{}' -> '{}'", file.getFileName().toString(), destFile.toAbsolutePath().toString());
+            LOGGER.debug("transformAndPivotFile(): File pivot: '{}' -> '{}'", file.getFileName().toString(),
+                         destFile.toAbsolutePath().toString());
+            this.totalCount++;
         }
         catch (Exception err)
         {
-            LOGGER.error("transformAndPivotFile(): Exception moving file '{}'; {}", file.getFileName().toString(), err.getLocalizedMessage());
+            LOGGER.error("transformAndPivotFile(): Exception moving file '{}'; {}", file.getFileName().toString(),
+                         err.getLocalizedMessage());
             return false;
         }
 
@@ -287,6 +326,8 @@ public class OperationFilePivot extends Operation implements AutoCloseable
         {
             this.PARSER.clear();
         }
+
+        this.inputDirSet.clear();
     }
 
     @Override
@@ -300,5 +341,7 @@ public class OperationFilePivot extends Operation implements AutoCloseable
         {
             this.PARSER.close();
         }
+
+        this.inputDirSet.clear();
     }
 }

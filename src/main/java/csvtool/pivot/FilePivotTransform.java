@@ -90,7 +90,8 @@ public record FilePivotTransform(String format, String defaultExt, int data, Lis
 
         if (pos < 0)
         {
-            return fileOut + this.defaultExt();
+            LOGGER.debug("AppendFileExt: [{}]", this.defaultExt());
+            return fileOut+"."+this.defaultExt();
         }
 
         return fileOut;
