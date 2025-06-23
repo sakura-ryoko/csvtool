@@ -1,5 +1,6 @@
 package csvtool.utils;
 
+@SuppressWarnings("deprecation")
 public class StringUtils extends org.apache.commons.lang3.StringUtils
 {
 //    private static final LogWrapper LOGGER = new LogWrapper(StringUtils.class);
