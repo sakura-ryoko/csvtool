@@ -1,5 +1,6 @@
 package csvtool.pivot;
 
+import csvtool.utils.FileUtils;
 import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nonnull;
@@ -102,7 +103,8 @@ public class FilePivotDirectoryBuilder
             {
                 try
                 {
-                    newDir = newDir.resolve(row.get(entry.field())).normalize();
+                    String sanitized = FileUtils.sanitizeFileName(row.get(entry.field()));
+                    newDir = newDir.resolve(sanitized).normalize();
                 }
                 catch (Exception err)
                 {
