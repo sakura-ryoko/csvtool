@@ -65,6 +65,7 @@ public class HeaderConfig
         "COPY { (field-id) } (Performs a value copy of the value in (field-id))",
         "MERGE { (field-id), [token] } (Performs a value merge from the value in (field-id), with a space or [token] in between)",
         "APPEND { (value), [token] } (Performs a value append of the value in (value), with a space or [token] in between)",
+        "REPLACE { (value), [token] } (Performs a value replace of the value in (value), with a space or [token] in between; if found)",
         "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
             "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
     );

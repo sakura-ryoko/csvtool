@@ -45,8 +45,9 @@ public class CSVRemapList
                 new CSVRemap(30, RemapType.COPY, List.of("3")),
                 new CSVRemap(31, RemapType.MERGE, List.of("3")),
                 new CSVRemap(32, RemapType.APPEND, List.of("Extra")),
-                new CSVRemap(33, RemapType.PHONE_NUMBER, List.of("E164")),
-                new CSVRemap(34, RemapType.SWAP, List.of("2"),
+                new CSVRemap(33, RemapType.REPLACE, List.of("DEL", "")),
+                new CSVRemap(34, RemapType.PHONE_NUMBER, List.of("E164")),
+                new CSVRemap(35, RemapType.SWAP, List.of("2"),
                         new CSVRemap(3, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )

@@ -351,6 +351,31 @@ public abstract class Operation
                     LOGGER.warn("applyRemapEach(): TRUNCATE error; {}", err.getMessage());
                 }
             }
+            case REPLACE ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): REPLACE error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                String obj = params.getFirst();
+                String token = "";
+
+                if (params.size() > 1)
+                {
+                    token = params.get(1);
+                }
+
+                if (data.contains(obj))
+                {
+                    result = data.replace(obj, token);
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case STATIC ->
             {
                 if (params == null || params.isEmpty())

@@ -34,6 +34,7 @@ public enum RemapType
     EXCLUDE_REGEX   ("exclude-regex",  true),
     PAD             ("pad",            true),
     TRUNCATE        ("truncate",       true),
+    REPLACE         ("replace",        true),
     PHONE_NUMBER    ("phone_number",   false),
     DATE            ("date",           true),
     DATE_NOW        ("date-now",       true),
