@@ -439,7 +439,14 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                result = data + " " + params.getFirst();
+                String token = " ";
+
+                if (params.size() > 1)
+                {
+                    token = params.get(1);
+                }
+
+                result = data + token + params.getFirst();
             }
             case COPY ->
             {
