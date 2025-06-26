@@ -525,7 +525,24 @@ public abstract class Operation
                     try
                     {
                         Phonenumber.PhoneNumber number = parser.parse(data, "US");
-                        result = parser.format(number, PhoneNumberUtil.PhoneNumberFormat.E164);
+                        PhoneNumberUtil.PhoneNumberFormat format;
+
+                        if (params != null && !params.isEmpty())
+                        {
+                            switch (params.getFirst().toUpperCase())
+                            {
+                                case "INTERNATIONAL", "INTL" -> format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
+                                case "NATIONAL", "NAT" -> format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
+                                case "E164", "E.164" -> format = PhoneNumberUtil.PhoneNumberFormat.E164;
+                                default -> format = PhoneNumberUtil.PhoneNumberFormat.RFC3966;
+                            }
+                        }
+                        else
+                        {
+                            format = PhoneNumberUtil.PhoneNumberFormat.RFC3966;
+                        }
+
+                        result = parser.format(number, format);
                     }
                     catch (NumberParseException err)
                     {
