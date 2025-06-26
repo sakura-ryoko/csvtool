@@ -1282,23 +1282,20 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                if (params.size() > 1)
+                boolean matched = false;
+
+                for (String param : params)
                 {
-                    boolean matched = false;
-
-                    for (String param : params)
+                    if (data.equals(param))
                     {
-                        if (data.equals(param))
-                        {
-                            matched = true;
-                            break;
-                        }
+                        matched = true;
+                        break;
                     }
+                }
 
-                    if (!matched)
-                    {
-                        exclude = true;
-                    }
+                if (!matched)
+                {
+                    exclude = true;
                 }
             }
             case EXCLUDE ->
@@ -1309,24 +1306,21 @@ public abstract class Operation
                     return Pair.of(false, data);
                 }
 
-                if (params.size() > 1)
+                boolean matched = false;
+
+                // Allow for multi-matching
+                for (String param : params)
                 {
-                    boolean matched = false;
-
-                    // Allow for multi-matching
-                    for (String param : params)
+                    if (data.equals(param))
                     {
-                        if (data.equals(param))
-                        {
-                            matched = true;
-                            break;
-                        }
+                        matched = true;
+                        break;
                     }
+                }
 
-                    if (matched)
-                    {
-                        exclude = true;
-                    }
+                if (matched)
+                {
+                    exclude = true;
                 }
             }
             case INCLUDE_REGEX ->
