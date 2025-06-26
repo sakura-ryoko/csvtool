@@ -1311,14 +1311,21 @@ public abstract class Operation
 
                 if (params.size() > 1)
                 {
+                    boolean matched = false;
+
                     // Allow for multi-matching
                     for (String param : params)
                     {
                         if (data.equals(param))
                         {
-                            exclude = true;
+                            matched = true;
                             break;
                         }
+                    }
+
+                    if (matched)
+                    {
+                        exclude = true;
                     }
                 }
             }
