@@ -14,6 +14,7 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationDedupe> DEDUPE;
 //    public static final OperationType<OperationSplit> SPLIT;
     public static final OperationType<OperationDiff> DIFF;
+    public static final OperationType<OperationHeaderAdd> HEADER_ADD;
     public static final OperationType<OperationHeaderSave> HEADER_SAVE;
     public static final OperationType<OperationTransformSave> TRANSFORM_SAVE;
     public static final OperationType<OperationReformat> REFORMAT;
@@ -55,6 +56,7 @@ public class OperationType<T extends Operation>
         DEDUPE = create(OperationDedupe::new, Operations.DEDUPE);
 //        SPLIT = create(OperationSplit::new, Operations.SPLIT);
         DIFF = create(OperationDiff::new, Operations.DIFF);
+        HEADER_ADD = create(OperationHeaderAdd::new, Operations.HEADER_SAVE);
         HEADER_SAVE = create(OperationHeaderSave::new, Operations.HEADER_SAVE);
         TRANSFORM_SAVE = create(OperationTransformSave::new, Operations.TRANSFORM_SAVE);
         REFORMAT = create(OperationReformat::new, Operations.REFORMAT);

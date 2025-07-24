@@ -15,6 +15,7 @@ public enum Operations
     DEDUPE              ("dedupe",           "--dedupe",            false, true,  true,  false, OperationType.DEDUPE,             List.of("-dedupe", "-ded", "--ded")),
 //    SPLIT               ("split",            "--split",             false, true, false,false, OperationType.SPLIT,              List.of("-split", "-sp", "--sp", "-s", "--s")),
     DIFF                ("diff",             "--diff",              true,  true,  true,  false, OperationType.DIFF,               List.of("-diff", "-d", "--d")),
+    HEADER_ADD          ("header-add",       "--header-add",        false, true,  false, true,  OperationType.HEADER_ADD,         List.of("-header-add", "--add", "-add")),
     HEADER_SAVE         ("header-save",      "--header-save",       false, false, false, true,  OperationType.HEADER_SAVE,        List.of("-header-save", "--save", "-save", "--sv", "-sv")),
     REFORMAT            ("reformat",         "--reformat",          false, true,  false, true,  OperationType.REFORMAT,           List.of("-reformat", "--ref", "-ref", "--rf", "-rf")),
     SERIALIZE           ("serialize",        "--serialize",         false, true,  true,  false, OperationType.SERIALIZE,          List.of("-serialize", "--ser", "-ser")),

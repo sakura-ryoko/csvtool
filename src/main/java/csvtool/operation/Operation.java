@@ -92,6 +92,35 @@ public abstract class Operation
         return null;
     }
 
+    protected @Nullable FileCache readFileNoHeaders(String file, boolean ignoreQuotes, boolean dump)
+    {
+        LOGGER.debug("readFileNoHeaders(): Reading file [{}] ...", file);
+
+        try (CSVWrapper wrapper = new CSVWrapper(file))
+        {
+            if (wrapper.read(false, ignoreQuotes))
+            {
+                LOGGER.info("readFileNoHeaders(): File read!");
+
+                if (dump)
+                {
+                    dumpFile(wrapper);
+                }
+
+                FileCache cache = new FileCache();
+                cache.copyFile(wrapper);
+                //wrapper.close();
+                return cache;
+            }
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("readFileNoHeaders(): Exception reading file! Error: {}", e.getMessage());
+        }
+
+        return null;
+    }
+
     protected @Nullable FileCache readFileHeadersOnly(String file, boolean ignoreQuotes, boolean dump)
     {
         LOGGER.debug("readFileHeadersOnly(): Reading file [{}] ...", file);

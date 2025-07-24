@@ -100,8 +100,10 @@ public class OperationHelp extends Operation
         System.out.print("\t--merge:\n\t\tMerge Two CSV Files [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--dedupe:\n\t\tDeDupe Two CSV Files  [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--diff:\n\t\tDiff Two CSV Files  [requires: (input) (output) (key_field)]\n");
+        System.out.print("\t--header-add:\n\t\tAppend the output headers from a headers.json from the input file to a new output [requires: (input) (output) (headers.json)]\n");
         System.out.print("\t--header-save:\n\t\tGenerate a headers.json from an input [requires: (input) (headers.json)]\n");
         System.out.print("\t--reformat:\n\t\tReformat A CSV File [requires: (input) (output) (headers.json)]\n");
+        System.out.print("\t--serialize:\n\t\tSerialize a CSV File with the --serial-key field, utilizing --key [through --key5] to build the Serialized Entry.  Then serialize the field starting with --serial-start [number] and optionally paired with --serial-end [number] [requires: (input) (output) (key) (serial-key) (serial-start)]\n");
         System.out.print("\t--transform-save:\n\t\tGenerate a transform.json from an input [requires: (input) (output) (transform.json)]\n");
         System.out.print("\t--transform-expand:\n\t\tExpand A CSV File's Columns using a transform.json using a key [requires: (input) (output) (transform.json) (key_field)]\n");
         System.out.print("\n");
