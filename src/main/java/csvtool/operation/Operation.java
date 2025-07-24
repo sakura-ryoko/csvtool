@@ -1274,6 +1274,52 @@ public abstract class Operation
                     result = data + token + otherField;
                 }
             }
+            case NOT_EMPTY_PREFIX ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): NOT_EMPTY_PREFIX error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    if (remap.getSubRemap() != null)
+                    {
+                        remap = remap.setSubRemap(null);
+                    }
+
+                    result = "";
+                }
+                else
+                {
+                    String token = " ";
+
+                    if (params.size() > 1)
+                    {
+                        token = params.get(1);
+                    }
+
+                    result = params.getFirst() + token + data;
+                }
+            }
+            case PREFIX ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): PREFIX error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                String token = " ";
+
+                if (params.size() > 1)
+                {
+                    token = params.get(1);
+                }
+
+                result = params.getFirst() + token + data;
+            }
             case INCLUDE ->
             {
                 if (params == null || params.isEmpty())
