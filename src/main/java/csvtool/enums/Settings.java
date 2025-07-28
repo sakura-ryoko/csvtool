@@ -6,8 +6,8 @@ import java.util.List;
 
 public enum Settings
 {
-    INPUT2      ("input2",      "--input",        true,  List.of("--in", "-input", "-i")),
-    OUTPUT      ("output",      "--output",       true,  List.of("--out", "-output", "-out")),
+    INPUT2      ("input2",      "--input",        true,  List.of("-input", "--in", "-in", "--i", "-i")),
+    OUTPUT      ("output",      "--output",       true,  List.of("-output", "--out", "-out", "--o", "-o")),
     HEADERS     ("headers",     "--headers",      true,  List.of("--header", "--head", "-head", "-header", "-headers", "--hd", "-hd")),
     KEY         ("key",         "--key",          true,  List.of("--k", "-key", "-k")),
     KEY2        ("key2",        "--key2",         true,  List.of("--k2", "-key2", "-k2")),
@@ -27,7 +27,7 @@ public enum Settings
     SQUASH_DUPE ("squash-dupe", "--squash-dupe",  false, List.of("-squash-dupe", "--squashdupe", "-squashdupe", "--sqdd", "-sqdd", "--sqd", "-sqd")),
     QUOTES      ("quotes",      "--quotes",       false, List.of("-quotes")),
     APPEND      ("append",      "--append",       false, List.of("--a", "-append", "-a")),
-    OUTER       ("outer-join",  "--outer-join",   false, List.of("-outer-join", "--outer", "-outer", "--out", "-out", "--o", "-o")),
+    OUTER       ("outer-join",  "--outer-join",   false, List.of("-outer-join", "--outer", "-outer", "--oj", "-oj")),
     QUIET       ("quiet",       "--quiet",        false, List.of("-quiet", "--q", "-q")),
     DEBUG       ("debug",       "--debug",        false, List.of("--db", "-db", "-debug", "--d", "-d")),
     ANSI_COLORS ("ansi-colors", "--ansi-colors",  false, List.of("--colors", "--color", "--ansi", "-colors", "-color", "-ansi")),
