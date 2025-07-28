@@ -20,6 +20,7 @@ public class OperationJoin extends Operation implements AutoCloseable
     private FileCache FILE_2;
     private final FileCache OUT;
     private final FileCache EXCEPTIONS;
+    private final List<Integer> matchedOuter;
     private int keyId1;
     private int keyId2;
     private int keyId3;
@@ -38,6 +39,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         this.FILE_2 = new FileCache();
         this.OUT = new FileCache();
         this.EXCEPTIONS = new FileCache();
+        this.matchedOuter = new ArrayList<>();
         this.keyId1 = -1;
         this.keyId2 = -1;
         this.keyId3 = -1;
@@ -96,7 +98,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         String exceptionsFileName = StringUtils.addFileSuffix(this.OUT.getFileName(), "-exceptions");
         this.EXCEPTIONS.setFileName(exceptionsFileName);
 
-        if (this.readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug()))
+        if (this.readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug(), ctx.getOpt().isOuterJoin()))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -289,7 +291,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         System.out.print("\n");
     }
 
-    private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)
+    private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug, boolean outer)
     {
         LOGGER.debug("readFiles(): Reading files [{}] and [{}] ...", file1, file2);
 
@@ -313,7 +315,15 @@ public class OperationJoin extends Operation implements AutoCloseable
         CSVHeader header1 = this.FILE_1.getHeader();
         CSVHeader header2 = this.FILE_2.getHeader();
         this.OUT.setHeader(header1);
-        this.EXCEPTIONS.setHeader(header1);
+
+        if (outer)
+        {
+            this.EXCEPTIONS.setHeader(header2);
+        }
+        else
+        {
+            this.EXCEPTIONS.setHeader(header1);
+        }
 
         Iterator<String> iter = header2.iterator();
 
@@ -329,7 +339,6 @@ public class OperationJoin extends Operation implements AutoCloseable
     {
         final int header1Size = this.FILE_1.getHeader().size();
         final int header2Size = this.FILE_2.getHeader().size();
-        final int combinedHeaderSize = header1Size + header2Size;
 
         for (int i = 1; i < this.FILE_1.getFile().size(); i++)
         {
@@ -349,7 +358,7 @@ public class OperationJoin extends Operation implements AutoCloseable
                 else if (outer)
                 {
                     // OuterJoin style, No Exceptions
-                    for (int j = 0; j < header2Size; j++)
+                    for (int j = header1Size; j < header2Size; j++)
                     {
                         result.add("");
                     }
@@ -359,6 +368,23 @@ public class OperationJoin extends Operation implements AutoCloseable
                 else
                 {
                     this.EXCEPTIONS.addLine(entry);
+                }
+            }
+        }
+
+        // Write All unmatched-outer Exceptions
+        if (outer)
+        {
+            for (int i = 1; i < this.FILE_2.getFile().size(); i++)
+            {
+                if (!this.matchedOuter.contains(i))
+                {
+                    List<String> entry = this.FILE_2.getFile().get(i);
+
+                    if (!entry.isEmpty())
+                    {
+                        this.EXCEPTIONS.addLine(entry);
+                    }
                 }
             }
         }
@@ -504,6 +530,7 @@ public class OperationJoin extends Operation implements AutoCloseable
 
                 if (this.matchKeys(lKeys, rKeys))
                 {
+                    this.matchedOuter.add(i);
                     return entry;
                 }
             }
@@ -534,6 +561,8 @@ public class OperationJoin extends Operation implements AutoCloseable
         {
             this.EXCEPTIONS.clear();
         }
+
+        this.matchedOuter.clear();
     }
 
     @Override
