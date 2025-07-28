@@ -24,6 +24,7 @@ public class OptSettings
     private boolean squashDupe;
     private boolean applyQuotes;
     private boolean appendOutput;
+    private boolean outer;
     private boolean quiet;
     private boolean debug;
     private boolean ansiColors;
@@ -46,6 +47,7 @@ public class OptSettings
         this.squashDupe = false;
         this.applyQuotes = false;
         this.appendOutput = false;
+        this.outer = false;
         this.quiet = Const.QUIET;
         this.debug = Const.DEBUG;
         this.ansiColors = Const.ANSI_COLOR;
@@ -191,6 +193,11 @@ public class OptSettings
         return this.appendOutput;
     }
 
+    public boolean isOuterJoin()
+    {
+        return this.outer;
+    }
+
     public boolean isQuiet()
     {
         return this.quiet;
@@ -311,6 +318,11 @@ public class OptSettings
     public void setAppendOutput(boolean toggle)
     {
         this.appendOutput = toggle;
+    }
+
+    public void setOuterJoin(boolean toggle)
+    {
+        this.outer = toggle;
     }
 
     public void setQuiet(boolean toggle)

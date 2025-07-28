@@ -68,6 +68,7 @@ public class HeaderConfig
         "APPEND { (value), [token] } (Performs a value append of the value in (value), with a space or [token] in between)",
         "PREFIX { (value), [token] } (Performs a value prefix with the value in (value), with a space or [token] in between)",
         "REPLACE { (value), [token] } (Performs a value replace of the value in (value), with a space or [token] in between; if found)",
+        "SANITIZE { } (Performs a string sanitize to replace all unsafe characters)",
         "SWAP (field-id) + subRemap (Performs a field swap with field-id, and also copies the subRemap and executes it)",
             "* subRemap {}: (Any Remap except for a SWAP and DROP; can be nested with a subRemap type)"
     );

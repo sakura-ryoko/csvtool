@@ -4,7 +4,7 @@ public class Const
 {
     public static final String ID = "csvtool";
     public static final String NAME = "CSVTool";
-    public static final String VERSION = "0.1.4";
+    public static final String VERSION = "0.1.5";
     public static final String AUTHOR = "Sakura Ryoko";
     public static final String STR = NAME + "-" + VERSION;
 

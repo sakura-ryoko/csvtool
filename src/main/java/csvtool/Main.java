@@ -340,6 +340,7 @@ public class Main
                     case SQUASH_DUPE -> opt.setSquashDupe(true);
                     case QUOTES -> opt.setApplyQuotes(true);
                     case APPEND -> opt.setAppendOutput(true);
+                    case OUTER -> opt.setOuterJoin(true);
                     case QUIET ->
                     {
                         LOGGER.toggleQuiet(true);

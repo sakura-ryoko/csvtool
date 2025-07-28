@@ -16,6 +16,7 @@ public class OperationType<T extends Operation>
     public static final OperationType<OperationDiff> DIFF;
     public static final OperationType<OperationHeaderAdd> HEADER_ADD;
     public static final OperationType<OperationHeaderSave> HEADER_SAVE;
+    public static final OperationType<OperationJoin> JOIN;
     public static final OperationType<OperationTransformSave> TRANSFORM_SAVE;
     public static final OperationType<OperationReformat> REFORMAT;
     public static final OperationType<OperationSerialize> SERIALIZE;
@@ -58,6 +59,7 @@ public class OperationType<T extends Operation>
         DIFF = create(OperationDiff::new, Operations.DIFF);
         HEADER_ADD = create(OperationHeaderAdd::new, Operations.HEADER_SAVE);
         HEADER_SAVE = create(OperationHeaderSave::new, Operations.HEADER_SAVE);
+        JOIN = create(OperationJoin::new, Operations.JOIN);
         TRANSFORM_SAVE = create(OperationTransformSave::new, Operations.TRANSFORM_SAVE);
         REFORMAT = create(OperationReformat::new, Operations.REFORMAT);
         SERIALIZE = create(OperationSerialize::new, Operations.SERIALIZE);

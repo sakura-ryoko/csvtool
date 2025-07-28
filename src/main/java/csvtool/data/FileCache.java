@@ -123,6 +123,15 @@ public class FileCache implements AutoCloseable
     {
         List<String> out = new ArrayList<>();
 
+        // Ensure Line Size fits
+        if (line.size() < this.header.size())
+        {
+            for (int j = line.size(); j < this.header.size(); j++)
+            {
+                line.add("");
+            }
+        }
+
         for (int i = 0; i < this.header.size(); i++)
         {
 //            if (line.size() >= i)
@@ -138,6 +147,15 @@ public class FileCache implements AutoCloseable
     public void setLine(int line, List<String> data)
     {
         List<String> out = new ArrayList<>();
+
+        // Ensure Data Size fits
+        if (data.size() < this.header.size())
+        {
+            for (int j = data.size(); j < this.header.size(); j++)
+            {
+                data.add("");
+            }
+        }
 
         for (int i = 0; i < this.header.size(); i++)
         {

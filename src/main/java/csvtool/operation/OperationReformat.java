@@ -95,7 +95,7 @@ public class OperationReformat extends Operation implements AutoCloseable
                     this.EXCEPTIONS.setFileName(exceptionsFile);
 
                     // Run Reformat
-                    if (reformatFile())
+                    if (this.reformatFile())
                     {
                         LOGGER.info("runOperation(): --> File reformat successful.");
 
@@ -518,6 +518,11 @@ public class OperationReformat extends Operation implements AutoCloseable
             this.OUT.clear();
         }
 
+        if (this.EXCEPTIONS != null && !this.EXCEPTIONS.isEmpty())
+        {
+            this.EXCEPTIONS.clear();
+        }
+
         if (this.PARSER != null && !this.PARSER.isEmpty())
         {
             this.PARSER.clear();
@@ -535,6 +540,11 @@ public class OperationReformat extends Operation implements AutoCloseable
         if (this.OUT != null)
         {
             this.OUT.close();
+        }
+
+        if (this.EXCEPTIONS != null)
+        {
+            this.EXCEPTIONS.close();
         }
 
         if (this.PARSER != null)

@@ -502,6 +502,17 @@ public abstract class Operation
 
                 result = data + token + params.getFirst();
             }
+            case SANITIZE ->
+            {
+                if (!data.isEmpty())
+                {
+                    result = StringUtils.sanitizeString(data);
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case COPY ->
             {
                 if (params == null || params.isEmpty())

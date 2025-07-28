@@ -1,5 +1,7 @@
 package csvtool.utils;
 
+import java.util.regex.Matcher;
+
 @SuppressWarnings("deprecation")
 public class StringUtils extends org.apache.commons.lang3.StringUtils
 {
@@ -54,5 +56,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         }
 
         return file;
+    }
+
+    public static String sanitizeString(String input)
+    {
+        String replace = Matcher.quoteReplacement(input);
+
+        replace = replace.replaceAll("\\R", "; ");
+//        replace = replace.replaceAll("#", "\\\\#");
+        replace = replace.replaceAll("\\\\$", "(Dollars)");
+
+        return replace;
     }
 }

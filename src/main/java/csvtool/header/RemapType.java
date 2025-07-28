@@ -37,6 +37,7 @@ public enum RemapType
     PAD             ("pad",            true),
     TRUNCATE        ("truncate",       true),
     REPLACE         ("replace",        true),
+    SANITIZE        ("sanitize",       false),
     PHONE_NUMBER    ("phone_number",   false),
     DATE            ("date",           true),
     DATE_NOW        ("date-now",       true),

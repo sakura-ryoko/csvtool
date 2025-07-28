@@ -17,6 +17,7 @@ public enum Operations
     DIFF                ("diff",             "--diff",              true,  true,  true,  false, OperationType.DIFF,               List.of("-diff", "-d", "--d")),
     HEADER_ADD          ("header-add",       "--header-add",        false, true,  false, true,  OperationType.HEADER_ADD,         List.of("-header-add", "--add", "-add")),
     HEADER_SAVE         ("header-save",      "--header-save",       false, false, false, true,  OperationType.HEADER_SAVE,        List.of("-header-save", "--save", "-save", "--sv", "-sv")),
+    JOIN                ("join",             "--join",              true,  true,  true,  false, OperationType.JOIN,               List.of("-join", "--vl", "-vl")),
     REFORMAT            ("reformat",         "--reformat",          false, true,  false, true,  OperationType.REFORMAT,           List.of("-reformat", "--ref", "-ref", "--rf", "-rf")),
     SERIALIZE           ("serialize",        "--serialize",         false, true,  true,  false, OperationType.SERIALIZE,          List.of("-serialize", "--ser", "-ser")),
     TRANSFORM_SAVE      ("transform-save",   "--transform-save",    false, false, false, true,  OperationType.TRANSFORM_SAVE,     List.of("-transform-save", "--tfs", "-tfs")),

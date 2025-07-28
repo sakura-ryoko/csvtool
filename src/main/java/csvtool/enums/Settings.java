@@ -22,6 +22,7 @@ public enum Settings
     SQUASH_DUPE ("squash-dupe", "--squash-dupe",  false, List.of("-squash-dupe", "--squashdupe", "-squashdupe", "--sqdd", "-sqdd", "--sqd", "-sqd")),
     QUOTES      ("quotes",      "--quotes",       false, List.of("-quotes")),
     APPEND      ("append",      "--append",       false, List.of("--a", "-append", "-a")),
+    OUTER       ("outer-join",  "--outer-join",   false, List.of("-outer-join", "--outer", "-outer", "--out", "-out", "--o", "-o")),
     QUIET       ("quiet",       "--quiet",        false, List.of("-quiet", "--q", "-q")),
     DEBUG       ("debug",       "--debug",        false, List.of("--db", "-db", "-debug", "--d", "-d")),
     ANSI_COLORS ("ansi-colors", "--ansi-colors",  false, List.of("--colors", "--color", "--ansi", "-colors", "-color", "-ansi")),
@@ -62,6 +63,16 @@ public enum Settings
             else if (val.getAlias().contains(name))
             {
                 return val;
+            }
+            else if (!val.getAlias().isEmpty())
+            {
+                for (String each : val.getAlias())
+                {
+                    if (each.equalsIgnoreCase(name))
+                    {
+                        return val;
+                    }
+                }
             }
         }
 

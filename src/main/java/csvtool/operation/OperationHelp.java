@@ -102,6 +102,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--diff:\n\t\tDiff Two CSV Files  [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--header-add:\n\t\tAppend the output headers from a headers.json from the input file to a new output [requires: (input) (output) (headers.json)]\n");
         System.out.print("\t--header-save:\n\t\tGenerate a headers.json from an input [requires: (input) (headers.json)]\n");
+        System.out.print("\t--join:\n\t\tJoin two CSV files into one matching key with key2 [requires: (input) (input2) (output) (key_field) (key_field2)]\n");
         System.out.print("\t--reformat:\n\t\tReformat A CSV File [requires: (input) (output) (headers.json)]\n");
         System.out.print("\t--serialize:\n\t\tSerialize a CSV File with the --serial-key field, utilizing --key [through --key5] to build the Serialized Entry.  Then serialize the field starting with --serial-start [number] and optionally paired with --serial-end [number] [requires: (input) (output) (key) (serial-key) (serial-start)]\n");
         System.out.print("\t--transform-save:\n\t\tGenerate a transform.json from an input [requires: (input) (output) (transform.json)]\n");
@@ -119,6 +120,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--squash-dupe:\n\t\tSets the MERGE/DEDUPE Operation in \"Squash\" mode, which combines rows that already exist with it's duplicates, and outputs the combined data.\n");
         System.out.print("\t--quotes:\n\t\tSets the CSV Output in \"Apply Quotes\" mode, which adds Quotes to all data, and not only when it is required.\n");
         System.out.print("\t--append:\n\t\tSets the CSV Output in \"Append\" mode, which causes the Output to not be Overwritten, but appended to.\n");
+        System.out.print("\t--outer-join:\n\t\tSets the CSV Output for the Join Operation to \"Outer-Join\" mode, which causes the Output to include lines that were not matched.\n");
         System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
         System.out.print("\t--debug:\n\t\tSets the Operation in \"Debug\" mode, which causes the Logger to output Debug Level messages.\n");
         System.out.print("\t--ansi-colors:\n\t\tSets the Operation in \"Ansi-Color\" mode, which causes the Logger to output messages with ANSI-style color codes.\n");
@@ -140,6 +142,7 @@ public class OperationHelp extends Operation
             case SQUASH_DUPE -> this.displayHelpForSquashDupe();
             case QUOTES -> this.displayHelpForQuotes();
             case APPEND -> this.displayHelpForAppend();
+            case OUTER -> this.displayHelpForOuterJoin();
             case QUIET -> this.displayHelpForQuiet();
             case DEBUG -> this.displayHelpForDebug();
             case ANSI_COLORS -> this.displayHelpForAnsiColors();
@@ -217,6 +220,12 @@ public class OperationHelp extends Operation
         {
             this.displayVersion();
             this.displayHelpForAppend();
+            hasOpt = true;
+        }
+        else if (opt.isOuterJoin())
+        {
+            this.displayVersion();
+            this.displayHelpForOuterJoin();
             hasOpt = true;
         }
         else if (opt.isDebug() && !Const.DEBUG)
@@ -307,6 +316,12 @@ public class OperationHelp extends Operation
     {
         System.out.print("--append:\n");
         System.out.printf("Aliases: %s\n", Settings.APPEND.getAlias().toString());
+    }
+
+    private void displayHelpForOuterJoin()
+    {
+        System.out.print("--outer-join:\n");
+        System.out.printf("Aliases: %s\n", Settings.OUTER.getAlias().toString());
     }
 
     private void displayHelpForQuiet()
