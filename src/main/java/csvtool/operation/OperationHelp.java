@@ -102,7 +102,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--diff:\n\t\tDiff Two CSV Files  [requires: (input) (output) (key_field)]\n");
         System.out.print("\t--header-add:\n\t\tAppend the output headers from a headers.json from the input file to a new output [requires: (input) (output) (headers.json)]\n");
         System.out.print("\t--header-save:\n\t\tGenerate a headers.json from an input [requires: (input) (headers.json)]\n");
-        System.out.print("\t--join:\n\t\tJoin two CSV files into one matching key with key2 [requires: (input) (input2) (output) (key_field) (key_field2)]\n");
+        System.out.print("\t--join:\n\t\tJoin two CSV files into one matching key with key2 [requires: (input) (input2) (output) (key_field) (join_key_field2) [...]]\n");
         System.out.print("\t--reformat:\n\t\tReformat A CSV File [requires: (input) (output) (headers.json)]\n");
         System.out.print("\t--serialize:\n\t\tSerialize a CSV File with the --serial-key field, utilizing --key [through --key5] to build the Serialized Entry.  Then serialize the field starting with --serial-start [number] and optionally paired with --serial-end [number] [requires: (input) (output) (key) (serial-key) (serial-start)]\n");
         System.out.print("\t--transform-save:\n\t\tGenerate a transform.json from an input [requires: (input) (output) (transform.json)]\n");
@@ -113,8 +113,15 @@ public class OperationHelp extends Operation
         System.out.print("\t--output (file):\n\t\tSets the Output File\n");
         System.out.print("\t--headers (file):\n\t\tSets the CSV Headers.json file.  This is used for \"Reformatting\" the CSV Fields like a config file.\n");
         System.out.print("\t--key (key):\n\t\tSets the CSV Key field.  This is used in MERGE, DIFF, and DEDUPE Operations so that they can compare the data.\n");
-        System.out.print("\t--key2 (key):\n\t\tSets the CSV Key2 field for the DIFF/DEDUPE Operation.  This is used in DIFF and DEDUPE matching operations as a secondary data comparison.\n");
-        System.out.print("\t--key3 (key):\n\t\tSets the CSV Key3 field for the DEDUPE Operation.  This is used in DEDUPE matching operations as a tertiary data comparison.\n");
+        System.out.print("\t--key2 (key):\n\t\tSets the CSV Key2 field for various Operations.  This is used in matching operations as a secondary data comparison.\n");
+        System.out.print("\t--key3 (key):\n\t\tSets the CSV Key3 field for various Operations.  This is used in matching operations as a tertiary data comparison.\n");
+        System.out.print("\t--key4 (key):\n\t\tSets the CSV Key4 field for various Operations.  This is used in matching operations as a quaternary data comparison.\n");
+        System.out.print("\t--key5 (key):\n\t\tSets the CSV Key5 field for various Operations.  This is used in matching operations as a quinary data comparison.\n");
+        System.out.print("\t--join-key (key):\n\t\tSets the CSV Join-Key field for the JOIN Operation.  This is used so that it can compare the data with the Key field.\n");
+        System.out.print("\t--join-key2 (key):\n\t\tSets the CSV Join-Key2 field for the JOIN Operation.  This is used so that it can compare the data with the Key2 field.\n");
+        System.out.print("\t--join-key3 (key):\n\t\tSets the CSV Join-Key3 field for the JOIN Operation.  This is used so that it can compare the data with the Key3 field.\n");
+        System.out.print("\t--join-key4 (key):\n\t\tSets the CSV Join-Key4 field for the JOIN Operation.  This is used so that it can compare the data with the Key4 field.\n");
+        System.out.print("\t--join-key5 (key):\n\t\tSets the CSV Join-Key5 field for the JOIN Operation.  This is used so that it can compare the data with the Key5 field.\n");
         System.out.print("\t--side (key):\n\t\tSets the CSV Side field for the DIFF Operation.  This informs of which \"Side\" the DIFF output came from.\n");
         System.out.print("\t--de-dupe:\n\t\tSets the MERGE Operation in \"De-Duplication\" mode, which removes rows that already exists, and outputs this data to a separate file.\n");
         System.out.print("\t--squash-dupe:\n\t\tSets the MERGE/DEDUPE Operation in \"Squash\" mode, which combines rows that already exist with it's duplicates, and outputs the combined data.\n");
@@ -137,6 +144,13 @@ public class OperationHelp extends Operation
             case KEY -> this.displayHelpForKey();
             case KEY2 -> this.displayHelpForKey2();
             case KEY3 -> this.displayHelpForKey3();
+            case KEY4 -> this.displayHelpForKey4();
+            case KEY5 -> this.displayHelpForKey5();
+            case JOIN_KEY -> this.displayHelpForJoinKey();
+            case JOIN_KEY2 -> this.displayHelpForJoinKey2();
+            case JOIN_KEY3 -> this.displayHelpForJoinKey3();
+            case JOIN_KEY4 -> this.displayHelpForJoinKey4();
+            case JOIN_KEY5 -> this.displayHelpForJoinKey5();
             case SIDE -> this.displayHelpForSide();
             case DE_DUPE -> this.displayHelpForDeDupe();
             case SQUASH_DUPE -> this.displayHelpForSquashDupe();
@@ -190,6 +204,48 @@ public class OperationHelp extends Operation
         {
             this.displayVersion();
             this.displayHelpForKey3();
+            hasOpt = true;
+        }
+        else if (opt.hasKey4())
+        {
+            this.displayVersion();
+            this.displayHelpForKey4();
+            hasOpt = true;
+        }
+        else if (opt.hasKey5())
+        {
+            this.displayVersion();
+            this.displayHelpForKey5();
+            hasOpt = true;
+        }
+        else if (opt.hasJoinKey())
+        {
+            this.displayVersion();
+            this.displayHelpForJoinKey();
+            hasOpt = true;
+        }
+        else if (opt.hasJoinKey2())
+        {
+            this.displayVersion();
+            this.displayHelpForJoinKey2();
+            hasOpt = true;
+        }
+        else if (opt.hasJoinKey3())
+        {
+            this.displayVersion();
+            this.displayHelpForJoinKey3();
+            hasOpt = true;
+        }
+        else if (opt.hasJoinKey4())
+        {
+            this.displayVersion();
+            this.displayHelpForJoinKey4();
+            hasOpt = true;
+        }
+        else if (opt.hasJoinKey5())
+        {
+            this.displayVersion();
+            this.displayHelpForJoinKey5();
             hasOpt = true;
         }
         else if (opt.hasSide())
@@ -286,6 +342,48 @@ public class OperationHelp extends Operation
     {
         System.out.print("--key3 (field):\n");
         System.out.printf("Aliases: %s\n", Settings.KEY3.getAlias().toString());
+    }
+
+    private void displayHelpForKey4()
+    {
+        System.out.print("--key4 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.KEY4.getAlias().toString());
+    }
+
+    private void displayHelpForKey5()
+    {
+        System.out.print("--key5 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.KEY5.getAlias().toString());
+    }
+
+    private void displayHelpForJoinKey()
+    {
+        System.out.print("--join-key (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.JOIN_KEY.getAlias().toString());
+    }
+
+    private void displayHelpForJoinKey2()
+    {
+        System.out.print("--join-key2 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.JOIN_KEY2.getAlias().toString());
+    }
+
+    private void displayHelpForJoinKey3()
+    {
+        System.out.print("--join-key3 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.JOIN_KEY3.getAlias().toString());
+    }
+
+    private void displayHelpForJoinKey4()
+    {
+        System.out.print("--join-key4 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.JOIN_KEY4.getAlias().toString());
+    }
+
+    private void displayHelpForJoinKey5()
+    {
+        System.out.print("--join-key5 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.JOIN_KEY5.getAlias().toString());
     }
 
     private void displayHelpForSide()

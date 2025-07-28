@@ -234,6 +234,51 @@ public class Main
             System.out.print(" Key5: [NOT_SET]\n");
         }
 
+        if (opt.hasJoinKey())
+        {
+            System.out.printf(" JoinKey: [%s] // applied [%s]\n", opt.getJoinKey(), ctx.getSettingValue(Settings.JOIN_KEY));
+        }
+        else
+        {
+            System.out.print(" JoinKey: [NOT_SET]\n");
+        }
+
+        if (opt.hasJoinKey2())
+        {
+            System.out.printf(" JoinKey2: [%s] // applied [%s]\n", opt.getJoinKey2(), ctx.getSettingValue(Settings.JOIN_KEY2));
+        }
+        else
+        {
+            System.out.print(" JoinKey2: [NOT_SET]\n");
+        }
+
+        if (opt.hasJoinKey3())
+        {
+            System.out.printf(" JoinKey3: [%s] // applied [%s]\n", opt.getJoinKey3(), ctx.getSettingValue(Settings.JOIN_KEY3));
+        }
+        else
+        {
+            System.out.print(" JoinKey3: [NOT_SET]\n");
+        }
+
+        if (opt.hasJoinKey4())
+        {
+            System.out.printf(" JoinKey4: [%s] // applied [%s]\n", opt.getJoinKey4(), ctx.getSettingValue(Settings.JOIN_KEY4));
+        }
+        else
+        {
+            System.out.print(" JoinKey4: [NOT_SET]\n");
+        }
+
+        if (opt.hasJoinKey5())
+        {
+            System.out.printf(" JoinKey5: [%s] // applied [%s]\n", opt.getJoinKey5(), ctx.getSettingValue(Settings.JOIN_KEY5));
+        }
+        else
+        {
+            System.out.print(" JoinKey5: [NOT_SET]\n");
+        }
+
         if (opt.hasSerialKey())
         {
             System.out.printf(" SerialKey: [%s] // applied [%s]\n", opt.getSerialKey(), ctx.getSettingValue(Settings.SERIAL_KEY));
@@ -331,6 +376,11 @@ public class Main
                     case KEY3 -> opt.setKey3(ctx.getSettingValue(entry));
                     case KEY4 -> opt.setKey4(ctx.getSettingValue(entry));
                     case KEY5 -> opt.setKey5(ctx.getSettingValue(entry));
+                    case JOIN_KEY -> opt.setJoinKey(ctx.getSettingValue(entry));
+                    case JOIN_KEY2 -> opt.setJoinKey2(ctx.getSettingValue(entry));
+                    case JOIN_KEY3 -> opt.setJoinKey3(ctx.getSettingValue(entry));
+                    case JOIN_KEY4 -> opt.setJoinKey4(ctx.getSettingValue(entry));
+                    case JOIN_KEY5 -> opt.setJoinKey5(ctx.getSettingValue(entry));
                     case SERIAL_KEY -> opt.setSerialKey(ctx.getSettingValue(entry));
                     case SERIAL_START -> opt.setSerialStart(ctx.getSettingValue(entry));
                     case SERIAL_END -> opt.setSerialEnd(ctx.getSettingValue(entry));

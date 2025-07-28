@@ -16,6 +16,11 @@ public class OptSettings
     private String key3;
     private String key4;
     private String key5;
+    private String joinKey;
+    private String joinKey2;
+    private String joinKey3;
+    private String joinKey4;
+    private String joinKey5;
     private String serialKey;
     private String serialStart;
     private String serialEnd;
@@ -39,6 +44,11 @@ public class OptSettings
         this.key3 = "";
         this.key4 = "";
         this.key5 = "";
+        this.joinKey = "";
+        this.joinKey2 = "";
+        this.joinKey3 = "";
+        this.joinKey4 = "";
+        this.joinKey5 = "";
         this.serialKey = "";
         this.serialStart = "";
         this.serialEnd = "";
@@ -91,6 +101,31 @@ public class OptSettings
     public boolean hasKey5()
     {
         return this.key5 != null && !this.key5.isEmpty();
+    }
+
+    public boolean hasJoinKey()
+    {
+        return this.joinKey != null && !this.joinKey.isEmpty();
+    }
+
+    public boolean hasJoinKey2()
+    {
+        return this.joinKey2 != null && !this.joinKey2.isEmpty();
+    }
+
+    public boolean hasJoinKey3()
+    {
+        return this.joinKey3 != null && !this.joinKey3.isEmpty();
+    }
+
+    public boolean hasJoinKey4()
+    {
+        return this.joinKey4 != null && !this.joinKey4.isEmpty();
+    }
+
+    public boolean hasJoinKey5()
+    {
+        return this.joinKey5 != null && !this.joinKey5.isEmpty();
     }
 
     public boolean hasSerialKey()
@@ -151,6 +186,31 @@ public class OptSettings
     public @Nullable String getKey5()
     {
         return this.key5;
+    }
+
+    public @Nullable String getJoinKey()
+    {
+        return this.joinKey;
+    }
+
+    public @Nullable String getJoinKey2()
+    {
+        return this.joinKey2;
+    }
+
+    public @Nullable String getJoinKey3()
+    {
+        return this.joinKey3;
+    }
+
+    public @Nullable String getJoinKey4()
+    {
+        return this.joinKey4;
+    }
+
+    public @Nullable String getJoinKey5()
+    {
+        return this.joinKey5;
     }
 
     public @Nullable String getSerialKey()
@@ -278,6 +338,31 @@ public class OptSettings
     public void setKey5(String key5)
     {
         this.key5 = key5;
+    }
+
+    public void setJoinKey(String key)
+    {
+        this.joinKey = key;
+    }
+
+    public void setJoinKey2(String key2)
+    {
+        this.joinKey2 = key2;
+    }
+
+    public void setJoinKey3(String key3)
+    {
+        this.joinKey3 = key3;
+    }
+
+    public void setJoinKey4(String key4)
+    {
+        this.joinKey4 = key4;
+    }
+
+    public void setJoinKey5(String key5)
+    {
+        this.joinKey5 = key5;
     }
 
     public void setSerialKey(String key)

@@ -22,6 +22,14 @@ public class OperationJoin extends Operation implements AutoCloseable
     private final FileCache EXCEPTIONS;
     private int keyId1;
     private int keyId2;
+    private int keyId3;
+    private int keyId4;
+    private int keyId5;
+    private int jKeyId1;
+    private int jKeyId2;
+    private int jKeyId3;
+    private int jKeyId4;
+    private int jKeyId5;
 
     public OperationJoin(Operations op)
     {
@@ -32,6 +40,14 @@ public class OperationJoin extends Operation implements AutoCloseable
         this.EXCEPTIONS = new FileCache();
         this.keyId1 = -1;
         this.keyId2 = -1;
+        this.keyId3 = -1;
+        this.keyId4 = -1;
+        this.keyId5 = -1;
+        this.jKeyId1 = -1;
+        this.jKeyId2 = -1;
+        this.jKeyId3 = -1;
+        this.jKeyId4 = -1;
+        this.jKeyId5 = -1;
     }
 
     @Override
@@ -68,9 +84,9 @@ public class OperationJoin extends Operation implements AutoCloseable
             return false;
         }
 
-        if (!ctx.getOpt().hasKey2())
+        if (!ctx.getOpt().hasJoinKey())
         {
-            LOGGER.error("runOperation(): Join FAILED, a key2 is required.");
+            LOGGER.error("runOperation(): Join FAILED, a join key is required.");
             this.clear();
             return false;
         }
@@ -93,13 +109,134 @@ public class OperationJoin extends Operation implements AutoCloseable
                 return false;
             }
 
-            this.keyId2 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.KEY2));
+            this.jKeyId1 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.JOIN_KEY));
 
-            if (this.keyId2 < 0)
+            if (this.jKeyId1 < 0)
             {
-                LOGGER.error("runOperation(): Join FAILED, key2 was NOT found in the Input2 Headers.");
+                LOGGER.error("runOperation(): Join FAILED, join key was NOT found in the Input2 Headers.");
                 this.clear();
                 return false;
+            }
+
+            // Technically we can allow any combination / pairs -- as long as they match.
+            if (ctx.getOpt().hasKey2())
+            {
+                this.keyId2 = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY2));
+
+                if (this.keyId2 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, key2 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasJoinKey2())
+                {
+                    this.jKeyId2 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.JOIN_KEY2));
+
+                    if (this.jKeyId2 < 0)
+                    {
+                        LOGGER.error("runOperation(): Join FAILED, join key2 was NOT found in the Input2 Headers.");
+                        this.clear();
+                        return false;
+                    }
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, join key2 was NOT found in the settings while key2 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasKey3())
+            {
+                this.keyId3 = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY3));
+
+                if (this.keyId3 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, key3 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasJoinKey3())
+                {
+                    this.jKeyId3 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.JOIN_KEY3));
+
+                    if (this.jKeyId3 < 0)
+                    {
+                        LOGGER.error("runOperation(): Join FAILED, join key3 was NOT found in the Input2 Headers.");
+                        this.clear();
+                        return false;
+                    }
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, join key3 was NOT found in the settings while key3 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasKey4())
+            {
+                this.keyId4 = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY4));
+
+                if (this.keyId4 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, key4 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasJoinKey4())
+                {
+                    this.jKeyId4 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.JOIN_KEY4));
+
+                    if (this.jKeyId4 < 0)
+                    {
+                        LOGGER.error("runOperation(): Join FAILED, join key4 was NOT found in the Input2 Headers.");
+                        this.clear();
+                        return false;
+                    }
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, join key4 was NOT found in the settings while key4 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasKey5())
+            {
+                this.keyId5 = this.FILE_1.getHeader().getId(ctx.getSettingValue(Settings.KEY5));
+
+                if (this.keyId5 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, key5 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasJoinKey5())
+                {
+                    this.jKeyId5 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.JOIN_KEY5));
+
+                    if (this.jKeyId5 < 0)
+                    {
+                        LOGGER.error("runOperation(): Join FAILED, join key5 was NOT found in the Input2 Headers.");
+                        this.clear();
+                        return false;
+                    }
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, join key5 was NOT found in the settings while key5 was defined.");
+                    this.clear();
+                    return false;
+                }
             }
 
             if (this.joinFiles(ctx.getOpt().isOuterJoin()))
@@ -142,12 +279,14 @@ public class OperationJoin extends Operation implements AutoCloseable
         System.out.print("Join Operation:\n");
         System.out.printf("\tAliases: %s\n\n", Operations.JOIN.getAlias().toString());
 
-//        System.out.print("This operation merges two files into a single output file.\n");
-//        System.out.print("It accepts two input files (--input), and an output (--output).\n");
-//        System.out.print("You can also pass the (--de-dupe) operation with requires a key field (--key) to be set.\n");
-//        System.out.print("Optionally, you can enable (--squash-dupe) which combines de-duplicated data values.\n");
-//        System.out.print("De-Dupe compares the files, and removes duplicate rows based on the key field given.\n");
-//        System.out.print("\n");
+        System.out.print("This operation merges two files into a single output file,\n");
+        System.out.print("While scanning input2 for a matching set of key pairs; such that:\n");
+        System.out.print("  - key matches join-key\n");
+        System.out.print("  - key2 matches join-key2\n");
+        System.out.print("  - ... and so on.\n");
+        System.out.print("The default join type is of the INNER type, but you can specify\n");
+        System.out.print("this operation to be in OUTER mode by using the --outer setting.\n");
+        System.out.print("\n");
     }
 
     private boolean readFiles(String file1, String file2, boolean ignoreQuotes, boolean debug)
@@ -190,6 +329,7 @@ public class OperationJoin extends Operation implements AutoCloseable
     {
         final int header1Size = this.FILE_1.getHeader().size();
         final int header2Size = this.FILE_2.getHeader().size();
+        final int combinedHeaderSize = header1Size + header2Size;
 
         for (int i = 1; i < this.FILE_1.getFile().size(); i++)
         {
@@ -197,9 +337,9 @@ public class OperationJoin extends Operation implements AutoCloseable
 
             if (!entry.isEmpty())
             {
-                String key = entry.get(this.keyId1);
+                List<String> lKeys = this.getKeys(entry);
                 List<String> result = new ArrayList<>(entry);
-                List<String> match = this.getFirstMatchingKey(key);
+                List<String> match = this.getFirstMatchingKey(lKeys);
 
                 if (!match.isEmpty())
                 {
@@ -212,8 +352,9 @@ public class OperationJoin extends Operation implements AutoCloseable
                     for (int j = 0; j < header2Size; j++)
                     {
                         result.add("");
-                        this.OUT.addLine(result);
                     }
+
+                    this.OUT.addLine(result);
                 }
                 else
                 {
@@ -225,7 +366,133 @@ public class OperationJoin extends Operation implements AutoCloseable
         return true;
     }
 
-    private List<String> getFirstMatchingKey(String key)
+    private List<String> getKeys(List<String> list)
+    {
+        List<String> result = new ArrayList<>();
+
+        if (list.size() > this.keyId1)
+        {
+            result.add(list.get(this.keyId1));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.keyId2)
+        {
+            result.add(list.get(this.keyId2));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.keyId3)
+        {
+            result.add(list.get(this.keyId3));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.keyId4)
+        {
+            result.add(list.get(this.keyId4));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.keyId5)
+        {
+            result.add(list.get(this.keyId5));
+        }
+        else
+        {
+            return result;
+        }
+
+        return result;
+    }
+
+    private List<String> getJoinKeys(List<String> list)
+    {
+        List<String> result = new ArrayList<>();
+
+        if (list.size() > this.jKeyId1)
+        {
+            result.add(list.get(this.jKeyId1));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.jKeyId2)
+        {
+            result.add(list.get(this.jKeyId2));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.jKeyId3)
+        {
+            result.add(list.get(this.jKeyId3));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.jKeyId4)
+        {
+            result.add(list.get(this.jKeyId4));
+        }
+        else
+        {
+            return result;
+        }
+
+        if (list.size() > this.jKeyId5)
+        {
+            result.add(list.get(this.jKeyId5));
+        }
+        else
+        {
+            return result;
+        }
+
+        return result;
+    }
+
+    private boolean matchKeys(List<String> left, List<String> right)
+    {
+        if (left.size() != right.size() ||
+            left.isEmpty())
+        {
+            return false;
+        }
+
+        for (int i = 0; i < left.size(); i++)
+        {
+            String lEntry = left.get(i);
+            String rEntry = right.get(i);
+
+            if (!lEntry.equals(rEntry))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<String> getFirstMatchingKey(List<String> lKeys)
     {
         for (int i = 1; i < this.FILE_2.getFile().size(); i++)
         {
@@ -233,9 +500,9 @@ public class OperationJoin extends Operation implements AutoCloseable
 
             if (!entry.isEmpty())
             {
-                String key2 = entry.get(this.keyId2);
+                List<String> rKeys = this.getJoinKeys(entry);
 
-                if (key.matches(key2))
+                if (this.matchKeys(lKeys, rKeys))
                 {
                     return entry;
                 }
