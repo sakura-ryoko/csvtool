@@ -379,7 +379,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.keyId2)
+        if (this.keyId2 > 0 && list.size() > this.keyId2)
         {
             result.add(list.get(this.keyId2));
         }
@@ -388,7 +388,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.keyId3)
+        if (this.keyId3 > 0 && list.size() > this.keyId3)
         {
             result.add(list.get(this.keyId3));
         }
@@ -397,7 +397,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.keyId4)
+        if (this.keyId4 > 0 && list.size() > this.keyId4)
         {
             result.add(list.get(this.keyId4));
         }
@@ -406,7 +406,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.keyId5)
+        if (this.keyId5 > 0 && list.size() > this.keyId5)
         {
             result.add(list.get(this.keyId5));
         }
@@ -431,7 +431,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.jKeyId2)
+        if (this.jKeyId2 > 0 && list.size() > this.jKeyId2)
         {
             result.add(list.get(this.jKeyId2));
         }
@@ -440,7 +440,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.jKeyId3)
+        if (this.jKeyId3 > 0 && list.size() > this.jKeyId3)
         {
             result.add(list.get(this.jKeyId3));
         }
@@ -449,7 +449,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.jKeyId4)
+        if (this.jKeyId4 > 0 && list.size() > this.jKeyId4)
         {
             result.add(list.get(this.jKeyId4));
         }
@@ -458,7 +458,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return result;
         }
 
-        if (list.size() > this.jKeyId5)
+        if (this.jKeyId5 > 0 && list.size() > this.jKeyId5)
         {
             result.add(list.get(this.jKeyId5));
         }
