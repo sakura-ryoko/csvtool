@@ -20,7 +20,7 @@ public class OperationJoin extends Operation implements AutoCloseable
     private FileCache FILE_2;
     private final FileCache OUT;
     private final FileCache EXCEPTIONS;
-    private final List<Integer> matchedOuter;
+    private final List<Integer> matched;
     private int keyId1;
     private int keyId2;
     private int keyId3;
@@ -39,7 +39,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         this.FILE_2 = new FileCache();
         this.OUT = new FileCache();
         this.EXCEPTIONS = new FileCache();
-        this.matchedOuter = new ArrayList<>();
+        this.matched = new ArrayList<>();
         this.keyId1 = -1;
         this.keyId2 = -1;
         this.keyId3 = -1;
@@ -247,7 +247,7 @@ public class OperationJoin extends Operation implements AutoCloseable
                 {
                     LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
 
-                    if (!ctx.getOpt().isOuterJoin())
+                    if (!this.EXCEPTIONS.isEmpty())
                     {
                         if (this.writeFile(this.EXCEPTIONS, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), null))
                         {
@@ -348,7 +348,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             {
                 List<String> lKeys = this.getKeys(entry);
                 List<String> result = new ArrayList<>(entry);
-                List<String> match = this.getFirstMatchingKey(lKeys);
+                List<String> match = this.getFirstMatchingKey(lKeys, outer);
 
                 if (!match.isEmpty())
                 {
@@ -377,7 +377,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         {
             for (int i = 1; i < this.FILE_2.getFile().size(); i++)
             {
-                if (!this.matchedOuter.contains(i))
+                if (!this.matched.contains(i))
                 {
                     List<String> entry = this.FILE_2.getFile().get(i);
 
@@ -518,19 +518,19 @@ public class OperationJoin extends Operation implements AutoCloseable
         return true;
     }
 
-    private List<String> getFirstMatchingKey(List<String> lKeys)
+    private List<String> getFirstMatchingKey(List<String> lKeys, boolean outer)
     {
         for (int i = 1; i < this.FILE_2.getFile().size(); i++)
         {
             List<String> entry = this.FILE_2.getFile().get(i);
 
-            if (!entry.isEmpty())
+            if (!entry.isEmpty() && !this.matched.contains(i))
             {
                 List<String> rKeys = this.getJoinKeys(entry);
 
                 if (this.matchKeys(lKeys, rKeys))
                 {
-                    this.matchedOuter.add(i);
+                    this.matched.add(i);
                     return entry;
                 }
             }
@@ -562,7 +562,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             this.EXCEPTIONS.clear();
         }
 
-        this.matchedOuter.clear();
+        this.matched.clear();
     }
 
     @Override
