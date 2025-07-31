@@ -1103,6 +1103,30 @@ public abstract class Operation
                     result = params.get(6);
                 }
             }
+            case IF_NUMBER_EMPTY ->
+            {
+                try
+                {
+                    Long.parseLong(data);
+                    result = "";
+                }
+                catch (NumberFormatException ignored)
+                {
+                    result = data;
+                }
+            }
+            case IF_FLOAT_EMPTY ->
+            {
+                try
+                {
+                    Double.parseDouble(data);
+                    result = "";
+                }
+                catch (NumberFormatException ignored)
+                {
+                    result = data;
+                }
+            }
             case NOT_EMPTY ->
             {
                 if (data.isEmpty())
@@ -1341,6 +1365,30 @@ public abstract class Operation
                     }
 
                     result = params.getFirst() + token + data;
+                }
+            }
+            case NOT_NUMBER_EMPTY ->
+            {
+                try
+                {
+                    Long.parseLong(data);
+                    result = data;
+                }
+                catch (NumberFormatException ignored)
+                {
+                    result = "";
+                }
+            }
+            case NOT_FLOAT_EMPTY ->
+            {
+                try
+                {
+                    Double.parseDouble(data);
+                    result = data;
+                }
+                catch (NumberFormatException ignored)
+                {
+                    result = "";
                 }
             }
             case PREFIX ->
