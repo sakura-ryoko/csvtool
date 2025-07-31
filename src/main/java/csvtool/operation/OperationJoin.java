@@ -524,8 +524,13 @@ public class OperationJoin extends Operation implements AutoCloseable
         {
             List<String> entry = this.FILE_2.getFile().get(i);
 
-            if (!entry.isEmpty() && !this.matched.contains(i))
+            if (!entry.isEmpty())
             {
+                if (outer && !this.matched.contains(i))
+                {
+                    continue;
+                }
+
                 List<String> rKeys = this.getJoinKeys(entry);
 
                 if (this.matchKeys(lKeys, rKeys))
