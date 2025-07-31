@@ -57,7 +57,7 @@ public class OperationMerge extends Operation implements AutoCloseable
 
         LOGGER.debug("runOperation(): --> MERGE [{}] + [{}] into [{}].", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), ctx.getSettingValue(Settings.OUTPUT));
 
-        if (readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug()))
+        if (this.readFiles(ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2), false, ctx.getOpt().isDebug()))
         {
             LOGGER.debug("runOperation(): --> File1 [{}] & File2 [{}] read successfully.", ctx.getInputFile(), ctx.getSettingValue(Settings.INPUT2));
 
@@ -102,6 +102,9 @@ public class OperationMerge extends Operation implements AutoCloseable
                     }
                 }
             }
+
+            // Set FILE_1 as Output file
+            this.FILE_1.setFileName(ctx.getSettingValue(Settings.OUTPUT));
 
             if (this.writeFile(this.FILE_1, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), this.FILE_2))
             {
