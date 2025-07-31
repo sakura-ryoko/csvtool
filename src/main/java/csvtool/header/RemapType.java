@@ -21,6 +21,7 @@ public enum RemapType
     IF_EQUAL        ("if-equal",       true),
     IF_EQUAL_COPY   ("if-equal-copy",  true),
     IF_EQUAL_APPEND ("if-equal-append",true),
+    IF_EQUAL_PREFIX ("if-equal-prefix",true),
     IF_FIELDS_EQUAL ("if-fields-equal",true),
     IF_RANGE        ("if-range",       true),
     IF_DATE_RANGE   ("if-date-range",  true),

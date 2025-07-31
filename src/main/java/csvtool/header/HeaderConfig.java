@@ -51,6 +51,7 @@ public class HeaderConfig
         "IF_EQUAL { (field), (value-true), [value-false] } (Performs a field compare of (field), and if they match, return (value-true), or optionally [value-false])",
         "IF_EQUAL_COPY { (field1), (field2) } (Performs a field compare of (field1) with this data, and if they match, return value of (field2))",
         "IF_EQUAL_APPEND { (field), (value), [token] } (Performs a field compare of (field) with this data, and if they match, append the value of (value), with a space or [token] in between)",
+        "IF_EQUAL_PREFIX { (field), (value), [token], [subRemap] } (Performs a value prefix if the value in (field) is equal, with the value in (value), with a space or [token] in between; or preserve the data and apply the optional [subRemap])",
         "IF_FIELDS_EQUAL { (field1), (field2), (value-true), (value-false) } (Performs a field compare of (field1) with (field2), and if they match, return (value-true), or (value-false))",
         "IF_RANGE { (min-value), (max-value), (result), [else], {...} }",
             "* (Performs an integer comparison of existing data using >= (min-value) and <= (max-value), then return (result), or return [else]; can be chained for multiple range tests)",

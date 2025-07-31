@@ -866,6 +866,48 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case IF_EQUAL_PREFIX ->
+            {
+                if (params == null || params.isEmpty() || params.size() < 2)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_PREFIX error; params are empty or less than 2.");
+                    return Pair.of(false, data);
+                }
+
+                int fieldNum;
+
+                try
+                {
+                    fieldNum = Integer.parseInt(params.getFirst());
+
+                    if (fieldNum < 0 || fieldNum > row.size())
+                    {
+                        LOGGER.warn("applyRemapEach(): IF_EQUAL_PREFIX error; fieldNum is out of range.");
+                        return Pair.of(false, data);
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): IF_EQUAL_PREFIX error; exception parsing fieldNum; {}", err.getLocalizedMessage());
+                    return Pair.of(false, data);
+                }
+
+                if (data.equals(row.get(fieldNum)))
+                {
+                    String token = " ";
+
+                    if (params.size() > 2)
+                    {
+                        token = params.get(2);
+                    }
+
+                    result = params.get(1) + token + data;
+                }
+                else
+                {
+                    result = data;
+                }
+            }
             case IF_FIELDS_EQUAL ->
             {
                 if (params == null || params.isEmpty() || params.size() < 4)
