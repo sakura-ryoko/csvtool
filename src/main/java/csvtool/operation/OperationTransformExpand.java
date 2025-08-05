@@ -23,6 +23,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
     private final FileCache OUT;
     private final HashMap<String, Integer> transformKeys;
     private final HashMap<String, HashMap<String, Integer>> transformSubkeys;
+    private int indexStart;
 
     public OperationTransformExpand(Operations op)
     {
@@ -32,6 +33,7 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         this.OUT = new FileCache();
         this.transformKeys = new HashMap<>();
         this.transformSubkeys = new HashMap<>();
+        this.indexStart = -1;
     }
 
     @Override
@@ -94,6 +96,29 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
                     }
 
                     LOGGER.debug("runOperation(): --> Transform Parser loaded config from [{}].", this.PARSER.getHeaderConfigFile());
+
+                    if (ctx.getOpt().hasSerialStart())
+                    {
+                        try
+                        {
+                            String value = ctx.getSettingValue(Settings.SERIAL_START);
+
+                            if (value != null && !value.isEmpty())
+                            {
+                                this.indexStart = Integer.parseInt(value);
+                            }
+                            else
+                            {
+                                LOGGER.error("runOperation(): Transform FAILED, SerialStart provided, but it was empty.");
+                                return false;
+                            }
+                        }
+                        catch (NumberFormatException err)
+                        {
+                            LOGGER.error("runOperation(): Transform FAILED, SerialStart provided, but it failed; {}", err.getLocalizedMessage());
+                            return false;
+                        }
+                    }
 
                     if (this.applyTransforms(ctx.getOpt().getKey()))
                     {
@@ -322,6 +347,13 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
                 int result = subMap.get(subkey);
                 subMap.put(subkey, ++result);
                 this.transformSubkeys.put(key, subMap);
+
+                // Offsets subkeyIndex value using SerialStart setting.
+                if (this.indexStart > -1)
+                {
+                    return result + this.indexStart;
+                }
+
                 return result;
             }
         }
@@ -329,6 +361,13 @@ public class OperationTransformExpand extends Operation implements AutoCloseable
         subMap = new HashMap<>();
         subMap.put(subkey, 0);
         this.transformSubkeys.put(key, subMap);
+
+        // Offsets subkeyIndex value using SerialStart setting.
+        if (this.indexStart > -1)
+        {
+            return this.indexStart;
+        }
+
         return 0;
     }
 
