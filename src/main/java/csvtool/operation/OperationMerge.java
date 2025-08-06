@@ -106,15 +106,31 @@ public class OperationMerge extends Operation implements AutoCloseable
             // Set FILE_1 as Output file
             this.FILE_1.setFileName(ctx.getSettingValue(Settings.OUTPUT));
 
-            if (this.writeFile(this.FILE_1, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), this.FILE_2))
+            if (this.FILE_2.isEmpty())
             {
-                LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
-                this.clear();
-                return true;
+                if (this.writeFile(this.FILE_1, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), null))
+                {
+                    LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
+                    this.clear();
+                    return true;
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Write file FAILED.");
+                }
             }
             else
             {
-                LOGGER.error("runOperation(): Write file FAILED.");
+                if (this.writeFile(this.FILE_1, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), this.FILE_2))
+                {
+                    LOGGER.debug("runOperation(): --> File [{}] written successfully.", ctx.getSettingValue(Settings.OUTPUT));
+                    this.clear();
+                    return true;
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Write file FAILED.");
+                }
             }
         }
 
@@ -141,11 +157,18 @@ public class OperationMerge extends Operation implements AutoCloseable
         LOGGER.debug("readFiles(): Reading file1 [{}] ...", file1);
 
         this.FILE_1 = this.readFile(file1, ignoreQuotes, debug);
+
+        if (this.FILE_1 == null || this.FILE_1.isEmpty())
+        {
+            LOGGER.error("readFiles(): File1 Cache is Empty!");
+            return false;
+        }
+
         this.FILE_2 = this.readFile(file2, ignoreQuotes, debug);
 
-        if (this.FILE_1.isEmpty() || this.FILE_2.isEmpty())
+        if (this.FILE_2 == null || this.FILE_2.isEmpty())
         {
-            LOGGER.error("readFiles(): Either File Cache is Empty!");
+            LOGGER.error("readFiles(): File2 Cache is Empty!");
             return false;
         }
 

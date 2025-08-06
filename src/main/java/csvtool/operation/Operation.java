@@ -223,7 +223,7 @@ public abstract class Operation
             {
                 if (APPEND != null)
                 {
-                    if (!appendFile(wrapper, APPEND))
+                    if (!this.appendFile(wrapper, APPEND))
                     {
                         LOGGER.error("writeFile(): Error appending file Cache.");
                         wrapper.close();
@@ -260,8 +260,14 @@ public abstract class Operation
 
     protected boolean appendFile(CSVWrapper wrapper, FileCache FILE)
     {
-        if (wrapper == null || FILE == null || FILE.isEmpty() || wrapper.isEmpty())
+        if (wrapper == null || wrapper.isEmpty())
         {
+            LOGGER.error("appendFile(): CSVWrapper is empty.");
+            return false;
+        }
+        else if (FILE == null || FILE.isEmpty())
+        {
+            LOGGER.error("appendFile(): FILE is empty.");
             return false;
         }
 
