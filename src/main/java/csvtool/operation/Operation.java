@@ -216,6 +216,8 @@ public abstract class Operation
     protected boolean writeFile(@Nonnull FileCache FILE, boolean applyQuotes, boolean append, boolean dump, @Nullable FileCache APPEND)
     {
         LOGGER.debug("writeFile(): Write file [{}]:", FILE.getFileName());
+        // TODO
+        dump = false;
 
         try (CSVWrapper wrapper = new CSVWrapper(FILE.getFileName(), false))
         {

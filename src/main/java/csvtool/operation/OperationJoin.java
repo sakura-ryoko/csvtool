@@ -374,7 +374,7 @@ public class OperationJoin extends Operation implements AutoCloseable
     {
         LOGGER.debug("readFiles(): Reading files [{}] and [{}] ...", file1, file2);
 
-        this.FILE_1 = this.readFile(file1, ignoreQuotes, debug);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, false);
 
         if (this.FILE_1 == null || this.FILE_1.isEmpty())
         {
@@ -382,7 +382,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return false;
         }
 
-        this.FILE_2 = this.readFile(file2, ignoreQuotes, debug);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, false);
 
         if (this.FILE_2 == null || this.FILE_2.isEmpty())
         {
@@ -622,6 +622,8 @@ public class OperationJoin extends Operation implements AutoCloseable
             String lEntry = left.get(i);
             String rEntry = right.get(i);
 
+            LOGGER.debug("matchKeys(): left: [{}], vs right: [{}]", lEntry, rEntry);
+
             if (!lEntry.equals(rEntry))
             {
                 return false;
@@ -631,8 +633,10 @@ public class OperationJoin extends Operation implements AutoCloseable
         return true;
     }
 
-    private boolean matchIncludes(List<String> data)
+    private boolean matchIncludes(List<String> data, boolean outer)
     {
+        if (outer) return true;
+
         if (this.iKeyId1 > -1)
         {
             String entry = data.get(this.iKeyId1);
@@ -671,22 +675,25 @@ public class OperationJoin extends Operation implements AutoCloseable
 
             if (!entry.isEmpty())
             {
-                if (outer && !this.matched.contains(i))
+                if (outer && this.matched.contains(i))
                 {
                     continue;
                 }
 
                 List<String> rKeys = this.getJoinKeys(entry);
+                LOGGER.debug("getFirstMatchingKey(): LINE[{}]: [{}] vs [{}]", i, lKeys, rKeys);
 
                 if (this.matchKeys(lKeys, rKeys) &&
-                    this.matchIncludes(entry))
+                    this.matchIncludes(entry, outer))
                 {
+                    LOGGER.debug("getFirstMatchingKey(): Match found; line [{}] // [{}]", i, entry);
                     this.matched.add(i);
                     return entry;
                 }
             }
         }
 
+        LOGGER.debug("getFirstMatchingKey(): NO MATCH!");
         return List.of();
     }
 
@@ -707,15 +714,19 @@ public class OperationJoin extends Operation implements AutoCloseable
 
                 List<String> rKeys = this.getJoinKeys(entry);
 
+                LOGGER.debug("getAllMatchingKeys(): LINE[{}]: [{}] vs [{}]", i, lKeys, rKeys);
+
                 if (this.matchKeys(lKeys, rKeys) &&
-                    this.matchIncludes(entry))
+                    this.matchIncludes(entry, outer))
                 {
+                    LOGGER.debug("getAllMatchingKeys(): Match found; line [{}] // [{}]", i, entry);
                     this.matched.add(i);
                     results.put(i, entry);
                 }
             }
         }
 
+        LOGGER.debug("getAllMatchingKeys(): [{}] Matches found", results.size());
         return results;
     }
 
