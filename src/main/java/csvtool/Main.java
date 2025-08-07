@@ -279,6 +279,60 @@ public class Main
             System.out.print(" JoinKey5: [NOT_SET]\n");
         }
 
+        if (opt.hasIncludeKey())
+        {
+            System.out.printf(" IncludeKey: [%s] // applied [%s]\n", opt.getIncludeKey(), ctx.getSettingValue(Settings.INCLUDE_KEY));
+        }
+        else
+        {
+            System.out.print(" IncludeKey: [NOT_SET]\n");
+        }
+
+        if (opt.hasIncludeKey2())
+        {
+            System.out.printf(" IncludeKey2: [%s] // applied [%s]\n", opt.getIncludeKey2(), ctx.getSettingValue(Settings.INCLUDE_KEY2));
+        }
+        else
+        {
+            System.out.print(" IncludeKey2: [NOT_SET]\n");
+        }
+
+        if (opt.hasIncludeKey3())
+        {
+            System.out.printf(" IncludeKey3: [%s] // applied [%s]\n", opt.getIncludeKey3(), ctx.getSettingValue(Settings.INCLUDE_KEY3));
+        }
+        else
+        {
+            System.out.print(" IncludeKey3: [NOT_SET]\n");
+        }
+
+        if (opt.hasIncludeVal())
+        {
+            System.out.printf(" IncludeVal: [%s] // applied [%s]\n", opt.getIncludeVal(), ctx.getSettingValue(Settings.INCLUDE_VAL));
+        }
+        else
+        {
+            System.out.print(" IncludeVal: [NOT_SET]\n");
+        }
+
+        if (opt.hasIncludeVal2())
+        {
+            System.out.printf(" IncludeVal2: [%s] // applied [%s]\n", opt.getIncludeVal2(), ctx.getSettingValue(Settings.INCLUDE_VAL2));
+        }
+        else
+        {
+            System.out.print(" IncludeVal2: [NOT_SET]\n");
+        }
+
+        if (opt.hasIncludeVal3())
+        {
+            System.out.printf(" IncludeVal3: [%s] // applied [%s]\n", opt.getIncludeVal3(), ctx.getSettingValue(Settings.INCLUDE_VAL3));
+        }
+        else
+        {
+            System.out.print(" IncludeVal3: [NOT_SET]\n");
+        }
+
         if (opt.hasSerialKey())
         {
             System.out.printf(" SerialKey: [%s] // applied [%s]\n", opt.getSerialKey(), ctx.getSettingValue(Settings.SERIAL_KEY));
@@ -381,6 +435,12 @@ public class Main
                     case JOIN_KEY3 -> opt.setJoinKey3(ctx.getSettingValue(entry));
                     case JOIN_KEY4 -> opt.setJoinKey4(ctx.getSettingValue(entry));
                     case JOIN_KEY5 -> opt.setJoinKey5(ctx.getSettingValue(entry));
+                    case INCLUDE_KEY -> opt.setIncludeKey(ctx.getSettingValue(entry));
+                    case INCLUDE_KEY2 -> opt.setIncludeKey2(ctx.getSettingValue(entry));
+                    case INCLUDE_KEY3 -> opt.setIncludeKey3(ctx.getSettingValue(entry));
+                    case INCLUDE_VAL -> opt.setIncludeVal(ctx.getSettingValue(entry));
+                    case INCLUDE_VAL2 -> opt.setIncludeVal2(ctx.getSettingValue(entry));
+                    case INCLUDE_VAL3 -> opt.setIncludeVal3(ctx.getSettingValue(entry));
                     case SERIAL_KEY -> opt.setSerialKey(ctx.getSettingValue(entry));
                     case SERIAL_START -> opt.setSerialStart(ctx.getSettingValue(entry));
                     case SERIAL_END -> opt.setSerialEnd(ctx.getSettingValue(entry));

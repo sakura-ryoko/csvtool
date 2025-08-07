@@ -21,6 +21,12 @@ public class OptSettings
     private String joinKey3;
     private String joinKey4;
     private String joinKey5;
+    private String incKey;
+    private String incKey2;
+    private String incKey3;
+    private String incVal;
+    private String incVal2;
+    private String incVal3;
     private String serialKey;
     private String serialStart;
     private String serialEnd;
@@ -49,6 +55,12 @@ public class OptSettings
         this.joinKey3 = "";
         this.joinKey4 = "";
         this.joinKey5 = "";
+        this.incKey = "";
+        this.incKey2 = "";
+        this.incKey3 = "";
+        this.incVal = "";
+        this.incVal2 = "";
+        this.incVal3 = "";
         this.serialKey = "";
         this.serialStart = "";
         this.serialEnd = "";
@@ -126,6 +138,36 @@ public class OptSettings
     public boolean hasJoinKey5()
     {
         return this.joinKey5 != null && !this.joinKey5.isEmpty();
+    }
+
+    public boolean hasIncludeKey()
+    {
+        return this.incKey != null && !this.incKey.isEmpty();
+    }
+
+    public boolean hasIncludeKey2()
+    {
+        return this.incKey2 != null && !this.incKey2.isEmpty();
+    }
+
+    public boolean hasIncludeKey3()
+    {
+        return this.incKey3 != null && !this.incKey3.isEmpty();
+    }
+
+    public boolean hasIncludeVal()
+    {
+        return this.incVal != null && !this.incVal.isEmpty();
+    }
+
+    public boolean hasIncludeVal2()
+    {
+        return this.incVal2 != null && !this.incVal2.isEmpty();
+    }
+
+    public boolean hasIncludeVal3()
+    {
+        return this.incVal3 != null && !this.incVal3.isEmpty();
     }
 
     public boolean hasSerialKey()
@@ -211,6 +253,36 @@ public class OptSettings
     public @Nullable String getJoinKey5()
     {
         return this.joinKey5;
+    }
+
+    public @Nullable String getIncludeKey()
+    {
+        return this.incKey;
+    }
+
+    public @Nullable String getIncludeKey2()
+    {
+        return this.incKey2;
+    }
+
+    public @Nullable String getIncludeKey3()
+    {
+        return this.incKey3;
+    }
+
+    public @Nullable String getIncludeVal()
+    {
+        return this.incVal;
+    }
+
+    public @Nullable String getIncludeVal2()
+    {
+        return this.incVal2;
+    }
+
+    public @Nullable String getIncludeVal3()
+    {
+        return this.incVal3;
     }
 
     public @Nullable String getSerialKey()
@@ -363,6 +435,36 @@ public class OptSettings
     public void setJoinKey5(String key5)
     {
         this.joinKey5 = key5;
+    }
+
+    public void setIncludeKey(String key)
+    {
+        this.incKey = key;
+    }
+
+    public void setIncludeKey2(String key2)
+    {
+        this.incKey2 = key2;
+    }
+
+    public void setIncludeKey3(String key3)
+    {
+        this.incKey3 = key3;
+    }
+
+    public void setIncludeVal(String val)
+    {
+        this.incVal = val;
+    }
+
+    public void setIncludeVal2(String val2)
+    {
+        this.incVal2 = val2;
+    }
+
+    public void setIncludeVal3(String val3)
+    {
+        this.incVal3 = val3;
     }
 
     public void setSerialKey(String key)

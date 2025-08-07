@@ -31,6 +31,12 @@ public class OperationJoin extends Operation implements AutoCloseable
     private int jKeyId3;
     private int jKeyId4;
     private int jKeyId5;
+    private int iKeyId1;
+    private int iKeyId2;
+    private int iKeyId3;
+    private String iVal1;
+    private String iVal2;
+    private String iVal3;
 
     public OperationJoin(Operations op)
     {
@@ -50,6 +56,12 @@ public class OperationJoin extends Operation implements AutoCloseable
         this.jKeyId3 = -1;
         this.jKeyId4 = -1;
         this.jKeyId5 = -1;
+        this.iKeyId1 = -1;
+        this.iKeyId2 = -1;
+        this.iKeyId3 = -1;
+        this.iVal1 = "";
+        this.iVal2 = "";
+        this.iVal3 = "";
     }
 
     @Override
@@ -236,6 +248,75 @@ public class OperationJoin extends Operation implements AutoCloseable
                 else
                 {
                     LOGGER.error("runOperation(): Join FAILED, join key5 was NOT found in the settings while key5 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasIncludeKey())
+            {
+                this.iKeyId1 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.INCLUDE_KEY));
+
+                if (this.iKeyId1 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, Include Key1 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasIncludeVal())
+                {
+                    this.iVal1 = ctx.getSettingValue(Settings.INCLUDE_VAL);
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, include value1 was NOT found in the settings while include key1 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasIncludeKey2())
+            {
+                this.iKeyId2 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.INCLUDE_KEY2));
+
+                if (this.iKeyId2 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, Include Key2 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasIncludeVal2())
+                {
+                    this.iVal2 = ctx.getSettingValue(Settings.INCLUDE_VAL2);
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, include value2 was NOT found in the settings while include key2 was defined.");
+                    this.clear();
+                    return false;
+                }
+            }
+
+            if (ctx.getOpt().hasIncludeKey3())
+            {
+                this.iKeyId3 = this.FILE_2.getHeader().getId(ctx.getSettingValue(Settings.INCLUDE_KEY3));
+
+                if (this.iKeyId3 < 0)
+                {
+                    LOGGER.error("runOperation(): Join FAILED, Include Key3 was NOT found in the Input Headers.");
+                    this.clear();
+                    return false;
+                }
+
+                if (ctx.getOpt().hasIncludeVal3())
+                {
+                    this.iVal3 = ctx.getSettingValue(Settings.INCLUDE_VAL3);
+                }
+                else
+                {
+                    LOGGER.error("runOperation(): Join FAILED, include value3 was NOT found in the settings while include key3 was defined.");
                     this.clear();
                     return false;
                 }
@@ -518,6 +599,38 @@ public class OperationJoin extends Operation implements AutoCloseable
         return true;
     }
 
+    private boolean matchIncludes(List<String> data)
+    {
+        if (this.iKeyId1 > -1)
+        {
+            String entry = data.get(this.iKeyId1);
+
+            if (!entry.equalsIgnoreCase(this.iVal1))
+            {
+                return false;
+            }
+        }
+
+        if (this.iKeyId2 > -1)
+        {
+            String entry = data.get(this.iKeyId2);
+
+            if (!entry.equalsIgnoreCase(this.iVal2))
+            {
+                return false;
+            }
+        }
+
+        if (this.iKeyId3 > -1)
+        {
+            String entry = data.get(this.iKeyId3);
+
+            return entry.equalsIgnoreCase(this.iVal3);
+        }
+
+        return true;
+    }
+
     private List<String> getFirstMatchingKey(List<String> lKeys, boolean outer)
     {
         for (int i = 1; i < this.FILE_2.getFile().size(); i++)
@@ -533,7 +646,8 @@ public class OperationJoin extends Operation implements AutoCloseable
 
                 List<String> rKeys = this.getJoinKeys(entry);
 
-                if (this.matchKeys(lKeys, rKeys))
+                if (this.matchKeys(lKeys, rKeys) &&
+                    this.matchIncludes(entry))
                 {
                     this.matched.add(i);
                     return entry;

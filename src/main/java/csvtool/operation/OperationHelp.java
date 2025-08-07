@@ -122,6 +122,12 @@ public class OperationHelp extends Operation
         System.out.print("\t--join-key3 (key):\n\t\tSets the CSV Join-Key3 field for the JOIN Operation.  This is used so that it can compare the data with the Key3 field.\n");
         System.out.print("\t--join-key4 (key):\n\t\tSets the CSV Join-Key4 field for the JOIN Operation.  This is used so that it can compare the data with the Key4 field.\n");
         System.out.print("\t--join-key5 (key):\n\t\tSets the CSV Join-Key5 field for the JOIN Operation.  This is used so that it can compare the data with the Key5 field.\n");
+        System.out.print("\t--include-key (key):\n\t\tSets the CSV Include-Key field for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Value.\n");
+        System.out.print("\t--include-key2 (key):\n\t\tSets the CSV Include-Key2 field for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Value2.\n");
+        System.out.print("\t--include-key3 (key):\n\t\tSets the CSV Include-Key3 field for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Value3.\n");
+        System.out.print("\t--include-val (value):\n\t\tSets the CSV Include-Val value for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Key field.\n");
+        System.out.print("\t--include-val2 (value):\n\t\tSets the CSV Include-Val2 value for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Key2 field.\n");
+        System.out.print("\t--include-val3 (value):\n\t\tSets the CSV Include-Val3 value for the JOIN Operation.  This is used so that it can compare the data with the provided Include-Key3 field.\n");
         System.out.print("\t--side (key):\n\t\tSets the CSV Side field for the DIFF Operation.  This informs of which \"Side\" the DIFF output came from.\n");
         System.out.print("\t--de-dupe:\n\t\tSets the MERGE Operation in \"De-Duplication\" mode, which removes rows that already exists, and outputs this data to a separate file.\n");
         System.out.print("\t--squash-dupe:\n\t\tSets the MERGE/DEDUPE Operation in \"Squash\" mode, which combines rows that already exist with it's duplicates, and outputs the combined data.\n");
@@ -151,6 +157,12 @@ public class OperationHelp extends Operation
             case JOIN_KEY3 -> this.displayHelpForJoinKey3();
             case JOIN_KEY4 -> this.displayHelpForJoinKey4();
             case JOIN_KEY5 -> this.displayHelpForJoinKey5();
+            case INCLUDE_KEY -> this.displayHelpForIncludeKey();
+            case INCLUDE_KEY2 -> this.displayHelpForIncludeKey2();
+            case INCLUDE_KEY3 -> this.displayHelpForIncludeKey3();
+            case INCLUDE_VAL -> this.displayHelpForIncludeVal();
+            case INCLUDE_VAL2 -> this.displayHelpForIncludeVal2();
+            case INCLUDE_VAL3 -> this.displayHelpForIncludeVal3();
             case SIDE -> this.displayHelpForSide();
             case DE_DUPE -> this.displayHelpForDeDupe();
             case SQUASH_DUPE -> this.displayHelpForSquashDupe();
@@ -246,6 +258,42 @@ public class OperationHelp extends Operation
         {
             this.displayVersion();
             this.displayHelpForJoinKey5();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeKey())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeKey();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeKey2())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeKey2();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeKey3())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeKey3();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeVal())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeVal();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeVal2())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeVal2();
+            hasOpt = true;
+        }
+        else if (opt.hasIncludeVal3())
+        {
+            this.displayVersion();
+            this.displayHelpForIncludeVal3();
             hasOpt = true;
         }
         else if (opt.hasSide())
@@ -384,6 +432,42 @@ public class OperationHelp extends Operation
     {
         System.out.print("--join-key5 (field):\n");
         System.out.printf("Aliases: %s\n", Settings.JOIN_KEY5.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeKey()
+    {
+        System.out.print("--include-key (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_KEY.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeKey2()
+    {
+        System.out.print("--include-key2 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_KEY2.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeKey3()
+    {
+        System.out.print("--include-key3 (field):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_KEY3.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeVal()
+    {
+        System.out.print("--include-val (value):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_VAL.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeVal2()
+    {
+        System.out.print("--include-val2 (value):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_VAL2.getAlias().toString());
+    }
+
+    private void displayHelpForIncludeVal3()
+    {
+        System.out.print("--include-val3 (value):\n");
+        System.out.printf("Aliases: %s\n", Settings.INCLUDE_VAL3.getAlias().toString());
     }
 
     private void displayHelpForSide()
