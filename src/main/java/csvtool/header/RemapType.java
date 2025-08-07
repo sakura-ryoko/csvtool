@@ -39,6 +39,7 @@ public enum RemapType
     EXCLUDE         ("exclude",        true),
     INCLUDE_REGEX   ("include-regex",  true),
     EXCLUDE_REGEX   ("exclude-regex",  true),
+    EXCLUDE_EMPTY   ("exclude-empty",  false),
     PAD             ("pad",            true),
     TRUNCATE        ("truncate",       true),
     REPLACE         ("replace",        true),

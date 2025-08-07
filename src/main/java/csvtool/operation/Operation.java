@@ -1505,6 +1505,13 @@ public abstract class Operation
                     exclude = true;
                 }
             }
+            case EXCLUDE_EMPTY ->
+            {
+                if (data.isEmpty())
+                {
+                    exclude = true;
+                }
+            }
             case INCLUDE_REGEX ->
             {
                 if (params == null || params.isEmpty())

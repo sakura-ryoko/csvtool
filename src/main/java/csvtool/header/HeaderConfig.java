@@ -42,6 +42,7 @@ public class HeaderConfig
         "EXCLUDE (...) (Performs a row exclusion if this field matches items in a list)",
         "INCLUDE_REGEX (RegEx) (Performs a row exclusion if this field does not match the RegEx)",
         "EXCLUDE_REGEX (RegEx) (Performs a row exclusion if this field matches the RegEx)",
+        "EXCLUDE_EMPTY (Performs a row exclusion if this field is empty)",
         "PAD { (count), [data] } (Pads this value with (count) and optional [data])",
         "TRUNCATE { (length) } (Truncates the value to a length of (length))",
         "IF_STATIC { (field-id), (condition), (value) } (Performs a value static if the value in (field-id) matches (condition), then this field becomes (value))",
