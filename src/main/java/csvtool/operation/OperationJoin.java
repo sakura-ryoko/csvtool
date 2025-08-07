@@ -707,7 +707,7 @@ public class OperationJoin extends Operation implements AutoCloseable
 
             if (!entry.isEmpty())
             {
-                if (outer && !this.matched.contains(i))
+                if (outer && this.matched.contains(i))
                 {
                     continue;
                 }
