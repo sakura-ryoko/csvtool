@@ -33,6 +33,7 @@ public enum Settings
     SQUASH_DUPE ("squash-dupe", "--squash-dupe",  false, List.of("-squash-dupe", "--squashdupe", "-squashdupe", "--sqdd", "-sqdd", "--sqd", "-sqd")),
     QUOTES      ("quotes",      "--quotes",       false, List.of("-quotes")),
     APPEND      ("append",      "--append",       false, List.of("--a", "-append", "-a")),
+    MULTI       ("multi-join",  "--multi-join",   false, List.of("-multi-join", "--multi", "-multi", "--mj", "-mj")),
     OUTER       ("outer-join",  "--outer-join",   false, List.of("-outer-join", "--outer", "-outer", "--oj", "-oj")),
     QUIET       ("quiet",       "--quiet",        false, List.of("-quiet", "--q", "-q")),
     DEBUG       ("debug",       "--debug",        false, List.of("--db", "-db", "-debug", "--d", "-d")),

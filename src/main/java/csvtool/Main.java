@@ -372,6 +372,8 @@ public class Main
         System.out.printf(" De-Dupe: [%s]\n", opt.isDeDupe());
         System.out.printf(" Apply Quotes: [%s]\n", opt.isApplyQuotes());
         System.out.printf(" Append Output: [%s]\n", opt.isAppendOutput());
+        System.out.printf(" Multi Join: [%s]\n", opt.isMultiJoin());
+        System.out.printf(" Outer Join: [%s]\n", opt.isOuterJoin());
         System.out.printf(" Debug Log: [%s]\n", opt.isDebug());
         System.out.printf(" Quiet Log: [%s]\n", opt.isQuiet());
         System.out.printf(" Ansi Colors: [%s]\n", opt.isAnsiColors());
@@ -450,6 +452,7 @@ public class Main
                     case SQUASH_DUPE -> opt.setSquashDupe(true);
                     case QUOTES -> opt.setApplyQuotes(true);
                     case APPEND -> opt.setAppendOutput(true);
+                    case MULTI -> opt.setMultiJoin(true);
                     case OUTER -> opt.setOuterJoin(true);
                     case QUIET ->
                     {

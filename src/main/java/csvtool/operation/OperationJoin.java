@@ -8,9 +8,7 @@ import csvtool.header.CSVHeader;
 import csvtool.utils.LogWrapper;
 import csvtool.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class OperationJoin extends Operation implements AutoCloseable
 {
@@ -322,7 +320,7 @@ public class OperationJoin extends Operation implements AutoCloseable
                 }
             }
 
-            if (this.joinFiles(ctx.getOpt().isOuterJoin()))
+            if (this.joinFiles(ctx.getOpt().isMultiJoin(), ctx.getOpt().isOuterJoin()))
             {
                 if (this.writeFile(this.OUT, ctx.getOpt().isApplyQuotes(), false, ctx.getOpt().isDebug(), null))
                 {
@@ -416,7 +414,7 @@ public class OperationJoin extends Operation implements AutoCloseable
         return true;
     }
 
-    private boolean joinFiles(boolean outer)
+    private boolean joinFiles(boolean multi, boolean outer)
     {
         final int header1Size = this.FILE_1.getHeader().size();
         final int header2Size = this.FILE_2.getHeader().size();
@@ -429,26 +427,60 @@ public class OperationJoin extends Operation implements AutoCloseable
             {
                 List<String> lKeys = this.getKeys(entry);
                 List<String> result = new ArrayList<>(entry);
-                List<String> match = this.getFirstMatchingKey(lKeys, outer);
 
-                if (!match.isEmpty())
+                if (multi)
                 {
-                    result.addAll(match);
-                    this.OUT.addLine(result);
-                }
-                else if (outer)
-                {
-                    // OuterJoin style, No Exceptions
-                    for (int j = header1Size; j < header2Size; j++)
+                    HashMap<Integer, List<String>> matches = this.getAllMatchingKeys(lKeys, outer);
+
+                    if (!matches.isEmpty())
                     {
-                        result.add("");
-                    }
+                        matches.forEach(
+                                (k, list) ->
+                                {
+                                    List<String> multiResult = new ArrayList<>(result);
 
-                    this.OUT.addLine(result);
+                                    multiResult.addAll(list);
+                                    this.OUT.addLine(multiResult);
+                                });
+                    }
+                    else if (outer)
+                    {
+                        // OuterJoin style, No Exceptions
+                        for (int j = header1Size; j < header2Size; j++)
+                        {
+                            result.add("");
+                        }
+
+                        this.OUT.addLine(result);
+                    }
+                    else
+                    {
+                        this.EXCEPTIONS.addLine(entry);
+                    }
                 }
                 else
                 {
-                    this.EXCEPTIONS.addLine(entry);
+                    List<String> match = this.getFirstMatchingKey(lKeys, outer);
+
+                    if (!match.isEmpty())
+                    {
+                        result.addAll(match);
+                        this.OUT.addLine(result);
+                    }
+                    else if (outer)
+                    {
+                        // OuterJoin style, No Exceptions
+                        for (int j = header1Size; j < header2Size; j++)
+                        {
+                            result.add("");
+                        }
+
+                        this.OUT.addLine(result);
+                    }
+                    else
+                    {
+                        this.EXCEPTIONS.addLine(entry);
+                    }
                 }
             }
         }
@@ -656,6 +688,35 @@ public class OperationJoin extends Operation implements AutoCloseable
         }
 
         return List.of();
+    }
+
+    private HashMap<Integer, List<String>> getAllMatchingKeys(List<String> lKeys, boolean outer)
+    {
+        HashMap<Integer, List<String>> results = new HashMap<>();
+
+        for (int i = 1; i < this.FILE_2.getFile().size(); i++)
+        {
+            List<String> entry = this.FILE_2.getFile().get(i);
+
+            if (!entry.isEmpty())
+            {
+                if (outer && !this.matched.contains(i))
+                {
+                    continue;
+                }
+
+                List<String> rKeys = this.getJoinKeys(entry);
+
+                if (this.matchKeys(lKeys, rKeys) &&
+                    this.matchIncludes(entry))
+                {
+                    this.matched.add(i);
+                    results.put(i, entry);
+                }
+            }
+        }
+
+        return results;
     }
 
     @Override

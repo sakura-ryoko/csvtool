@@ -133,6 +133,7 @@ public class OperationHelp extends Operation
         System.out.print("\t--squash-dupe:\n\t\tSets the MERGE/DEDUPE Operation in \"Squash\" mode, which combines rows that already exist with it's duplicates, and outputs the combined data.\n");
         System.out.print("\t--quotes:\n\t\tSets the CSV Output in \"Apply Quotes\" mode, which adds Quotes to all data, and not only when it is required.\n");
         System.out.print("\t--append:\n\t\tSets the CSV Output in \"Append\" mode, which causes the Output to not be Overwritten, but appended to.\n");
+        System.out.print("\t--multi-join:\n\t\tSets the CSV Output for the Join Operation to \"Multi-Join\" mode, which causes the Output to include multiple lines that were matched.\n");
         System.out.print("\t--outer-join:\n\t\tSets the CSV Output for the Join Operation to \"Outer-Join\" mode, which causes the Output to include lines that were not matched.\n");
         System.out.print("\t--quiet:\n\t\tSets the Operation in \"Quiet\" mode, which causes the Logger messages to be suppressed.\n");
         System.out.print("\t--debug:\n\t\tSets the Operation in \"Debug\" mode, which causes the Logger to output Debug Level messages.\n");
@@ -168,6 +169,7 @@ public class OperationHelp extends Operation
             case SQUASH_DUPE -> this.displayHelpForSquashDupe();
             case QUOTES -> this.displayHelpForQuotes();
             case APPEND -> this.displayHelpForAppend();
+            case MULTI -> this.displayHelpForMultiJoin();
             case OUTER -> this.displayHelpForOuterJoin();
             case QUIET -> this.displayHelpForQuiet();
             case DEBUG -> this.displayHelpForDebug();
@@ -324,6 +326,12 @@ public class OperationHelp extends Operation
         {
             this.displayVersion();
             this.displayHelpForAppend();
+            hasOpt = true;
+        }
+        else if (opt.isMultiJoin())
+        {
+            this.displayVersion();
+            this.displayHelpForMultiJoin();
             hasOpt = true;
         }
         else if (opt.isOuterJoin())
@@ -498,6 +506,12 @@ public class OperationHelp extends Operation
     {
         System.out.print("--append:\n");
         System.out.printf("Aliases: %s\n", Settings.APPEND.getAlias().toString());
+    }
+
+    private void displayHelpForMultiJoin()
+    {
+        System.out.print("--multi-join:\n");
+        System.out.printf("Aliases: %s\n", Settings.MULTI.getAlias().toString());
     }
 
     private void displayHelpForOuterJoin()

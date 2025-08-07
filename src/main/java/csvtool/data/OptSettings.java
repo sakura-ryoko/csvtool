@@ -35,6 +35,7 @@ public class OptSettings
     private boolean squashDupe;
     private boolean applyQuotes;
     private boolean appendOutput;
+    private boolean multi;
     private boolean outer;
     private boolean quiet;
     private boolean debug;
@@ -69,6 +70,7 @@ public class OptSettings
         this.squashDupe = false;
         this.applyQuotes = false;
         this.appendOutput = false;
+        this.multi = false;
         this.outer = false;
         this.quiet = Const.QUIET;
         this.debug = Const.DEBUG;
@@ -325,6 +327,11 @@ public class OptSettings
         return this.appendOutput;
     }
 
+    public boolean isMultiJoin()
+    {
+        return this.multi;
+    }
+
     public boolean isOuterJoin()
     {
         return this.outer;
@@ -505,6 +512,11 @@ public class OptSettings
     public void setAppendOutput(boolean toggle)
     {
         this.appendOutput = toggle;
+    }
+
+    public void setMultiJoin(boolean toggle)
+    {
+        this.multi = toggle;
     }
 
     public void setOuterJoin(boolean toggle)
