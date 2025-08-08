@@ -374,7 +374,7 @@ public class OperationJoin extends Operation implements AutoCloseable
     {
         LOGGER.debug("readFiles(): Reading files [{}] and [{}] ...", file1, file2);
 
-        this.FILE_1 = this.readFile(file1, ignoreQuotes, false);
+        this.FILE_1 = this.readFile(file1, ignoreQuotes, debug);
 
         if (this.FILE_1 == null || this.FILE_1.isEmpty())
         {
@@ -382,7 +382,7 @@ public class OperationJoin extends Operation implements AutoCloseable
             return false;
         }
 
-        this.FILE_2 = this.readFile(file2, ignoreQuotes, false);
+        this.FILE_2 = this.readFile(file2, ignoreQuotes, debug);
 
         if (this.FILE_2 == null || this.FILE_2.isEmpty())
         {

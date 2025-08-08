@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 public class CSVHeader implements AutoCloseable
 {
+//    private final LogWrapper LOGGER = new LogWrapper(this.getClass(), true, false, true);
     private final AbstractList<String> headers;
 
     public CSVHeader()
@@ -44,6 +45,7 @@ public class CSVHeader implements AutoCloseable
     {
         if (this.size() != otherHeaders.size())
         {
+//            LOGGER.error("matches(): Mismatched sizes: [{} != {}]", this.size(), otherHeaders.size());
             return false;
         }
 
@@ -55,12 +57,15 @@ public class CSVHeader implements AutoCloseable
             String left = iter.next();
             String right = otherIter.next();
 
+//            LOGGER.debug("matches(): Compare: [{}] vs [{}], result: [{}]", left, right, left.matches(right));
+
             if (!left.matches(right))
             {
                 return false;
             }
         }
 
+//        LOGGER.debug("matches(): Headers matched");
         return true;
     }
 
