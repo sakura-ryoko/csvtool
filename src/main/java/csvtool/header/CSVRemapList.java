@@ -54,9 +54,11 @@ public class CSVRemapList
                 new CSVRemap(39, RemapType.APPEND, List.of("Extra")),
                 new CSVRemap(40, RemapType.PREFIX, List.of("PREFIX: ")),
                 new CSVRemap(41, RemapType.REPLACE, List.of("DEL", "")),
-                new CSVRemap(42, RemapType.SANITIZE, List.of()),
-                new CSVRemap(43, RemapType.PHONE_NUMBER, List.of("E164")),
-                new CSVRemap(44, RemapType.SWAP, List.of("2"),
+                new CSVRemap(42, RemapType.LEFT, List.of("4")),
+                new CSVRemap(43, RemapType.RIGHT, List.of("4")),
+                new CSVRemap(44, RemapType.SANITIZE, List.of()),
+                new CSVRemap(45, RemapType.PHONE_NUMBER, List.of("E164")),
+                new CSVRemap(46, RemapType.SWAP, List.of("2"),
                         new CSVRemap(3, RemapType.STATIC, List.of("orange", "banana"))
                 )
         )

@@ -42,6 +42,8 @@ public enum RemapType
     EXCLUDE_EMPTY   ("exclude-empty",  false),
     PAD             ("pad",            true),
     TRUNCATE        ("truncate",       true),
+    LEFT            ("left",           true),
+    RIGHT           ("right",          true),
     REPLACE         ("replace",        true),
     SANITIZE        ("sanitize",       false),
     PHONE_NUMBER    ("phone_number",   false),

@@ -411,6 +411,59 @@ public abstract class Operation
                     result = data;
                 }
             }
+            case LEFT ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): LEFT error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                // Basically the same as TRUNCATE
+                try
+                {
+                    final int length = Integer.parseInt(params.getFirst());
+
+                    if (data.length() > length)
+                    {
+                        result = data.substring(0, length);
+                    }
+                    else
+                    {
+                        result = data;
+                    }
+                }
+                catch (NumberFormatException err)
+                {
+                    LOGGER.warn("applyRemapEach(): LEFT error; {}", err.getMessage());
+                }
+            }
+            case RIGHT ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): RIGHT error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    final int length = Integer.parseInt(params.getFirst());
+
+                    if (data.length() > length)
+                    {
+                        result = data.substring(data.length() - length);
+                    }
+                    else
+                    {
+                        result = data;
+                    }
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): RIGHT error; {}", err.getMessage());
+                }
+            }
             case STATIC ->
             {
                 if (params == null || params.isEmpty())
