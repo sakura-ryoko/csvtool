@@ -52,6 +52,7 @@ public enum RemapType
     DATE_YEARS      ("date-years",     true),
     DATE_MONTHS     ("date-months",    true),
     DATE_DAYS       ("date-days",      true),
+    DATE_EPOCH      ("date-epoch",     true),
     ;
 
     public static final List<RemapType> VALUES = List.of(values());

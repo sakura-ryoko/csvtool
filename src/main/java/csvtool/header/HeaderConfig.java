@@ -38,6 +38,7 @@ public class HeaderConfig
         "DATE_YEARS { (fmt) } (Performs a date format based on (fmt) of now; using SimpleDateFormat patterns, and then returns the duration in Years since.)",
         "DATE_MONTHS { (fmt) } (Performs a date format based on (fmt) of now; using SimpleDateFormat patterns, and then returns the duration in Months since.)",
         "DATE_DAYS { (fmt) } (Performs a date format based on (fmt) of now; using SimpleDateFormat patterns, and then returns the duration in Days since.)",
+        "DATE_EPOCH { (fmt), [multiplier] } (Performs a date format based on (fmt) of an Epoch value (multiplied by an optional [multiplier], such as for converting seconds to millis); using DateTimeFormatter patterns, and then returns the time/date represented aligned to UTC)",
         "INCLUDE (...) (Performs a row exclusion if this field does not match items on a list)",
         "EXCLUDE (...) (Performs a row exclusion if this field matches items in a list)",
         "INCLUDE_REGEX (RegEx) (Performs a row exclusion if this field does not match the RegEx)",

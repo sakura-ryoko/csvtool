@@ -16,13 +16,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1745,6 +1744,47 @@ public abstract class Operation
                 catch (Exception err)
                 {
                     LOGGER.warn("applyRemapEach(): DATE_DAYS error; {}", err.getMessage());
+                }
+            }
+            case DATE_EPOCH ->
+            {
+                if (params == null || params.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_EPOCH error; params are empty");
+                    return Pair.of(false, data);
+                }
+
+                if (data.isEmpty())
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_EPOCH error; data is empty");
+                    return Pair.of(false, data);
+                }
+
+                try
+                {
+                    int multiplier = 1;
+
+                    if (params.size() > 1)
+                    {
+                        try
+                        {
+                            multiplier = Integer.parseInt(params.get(1));
+                        }
+                        catch (NumberFormatException err)
+                        {
+                            LOGGER.warn("applyRemapEach(): DATE_EPOCH multiplier error; {}", err.getMessage());
+                        }
+                    }
+
+                    final long epoch = Long.parseLong(data) * multiplier;
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern(params.getFirst(), Locale.ROOT);
+                    ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(epoch), ZoneId.of("UTC"));
+
+                    result = fmt.format(date);
+                }
+                catch (Exception err)
+                {
+                    LOGGER.warn("applyRemapEach(): DATE_EPOCH error; {}", err.getMessage());
                 }
             }
         }
