@@ -14,3 +14,5 @@ Valid Operations:
 
 Building manually:
 - `./gradlew shadowJar` - Builds the full JAR file with all of it's dependancies.
+
+[![Join Sakura's RyokoCraft Discord](https://sakuraryoko.com/files/1398873/discord-300px.png)](https://discord.gg/njVWs6DF)
