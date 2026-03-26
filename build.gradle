@@ -1,11 +1,13 @@
 plugins {
-    id 'com.gradleup.shadow' version '9.3.1'
+    id 'com.gradleup.shadow' version '9.4.0'
     id 'java'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+    withJavadocJar()
 }
 
 repositories {
@@ -27,7 +29,7 @@ base {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    it.options.release = 21
+    it.options.release = 25
 }
 
 // Shadow task depends on Jar task, so these configs are reflected for Shadow as well
