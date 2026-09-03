@@ -42,6 +42,7 @@ public enum RemapType
     EXCLUDE_EMPTY   ("exclude-empty",  false),
     PAD             ("pad",            true),
     TRUNCATE        ("truncate",       true),
+	TOKEN_TRUNCATE  ("token-truncate", true),
     LEFT            ("left",           true),
     RIGHT           ("right",          true),
     REPLACE         ("replace",        true),

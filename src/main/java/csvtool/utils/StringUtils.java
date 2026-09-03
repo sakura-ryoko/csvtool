@@ -1,6 +1,7 @@
 package csvtool.utils;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class StringUtils extends org.apache.commons.lang3.StringUtils
@@ -68,4 +69,36 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
 
         return replace;
     }
+
+	public static String truncateByTokenAndLength(final String in, final String token, final int maxLength)
+	{
+		if (in == null || token == null || maxLength <= 0)
+		{
+			return "";
+		}
+
+		final String[] tokens = in.split(Pattern.quote(token), -1);
+		StringBuilder sb = new StringBuilder();
+
+		for (String entry : tokens)
+		{
+			int addedLength = sb.isEmpty() ? entry.length() : token.length() + entry.length();
+
+			if (sb.length() + addedLength <= maxLength)
+			{
+				if (!sb.isEmpty())
+				{
+					sb.append(token);
+				}
+
+				sb.append(entry);
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		return sb.toString();
+	}
 }

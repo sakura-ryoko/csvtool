@@ -18,10 +18,7 @@ import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -385,6 +382,25 @@ public abstract class Operation
                     LOGGER.warn("applyRemapEach(): TRUNCATE error; {}", err.getMessage());
                 }
             }
+	        case TOKEN_TRUNCATE ->
+	        {
+		        if (params == null || params.size() != 2)
+		        {
+			        LOGGER.warn("applyRemapEach(): TOKEN_TRUNCATE error; params do not equal 2");
+			        return Pair.of(false, data);
+		        }
+
+		        try
+		        {
+					final String token = params.getFirst();
+			        final int maxLength = Integer.parseInt(params.getLast());
+					data = StringUtils.truncateByTokenAndLength(data, token, maxLength);
+		        }
+		        catch (NumberFormatException err)
+		        {
+			        LOGGER.warn("applyRemapEach(): TOKEN_TRUNCATE error; {}", err.getMessage());
+		        }
+	        }
             case REPLACE ->
             {
                 if (params == null || params.isEmpty())

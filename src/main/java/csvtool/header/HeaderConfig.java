@@ -46,6 +46,7 @@ public class HeaderConfig
         "EXCLUDE_EMPTY (Performs a row exclusion if this field is empty)",
         "PAD { (count), [data] } (Pads this value with (count) and optional [data])",
         "TRUNCATE { (length) } (Truncates the value to a length of (length))",
+	    "TOKEN_TRUNCATE { (token), (length) } (Truncates the value to a length of (length), based on a (token) to split the values)",
         "IF_STATIC { (field-id), (condition), (value) } (Performs a value static if the value in (field-id) matches (condition), then this field becomes (value))",
         "IF_EMPTY { (value), [subRemap] } (Performs a value static if the value is empty, then this field becomes (value), or applies the optional [subRemap])",
         "IF_EMPTY_FIELD { (other-field), (value), [subRemap] } (Performs a value static if the value in (other-field) is empty, then this field becomes (value), or applies the optional [subRemap])",
