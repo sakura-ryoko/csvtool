@@ -5,6 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import csvtool.data.Context;
 import csvtool.enums.Settings;
+import csvtool.remap.CSVRemap;
+import csvtool.remap.RemapList;
+import csvtool.remap.RemapType;
 import csvtool.utils.FileUtils;
 import csvtool.utils.LogWrapper;
 
@@ -93,7 +96,7 @@ public class HeaderParser implements AutoCloseable
         return null;
     }
 
-    public @Nullable CSVRemapList getRemapList()
+    public @Nullable RemapList getRemapList()
     {
         if (this.CONFIG != null)
         {
@@ -161,7 +164,7 @@ public class HeaderParser implements AutoCloseable
         this.CONFIG.output = output;
     }
 
-    public void setRemapList(@Nonnull CSVRemapList remaps)
+    public void setRemapList(@Nonnull RemapList remaps)
     {
         if (this.CONFIG == null)
         {
@@ -202,7 +205,7 @@ public class HeaderParser implements AutoCloseable
 
         if (this.CONFIG.remapList == null)
         {
-            this.CONFIG.remapList = new CSVRemapList();
+            this.CONFIG.remapList = new RemapList();
         }
 
         this.CONFIG.remapList.clear();

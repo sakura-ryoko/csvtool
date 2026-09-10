@@ -10,8 +10,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Immutable
@@ -23,8 +23,8 @@ public class CSVWrapper implements AutoCloseable
     private CSVWriter writer;
 
     private final String file;
-    private HashMap<Integer, String> header;
-    private HashMap<Integer, List<String>> lines;
+    private ConcurrentHashMap<Integer, String> header;
+    private ConcurrentHashMap<Integer, List<String>> lines;
     private int columns;
     private final boolean read;
 
@@ -39,8 +39,8 @@ public class CSVWrapper implements AutoCloseable
         this.parser = null;
         this.reader = null;
         this.writer = null;
-        this.header = new HashMap<>();
-        this.lines = new HashMap<>();
+        this.header = new ConcurrentHashMap<>();
+        this.lines = new ConcurrentHashMap<>();
         this.columns = -1;
         this.read = read;
 
@@ -111,7 +111,7 @@ public class CSVWrapper implements AutoCloseable
             return false;
         }
 
-        this.lines = new HashMap<>();
+        this.lines = new ConcurrentHashMap<>();
         AtomicInteger line = new AtomicInteger();
 
         LOGGER.debug("read(): Reading file ...");
@@ -163,7 +163,7 @@ public class CSVWrapper implements AutoCloseable
             return false;
         }
 
-        this.lines = new HashMap<>();
+        this.lines = new ConcurrentHashMap<>();
 
         LOGGER.debug("readHeadersOnly(): Reading file ...");
 
@@ -359,7 +359,7 @@ public class CSVWrapper implements AutoCloseable
         }
 
         LOGGER.debug("setHeader(): Building new Header ...");
-        this.header = new HashMap<>();
+        this.header = new ConcurrentHashMap<>();
 
         for (int i = 0; i < list.size(); i++)
         {
@@ -381,7 +381,7 @@ public class CSVWrapper implements AutoCloseable
         return this.getSize() < 1 || this.header.isEmpty();
     }
 
-    public HashMap<Integer, List<String>> getAllLines()
+    public ConcurrentHashMap<Integer, List<String>> getAllLines()
     {
         return this.lines;
     }
@@ -403,12 +403,12 @@ public class CSVWrapper implements AutoCloseable
         return entry;
     }
 
-    public boolean putAllLines(@Nonnull HashMap<Integer, List<String>> mapIn, boolean hasHeader)
+    public boolean putAllLines(@Nonnull ConcurrentHashMap<Integer, List<String>> mapIn, boolean hasHeader)
     {
         return this.putAllLines(mapIn, hasHeader, -1);
     }
 
-    public boolean putAllLines(@Nonnull HashMap<Integer, List<String>> mapIn, boolean hasHeader, int startAt)
+    public boolean putAllLines(@Nonnull ConcurrentHashMap<Integer, List<String>> mapIn, boolean hasHeader, int startAt)
     {
         if (this.read)
         {

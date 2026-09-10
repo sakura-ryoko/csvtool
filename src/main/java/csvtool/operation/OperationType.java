@@ -4,7 +4,7 @@ import csvtool.enums.Operations;
 
 import javax.annotation.Nullable;
 
-public class OperationType<T extends Operation>
+public class OperationType<T extends AbstractOperation>
 {
     //private final LogWrapper LOGGER = new LogWrapper(getClass());
 
@@ -27,7 +27,7 @@ public class OperationType<T extends Operation>
     private final OperationFactory<? extends T> factory;
     private final Operations ops;
 
-    private static <T extends Operation> OperationType<T> create(OperationFactory<? extends T> factory, Operations ops)
+    private static <T extends AbstractOperation> OperationType<T> create(OperationFactory<? extends T> factory, Operations ops)
     {
         return new OperationType<>(factory, ops);
     }
@@ -70,7 +70,7 @@ public class OperationType<T extends Operation>
     }
 
     @FunctionalInterface
-    interface OperationFactory<T extends Operation>
+    interface OperationFactory<T extends AbstractOperation>
     {
         T create(Operations ops);
     }

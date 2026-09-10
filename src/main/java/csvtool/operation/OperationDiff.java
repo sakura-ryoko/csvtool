@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationDiff extends Operation implements AutoCloseable
+public class OperationDiff extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

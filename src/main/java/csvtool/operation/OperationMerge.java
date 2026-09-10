@@ -10,7 +10,7 @@ import csvtool.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationMerge extends Operation implements AutoCloseable
+public class OperationMerge extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

@@ -1,6 +1,6 @@
 package csvtool.enums;
 
-import csvtool.operation.Operation;
+import csvtool.operation.AbstractOperation;
 import csvtool.operation.OperationType;
 
 import javax.annotation.Nullable;
@@ -68,7 +68,7 @@ public enum Operations
         return this.type;
     }
 
-    public @Nullable Operation init()
+    public @Nullable AbstractOperation init()
     {
         return this.type.init(this);
     }

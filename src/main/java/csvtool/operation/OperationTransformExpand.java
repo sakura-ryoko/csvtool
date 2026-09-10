@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OperationTransformExpand extends Operation implements AutoCloseable
+public class OperationTransformExpand extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

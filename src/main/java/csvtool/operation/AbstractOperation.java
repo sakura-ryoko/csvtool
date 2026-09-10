@@ -7,7 +7,7 @@ import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.header.CSVHeader;
-import csvtool.header.CSVRemap;
+import csvtool.remap.CSVRemap;
 import csvtool.utils.CSVWrapper;
 import csvtool.utils.LogWrapper;
 import csvtool.utils.StringUtils;
@@ -22,11 +22,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Operation
+public abstract class AbstractOperation
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
-    public Operation(Operations op)
+    public AbstractOperation(Operations op)
     {
         LOGGER.debug("new abstract Operation for op [{}]", op.getName());
     }

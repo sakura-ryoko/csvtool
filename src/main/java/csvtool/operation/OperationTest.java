@@ -6,7 +6,7 @@ import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
 
-public class OperationTest extends Operation implements AutoCloseable
+public class OperationTest extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

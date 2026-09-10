@@ -7,7 +7,7 @@ import csvtool.enums.Settings;
 import csvtool.pivot.FilePivotParser;
 import csvtool.utils.LogWrapper;
 
-public class OperationFilePivotSave extends Operation implements AutoCloseable
+public class OperationFilePivotSave extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private final FilePivotParser PARSER;

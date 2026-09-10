@@ -6,7 +6,7 @@ import csvtool.data.OptSettings;
 import csvtool.enums.ExitCode;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
-import csvtool.operation.Operation;
+import csvtool.operation.AbstractOperation;
 import csvtool.utils.FileUtils;
 import csvtool.utils.LogWrapper;
 
@@ -15,7 +15,7 @@ public class Main
     private static final LogWrapper LOGGER = new LogWrapper(Main.class);
     private static Context ctx;
 
-    public static void main(String[] args)
+    static void main(String[] args)
     {
         processArgs(args);
         processSettings();
@@ -484,7 +484,7 @@ public class Main
             exit(ExitCode.MISSING_INPUT);
         }
 
-        Operation type = ctx.getOp().init();
+        AbstractOperation type = ctx.getOp().init();
 
         if (type != null && type.runOperation(ctx))
         {

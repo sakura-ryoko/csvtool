@@ -6,7 +6,7 @@ import csvtool.enums.Operations;
 import csvtool.transform.HeaderTransformParser;
 import csvtool.utils.LogWrapper;
 
-public class OperationTransformSquash extends Operation implements AutoCloseable
+public class OperationTransformSquash extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(getClass());
 

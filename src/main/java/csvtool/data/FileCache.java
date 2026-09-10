@@ -6,34 +6,31 @@ import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileCache implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
-    public HashMap<Integer, List<String>> file;
+    public ConcurrentHashMap<Integer, List<String>> file;
     public CSVHeader header;
     public String fileName;
+    public int columns;
 
     public FileCache()
     {
-        this.file = new HashMap<>();
-        this.header = new CSVHeader();
-        this.fileName = "";
+        this(new CSVHeader(), "");
     }
 
     public FileCache(@Nonnull CSVHeader newHeader)
     {
-        this.file = new HashMap<>();
-        this.setHeader(newHeader);
-        this.fileName = "";
+        this(newHeader, "");
     }
 
     public FileCache(@Nonnull CSVHeader newHeader, String fileName)
     {
-        this.file = new HashMap<>();
+        this.file = new ConcurrentHashMap<>();
         this.setHeader(newHeader);
         this.fileName = fileName;
     }
@@ -69,7 +66,7 @@ public class FileCache implements AutoCloseable
         this.header = wrapper.getHeader();
     }
 
-    public HashMap<Integer, List<String>> getFile()
+    public ConcurrentHashMap<Integer, List<String>> getFile()
     {
         return this.file;
     }

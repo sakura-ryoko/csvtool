@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class OperationFilePivot extends Operation implements AutoCloseable
+public class OperationFilePivot extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private FileCache FILE;

@@ -9,7 +9,7 @@ import csvtool.utils.LogWrapper;
 
 import java.util.List;
 
-public class OperationHeaderAdd extends Operation implements AutoCloseable
+public class OperationHeaderAdd extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private final HeaderParser PARSER;

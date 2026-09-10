@@ -7,7 +7,7 @@ import csvtool.enums.Settings;
 import csvtool.transform.HeaderTransformParser;
 import csvtool.utils.LogWrapper;
 
-public class OperationTransformSave extends Operation implements AutoCloseable
+public class OperationTransformSave extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private final HeaderTransformParser PARSER;

@@ -7,7 +7,7 @@ import csvtool.enums.Operations;
 import csvtool.enums.Settings;
 import csvtool.utils.LogWrapper;
 
-public class OperationHelp extends Operation
+public class OperationHelp extends AbstractOperation
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 
@@ -46,7 +46,7 @@ public class OperationHelp extends Operation
 
             if (type != null)
             {
-                Operation ops = type.init();
+                AbstractOperation ops = type.init();
 
                 if (ops != null)
                 {

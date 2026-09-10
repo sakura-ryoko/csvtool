@@ -5,10 +5,10 @@ import csvtool.data.Context;
 import csvtool.data.FileCache;
 import csvtool.enums.Operations;
 import csvtool.enums.Settings;
-import csvtool.header.CSVRemap;
-import csvtool.header.CSVRemapList;
+import csvtool.remap.CSVRemap;
+import csvtool.remap.RemapList;
 import csvtool.header.HeaderParser;
-import csvtool.header.RemapType;
+import csvtool.remap.RemapType;
 import csvtool.utils.LogWrapper;
 import csvtool.utils.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class OperationReformat extends Operation implements AutoCloseable
+public class OperationReformat extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private final HeaderParser PARSER;
@@ -214,7 +214,7 @@ public class OperationReformat extends Operation implements AutoCloseable
             return null;
         }
 
-        CSVRemapList remapList = new CSVRemapList(this.PARSER.getRemapList().getList());
+        RemapList remapList = new RemapList(this.PARSER.getRemapList().list());
 
         if (remapList.size() != data.size())
         {

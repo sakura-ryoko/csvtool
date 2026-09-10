@@ -10,7 +10,7 @@ import csvtool.utils.StringUtils;
 
 import java.util.*;
 
-public class OperationJoin extends Operation implements AutoCloseable
+public class OperationJoin extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

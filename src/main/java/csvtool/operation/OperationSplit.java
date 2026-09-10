@@ -10,7 +10,7 @@ import csvtool.utils.StringUtils;
 import java.util.HashMap;
 import java.util.List;
 
-public class OperationSplit extends Operation implements AutoCloseable
+public class OperationSplit extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
 

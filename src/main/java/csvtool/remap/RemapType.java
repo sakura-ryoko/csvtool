@@ -1,4 +1,4 @@
-package csvtool.header;
+package csvtool.remap;
 
 import javax.annotation.Nullable;
 import java.util.List;

@@ -10,7 +10,7 @@ import csvtool.utils.LogWrapper;
 
 import javax.annotation.Nullable;
 
-public class OperationHeaderSave extends Operation implements AutoCloseable
+public class OperationHeaderSave extends AbstractOperation implements AutoCloseable
 {
     private final LogWrapper LOGGER = new LogWrapper(this.getClass());
     private final HeaderParser PARSER;
